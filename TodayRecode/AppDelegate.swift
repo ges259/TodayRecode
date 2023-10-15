@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import FirebaseCore
+import FirebaseFirestore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -13,7 +15,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // 파이어베이스
+        FirebaseApp.configure()
+        
+        
+        // 네비게이션 바 설정
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.backgroundColor = UIColor.customWhite7.withAlphaComponent(0.1)
+        
+        let navBar = UINavigationBar.appearance()
+            navBar.isTranslucent = true
+            
+            navBar.standardAppearance = navigationBarAppearance
+            navBar.scrollEdgeAppearance = navigationBarAppearance
+            navBar.compactAppearance = navigationBarAppearance
+        
+        
         return true
     }
 
