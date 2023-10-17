@@ -37,6 +37,8 @@ final class Recodecontroller: UIViewController {
     
     
     
+    
+    
     // MARK: - Properties
     /// 날짜가 선택되면 날짜레이블(dateLabel)에 해당 날짜 표시
     private var selectedDay: String? {
@@ -66,6 +68,7 @@ final class Recodecontroller: UIViewController {
     
     // 오토레이아웃
     private func configureAutoLayout() {
+        // addSubView
         [self.backgroundImg, self.calendar, self.dateView, self.scrollView, self.plusBtn].forEach { views in
             self.view.addSubview(views)
         }
@@ -80,7 +83,7 @@ final class Recodecontroller: UIViewController {
             make.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
         }
-        self.calendarHeight = self.calendar.heightAnchor.constraint(equalToConstant: 300)
+        self.calendarHeight = self.calendar.heightAnchor.constraint(equalToConstant: 250)
         self.calendarHeight?.isActive = true
         // 날짜 뷰
         self.dateView.snp.makeConstraints { make in
@@ -109,7 +112,7 @@ final class Recodecontroller: UIViewController {
         // 테이블뷰
         self.contentView.addSubview(self.tableView)
         self.tableView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(5)
+            make.top.equalToSuperview()
             make.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
             make.bottom.lessThanOrEqualTo(self.contentView.snp.bottom).offset(-10)
@@ -139,8 +142,6 @@ final class Recodecontroller: UIViewController {
         self.plusBtn.setImage(UIImage(systemName: "plus"), for: .normal)
         self.plusBtn.backgroundColor = .white
         
-        
-        
         // cornerRadius
         [self.calendar, self.dateView, self.tableView].forEach({ view in
             view.clipsToBounds = true
@@ -168,7 +169,11 @@ final class Recodecontroller: UIViewController {
             // 색상
         self.calendar.appearance.weekdayTextColor = .black.withAlphaComponent(0.7)
         // 헤더 높이 설정
-        self.calendar.headerHeight = 0
+//        self.calendar.headerHeight = 20
+        self.calendar.appearance.headerDateFormat = "M월"
+        self.calendar.appearance.headerTitleFont = .boldSystemFont(ofSize: 17)
+        self.calendar.appearance.headerTitleColor = .black
+        self.calendar.appearance.headerMinimumDissolvedAlpha = 0
         // 이벤트 - 선택되지 않은 날짜 색깔
         self.calendar.appearance.eventDefaultColor = UIColor.green
         // 이벤트 - 선택된 날짜 색깔
@@ -212,13 +217,12 @@ final class Recodecontroller: UIViewController {
         let swipeUp = UISwipeGestureRecognizer(target: self,
                                                action: #selector(self.swipeAction(_:)))
             swipeUp.direction = .up
-        self.tableView.addGestureRecognizer(swipeUp)
         self.view.addGestureRecognizer(swipeUp)
+        
         // 아래로 스와이프
         let swipeDown = UISwipeGestureRecognizer(target: self,
                                                  action: #selector(self.swipeAction(_:)))
             swipeDown.direction = .down
-        self.tableView.addGestureRecognizer(swipeDown)
         self.view.addGestureRecognizer(swipeDown)
         
         // 플러스 버튼 셀렉터
@@ -242,10 +246,7 @@ final class Recodecontroller: UIViewController {
     
     
     
-    
-    
-    
-    
+    // MARK: - 위/아래 스와이프 액션
     /// 스와이프를 하면 자동으로 불리는 메서드
     /// up: 달력을 한 주만 보이도록 설정
     /// down: 달력을 한 달 전체가 보이도록 설정
@@ -255,18 +256,29 @@ final class Recodecontroller: UIViewController {
         : self.calendar.setScope(.month, animated: true)
     }
     
+    
+    
+    
+    
+    
+    
+    // MARK: - 플러스 버튼 액션
     @objc private func plusBtnTapped() {
-        
-        self.tableCellCount += 1
-        
-        self.tableView.reloadData()
+        let vc = EasyWritingScreenController()
+            vc.modalPresentationStyle = .overFullScreen
+        self.present(vc, animated: false)
     }
+    /*
+     self.tableCellCount += 1
+     
+     self.tableView.reloadData()
+     */
     
     
     
     
     
-    
+    // MARK: - 날짜 띄우기
     /// dateLabel에 날짜를 띄우는 메서드
     /// 기본값: 오늘 날짜를 띄운다.
     /// - Parameter selectedDate: 선택된 날짜를 띄운다.
@@ -277,18 +289,12 @@ final class Recodecontroller: UIViewController {
         // dateLabel에 오늘 날짜 띄우기
         self.selectedDay = dateFormat.string(from: selectedDate!)
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
+
+
+
+
+
 
 
 
@@ -305,17 +311,11 @@ extension Recodecontroller: FSCalendarDelegate, FSCalendarDataSource {
             self.view.layoutIfNeeded()
         }
     }
-    
-    
-    
     /// 날짜를 선택했을 때
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         // dateLabel에 선택된 날짜 띄우기
         self.dateChangeToString(selectedDate: date)
     }
-    
-    
-    
     /// 이벤트가 표시되는 갯수
     func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
         return 0
@@ -328,29 +328,75 @@ extension Recodecontroller: FSCalendarDelegate, FSCalendarDataSource {
 
 
 
-// MARK: - 테이블뷰 델리게이트
-extension Recodecontroller: UITableViewDelegate {
+
+
+
+
+
+// MARK: - 스크롤뷰
+extension Recodecontroller {
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if scrollView.contentOffset.y < 1 {
-            self.scrollView.isScrollEnabled = false
+        
+        if scrollView.contentOffset.y < 10 && self.calendar.scope == .week {
             // 한 달 전체가 보이도록 설정
             self.calendar.setScope(.month, animated: true)
+        }
+    }
+    
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if self.calendar.scope == .month {
             
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            self.calendar.setScope(.week, animated: true)
+
+            self.scrollView.isScrollEnabled = false
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()) {
                 self.scrollView.isScrollEnabled = true
             }
-            
-            
-        } else if self.calendar.scope == .month {
-            self.calendar.setScope(.week, animated: true)
         }
     }
 }
 
 
+
+
+
+
+
+
+
+
+
+// MARK: - 테이블뷰 델리게이트
+extension Recodecontroller: UITableViewDelegate {
+    /// 스와이프 설정
+    /// 오른쪽 -> 왼쪽 스와이프하면 버튼이 나타남
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        // 왼쪽에 만들기
+        let trash = UIContextualAction(style: .normal, title: "삭제") { (_, _, success: @escaping (Bool) -> Void) in
+            print("trash 클릭 됨")
+            success(true)
+        }
+        trash.image = UIImage(systemName: "trash")
+        trash.backgroundColor = .systemPink
+        //actions배열 인덱스 0이 왼쪽에 붙어서 나옴
+        let swipeAction = UISwipeActionsConfiguration(actions:[trash])
+            swipeAction.performsFirstActionWithFullSwipe = false
+        
+        return swipeAction
+    }
+    
+    
+    
+    
+    
+    
+    
+}
 extension Recodecontroller: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.tableCellCount
+//        return self.tableCellCount
+        return 12
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
