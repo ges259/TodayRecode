@@ -10,28 +10,7 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
-    // MARK: - Layout
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // MARK: - Properties
-    
-    
-    
-
-    
-    
-    
-    
-    // MARK: - LifeCycle
+    // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -41,15 +20,7 @@ final class TabBarController: UITabBarController {
     
     
     
-    
-    
-    
-    
-    
-
-    
-    
-    // MARK: - 화면 구성
+    // MARK: - 화면 설정
     /// 뷰의 배경, 탭바, 네비게이션 바 설정
     private func configureUI() {
         self.tabBar.tintColor = UIColor.customblue3
@@ -58,11 +29,11 @@ final class TabBarController: UITabBarController {
     
     
     
-    // MARK: - 탭바 구성
+    // MARK: - 탭바 설정
     /// 탭바 설정
     private func configureTabBar() {
         // 오늘 날짜 가져오기
-        let today = self.todayReturn(todayFormat: .today)
+        let today = todayReturn(todayFormat: .day_d)
         
         // 기록 화면
         let recode = self.templateNavContoller(

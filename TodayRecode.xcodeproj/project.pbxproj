@@ -14,7 +14,7 @@
 		5F4B66882ADA3455004FE62E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F4B66862ADA3455004FE62E /* LaunchScreen.storyboard */; };
 		5F572CF92ADCDF660030EC7B /* EasyWritingScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F572CF82ADCDF660030EC7B /* EasyWritingScreenController.swift */; };
 		5F6EECDD2ADA3F490046E686 /* RecodeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECDC2ADA3F490046E686 /* RecodeController.swift */; };
-		5F6EECDF2ADA40170046E686 /* WritingScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECDE2ADA40170046E686 /* WritingScreenController.swift */; };
+		5F6EECDF2ADA40170046E686 /* DetailWritingScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECDE2ADA40170046E686 /* DetailWritingScreenController.swift */; };
 		5F6EECE12ADA40200046E686 /* SettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECE02ADA40200046E686 /* SettingController.swift */; };
 		5F6EECE32ADA40E20046E686 /* DiaryListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECE22ADA40E20046E686 /* DiaryListController.swift */; };
 		5F6EECE52ADA412D0046E686 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECE42ADA412D0046E686 /* LoginController.swift */; };
@@ -26,6 +26,14 @@
 		5F6EECF22ADA70470046E686 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 5F6EECF12ADA70470046E686 /* FirebaseDatabase */; };
 		5F6EECF42ADA70470046E686 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 5F6EECF32ADA70470046E686 /* FirebaseFirestore */; };
 		5F6EECF62ADA70470046E686 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 5F6EECF52ADA70470046E686 /* FirebaseStorage */; };
+		5F785B822ADEA7AF00955C4A /* Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F785B812ADEA7AF00955C4A /* Enum.swift */; };
+		5F785B842ADEA7E000955C4A /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F785B832ADEA7DF00955C4A /* UIView+Ext.swift */; };
+		5F785B862ADEA7F200955C4A /* UITextView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F785B852ADEA7F200955C4A /* UITextView+Ext.swift */; };
+		5F785B882ADEA80300955C4A /* UIButton+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F785B872ADEA80300955C4A /* UIButton+Ext.swift */; };
+		5F785B8A2ADEA81100955C4A /* UILabel+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F785B892ADEA81100955C4A /* UILabel+Ext.swift */; };
+		5F785B8C2ADEA84A00955C4A /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F785B8B2ADEA84A00955C4A /* Protocol.swift */; };
+		5F785B8E2ADEA8AB00955C4A /* InputAccessoryCustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F785B8D2ADEA8AB00955C4A /* InputAccessoryCustomView.swift */; };
+		5F785B902ADED33A00955C4A /* DateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F785B8F2ADED33A00955C4A /* DateView.swift */; };
 		5F7A02772ADAC8F100128DC4 /* ViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */; };
 		5F7A027A2ADAD00A00128DC4 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5F7A02792ADAD00A00128DC4 /* SnapKit */; };
 		5F7A027D2ADAD02B00128DC4 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 5F7A027C2ADAD02B00128DC4 /* FSCalendar */; };
@@ -47,7 +55,7 @@
 		5F4B66892ADA3455004FE62E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F572CF82ADCDF660030EC7B /* EasyWritingScreenController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EasyWritingScreenController.swift; sourceTree = "<group>"; };
 		5F6EECDC2ADA3F490046E686 /* RecodeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeController.swift; sourceTree = "<group>"; };
-		5F6EECDE2ADA40170046E686 /* WritingScreenController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WritingScreenController.swift; sourceTree = "<group>"; };
+		5F6EECDE2ADA40170046E686 /* DetailWritingScreenController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailWritingScreenController.swift; sourceTree = "<group>"; };
 		5F6EECE02ADA40200046E686 /* SettingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingController.swift; sourceTree = "<group>"; };
 		5F6EECE22ADA40E20046E686 /* DiaryListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryListController.swift; sourceTree = "<group>"; };
 		5F6EECE42ADA412D0046E686 /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
@@ -55,6 +63,14 @@
 		5F6EECE82ADA418F0046E686 /* SelectALoginMethodController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectALoginMethodController.swift; sourceTree = "<group>"; };
 		5F6EECEA2ADA6D700046E686 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		5F6EECEC2ADA6F290046E686 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		5F785B812ADEA7AF00955C4A /* Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
+		5F785B832ADEA7DF00955C4A /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
+		5F785B852ADEA7F200955C4A /* UITextView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+Ext.swift"; sourceTree = "<group>"; };
+		5F785B872ADEA80300955C4A /* UIButton+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Ext.swift"; sourceTree = "<group>"; };
+		5F785B892ADEA81100955C4A /* UILabel+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Ext.swift"; sourceTree = "<group>"; };
+		5F785B8B2ADEA84A00955C4A /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
+		5F785B8D2ADEA8AB00955C4A /* InputAccessoryCustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputAccessoryCustomView.swift; sourceTree = "<group>"; };
+		5F785B8F2ADED33A00955C4A /* DateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateView.swift; sourceTree = "<group>"; };
 		5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Ext.swift"; sourceTree = "<group>"; };
 		5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Ext.swift"; sourceTree = "<group>"; };
 		5FAA763F2ADBA8220024B810 /* RecodeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeTableViewCell.swift; sourceTree = "<group>"; };
@@ -118,6 +134,8 @@
 		5F6EECD72ADA3E240046E686 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				5F785B8B2ADEA84A00955C4A /* Protocol.swift */,
+				5F785B812ADEA7AF00955C4A /* Enum.swift */,
 				5FAF543C2ADA907100BD849C /* Constants.swift */,
 				5FAA76412ADC13340024B810 /* CustomTableView.swift */,
 				5F7A02752ADAC8C200128DC4 /* Extenstion */,
@@ -136,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				5FAA763F2ADBA8220024B810 /* RecodeTableViewCell.swift */,
+				5FE7C69E2ADEDDBE00BF9785 /* ReuseView */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -143,15 +162,9 @@
 		5F6EECDA2ADA3E360046E686 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				5F4B667F2ADA3452004FE62E /* TabBarController.swift */,
-				5F6EECDC2ADA3F490046E686 /* RecodeController.swift */,
-				5F6EECE22ADA40E20046E686 /* DiaryListController.swift */,
-				5F6EECE02ADA40200046E686 /* SettingController.swift */,
-				5F572CF82ADCDF660030EC7B /* EasyWritingScreenController.swift */,
-				5F6EECE82ADA418F0046E686 /* SelectALoginMethodController.swift */,
-				5F6EECDE2ADA40170046E686 /* WritingScreenController.swift */,
-				5F6EECE42ADA412D0046E686 /* LoginController.swift */,
-				5F6EECE62ADA41380046E686 /* SignUpController.swift */,
+				5FE7C6A02ADEDDFC00BF9785 /* TabBar */,
+				5FE7C6A12ADEDE0700BF9785 /* WritingView */,
+				5FE7C69F2ADEDDDA00BF9785 /* Auth */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -167,10 +180,53 @@
 		5F7A02752ADAC8C200128DC4 /* Extenstion */ = {
 			isa = PBXGroup;
 			children = (
-				5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */,
 				5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */,
+				5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */,
+				5F785B832ADEA7DF00955C4A /* UIView+Ext.swift */,
+				5F785B852ADEA7F200955C4A /* UITextView+Ext.swift */,
+				5F785B872ADEA80300955C4A /* UIButton+Ext.swift */,
+				5F785B892ADEA81100955C4A /* UILabel+Ext.swift */,
 			);
 			path = Extenstion;
+			sourceTree = "<group>";
+		};
+		5FE7C69E2ADEDDBE00BF9785 /* ReuseView */ = {
+			isa = PBXGroup;
+			children = (
+				5F785B8D2ADEA8AB00955C4A /* InputAccessoryCustomView.swift */,
+				5F785B8F2ADED33A00955C4A /* DateView.swift */,
+			);
+			path = ReuseView;
+			sourceTree = "<group>";
+		};
+		5FE7C69F2ADEDDDA00BF9785 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				5F6EECE82ADA418F0046E686 /* SelectALoginMethodController.swift */,
+				5F6EECE42ADA412D0046E686 /* LoginController.swift */,
+				5F6EECE62ADA41380046E686 /* SignUpController.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		5FE7C6A02ADEDDFC00BF9785 /* TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				5F4B667F2ADA3452004FE62E /* TabBarController.swift */,
+				5F6EECDC2ADA3F490046E686 /* RecodeController.swift */,
+				5F6EECE22ADA40E20046E686 /* DiaryListController.swift */,
+				5F6EECE02ADA40200046E686 /* SettingController.swift */,
+			);
+			path = TabBar;
+			sourceTree = "<group>";
+		};
+		5FE7C6A12ADEDE0700BF9785 /* WritingView */ = {
+			isa = PBXGroup;
+			children = (
+				5F572CF82ADCDF660030EC7B /* EasyWritingScreenController.swift */,
+				5F6EECDE2ADA40170046E686 /* DetailWritingScreenController.swift */,
+			);
+			path = WritingView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -261,20 +317,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F785B902ADED33A00955C4A /* DateView.swift in Sources */,
 				5F7A02772ADAC8F100128DC4 /* ViewController+Ext.swift in Sources */,
 				5F7A02852ADAD3D700128DC4 /* Color+Ext.swift in Sources */,
+				5F785B882ADEA80300955C4A /* UIButton+Ext.swift in Sources */,
 				5F6EECEB2ADA6D700046E686 /* APIService.swift in Sources */,
 				5F572CF92ADCDF660030EC7B /* EasyWritingScreenController.swift in Sources */,
 				5F6EECE92ADA418F0046E686 /* SelectALoginMethodController.swift in Sources */,
+				5F785B8C2ADEA84A00955C4A /* Protocol.swift in Sources */,
 				5F6EECE12ADA40200046E686 /* SettingController.swift in Sources */,
-				5F6EECDF2ADA40170046E686 /* WritingScreenController.swift in Sources */,
+				5F785B842ADEA7E000955C4A /* UIView+Ext.swift in Sources */,
+				5F6EECDF2ADA40170046E686 /* DetailWritingScreenController.swift in Sources */,
 				5F6EECE72ADA41380046E686 /* SignUpController.swift in Sources */,
+				5F785B862ADEA7F200955C4A /* UITextView+Ext.swift in Sources */,
 				5F6EECE32ADA40E20046E686 /* DiaryListController.swift in Sources */,
+				5F785B8A2ADEA81100955C4A /* UILabel+Ext.swift in Sources */,
 				5F4B66802ADA3452004FE62E /* TabBarController.swift in Sources */,
 				5F4B667C2ADA3452004FE62E /* AppDelegate.swift in Sources */,
 				5F6EECE52ADA412D0046E686 /* LoginController.swift in Sources */,
 				5F4B667E2ADA3452004FE62E /* SceneDelegate.swift in Sources */,
 				5FAA76402ADBA8220024B810 /* RecodeTableViewCell.swift in Sources */,
+				5F785B8E2ADEA8AB00955C4A /* InputAccessoryCustomView.swift in Sources */,
+				5F785B822ADEA7AF00955C4A /* Enum.swift in Sources */,
 				5F6EECDD2ADA3F490046E686 /* RecodeController.swift in Sources */,
 				5FAA76422ADC13340024B810 /* CustomTableView.swift in Sources */,
 				5FAF543D2ADA907100BD849C /* Constants.swift in Sources */,

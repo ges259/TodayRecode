@@ -1,0 +1,16 @@
+//
+//  Protocol.swift
+//  TodayRecode
+//
+//  Created by 계은성 on 2023/10/17.
+//
+
+import Foundation
+
+
+
+protocol AccessoryViewDelegate: AnyObject {
+    func cameraBtnTapped()
+    func albumBtnTapped()
+    func sendBtnTapped()
+}
