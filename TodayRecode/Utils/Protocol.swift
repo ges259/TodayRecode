@@ -12,5 +12,12 @@ import Foundation
 protocol AccessoryViewDelegate: AnyObject {
     func cameraBtnTapped()
     func albumBtnTapped()
-    func sendBtnTapped()
+    func accessoryRightBtnTapped()
+    
+}
+
+
+
+protocol EasyWritingScreenDelegate: AnyObject {
+    func expansionBtnTapped()
 }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5F07BF0B2AE0F1C800C471B4 /* UIScrollView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F07BF0A2AE0F1C800C471B4 /* UIScrollView+Ext.swift */; };
+		5F07BF0D2AE11B7A00C471B4 /* UIStackView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F07BF0C2AE11B7A00C471B4 /* UIStackView+Ext.swift */; };
 		5F4B667C2ADA3452004FE62E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B667B2ADA3452004FE62E /* AppDelegate.swift */; };
 		5F4B667E2ADA3452004FE62E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B667D2ADA3452004FE62E /* SceneDelegate.swift */; };
 		5F4B66802ADA3452004FE62E /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B667F2ADA3452004FE62E /* TabBarController.swift */; };
@@ -48,6 +50,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5F07BF0A2AE0F1C800C471B4 /* UIScrollView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Ext.swift"; sourceTree = "<group>"; };
+		5F07BF0C2AE11B7A00C471B4 /* UIStackView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Ext.swift"; sourceTree = "<group>"; };
 		5F4B66782ADA3452004FE62E /* TodayRecode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodayRecode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F4B667B2ADA3452004FE62E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5F4B667D2ADA3452004FE62E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -190,6 +194,8 @@
 				5F785B852ADEA7F200955C4A /* UITextView+Ext.swift */,
 				5F785B872ADEA80300955C4A /* UIButton+Ext.swift */,
 				5F785B892ADEA81100955C4A /* UILabel+Ext.swift */,
+				5F07BF0A2AE0F1C800C471B4 /* UIScrollView+Ext.swift */,
+				5F07BF0C2AE11B7A00C471B4 /* UIStackView+Ext.swift */,
 			);
 			path = Extenstion;
 			sourceTree = "<group>";
@@ -324,6 +330,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F785B902ADED33A00955C4A /* DateView.swift in Sources */,
+				5F07BF0B2AE0F1C800C471B4 /* UIScrollView+Ext.swift in Sources */,
 				5F7A02772ADAC8F100128DC4 /* ViewController+Ext.swift in Sources */,
 				5F7A02852ADAD3D700128DC4 /* Color+Ext.swift in Sources */,
 				5F785B882ADEA80300955C4A /* UIButton+Ext.swift in Sources */,
@@ -332,6 +339,7 @@
 				5F6EECE92ADA418F0046E686 /* SelectALoginMethodController.swift in Sources */,
 				5F785B8C2ADEA84A00955C4A /* Protocol.swift in Sources */,
 				5F6EECE12ADA40200046E686 /* SettingController.swift in Sources */,
+				5F07BF0D2AE11B7A00C471B4 /* UIStackView+Ext.swift in Sources */,
 				5F785B842ADEA7E000955C4A /* UIView+Ext.swift in Sources */,
 				5F6EECDF2ADA40170046E686 /* DetailWritingScreenController.swift in Sources */,
 				5F6EECE72ADA41380046E686 /* SignUpController.swift in Sources */,

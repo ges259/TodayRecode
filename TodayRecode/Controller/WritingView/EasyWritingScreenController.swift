@@ -17,6 +17,7 @@ final class EasyWritingScreenController: UIViewController {
     private lazy var accessoryCustomView: InputAccessoryCustomView = {
         let view = InputAccessoryCustomView()
             view.delegate = self
+            view.currentWritingScreen = .easyWritingScreen
         return view
     }()
     /// 텍스트뷰
@@ -51,7 +52,7 @@ final class EasyWritingScreenController: UIViewController {
                                    height: .infinity)
     
     
-    
+    weak var delegate: EasyWritingScreenDelegate?
     
     
     
@@ -175,6 +176,8 @@ final class EasyWritingScreenController: UIViewController {
         let gesture2 = UITapGestureRecognizer(target: self, action: #selector(self.nothingHappened))
             gesture2.numberOfTapsRequired = 1
         self.containerView.addGestureRecognizer(gesture2)
+        
+        self.expansionBtn.addTarget(self, action: #selector(self.expansionBtnTapped), for: .touchUpInside)
     }
     
     
@@ -206,6 +209,20 @@ final class EasyWritingScreenController: UIViewController {
     }
     @objc private func keyboardWillHide() {
         self.view.frame.origin.y = 0
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - 확장 버튼 액션
+    @objc private func expansionBtnTapped() {
+        self.dismiss(animated: false)
+        self.delegate?.expansionBtnTapped()
     }
     
     
@@ -256,9 +273,6 @@ extension EasyWritingScreenController: UITextViewDelegate {
         }
         
         
-        
-        
-        
         // 현재 테이블의 높이 가져오기
         let textViewHeight = self.recodeTextView.sizeThatFits(self.size).height
         
@@ -284,7 +298,7 @@ extension EasyWritingScreenController: AccessoryViewDelegate {
         print("Easy --- \(#function)")
     }
     
-    func sendBtnTapped() {
+    func accessoryRightBtnTapped() {
         print("Easy --- \(#function)")
     }
 }

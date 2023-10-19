@@ -192,7 +192,6 @@ final class Recodecontroller: UIViewController {
             make.trailing.equalToSuperview().offset(-15)
             make.width.height.equalTo(53)
         }
-
     }
     
     
@@ -248,10 +247,20 @@ final class Recodecontroller: UIViewController {
     
     
     // MARK: - 플러스 버튼 액션
+    /// 간편 작성 화면으로 이동
     @objc private func plusBtnTapped() {
         let vc = EasyWritingScreenController()
             vc.modalPresentationStyle = .overFullScreen
+            vc.delegate = self
         self.present(vc, animated: false)
+    }
+    // MARK: - 상세 작성 화면으로 이동
+    private func pushToDetailWritingScreen() {
+        let vc = DetailWritingScreenController()
+            // 상세 작성뷰에서 탭바 없애기
+            vc.hidesBottomBarWhenPushed = true
+            
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -345,10 +354,7 @@ extension Recodecontroller: UITableViewDelegate {
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = DetailWritingScreenController()
-            // 상세 작성뷰에서 탭바 없애기
-            vc.hidesBottomBarWhenPushed = true
-        self.navigationController?.pushViewController(vc, animated: true)
+        self.pushToDetailWritingScreen()
     }
 }
 
@@ -364,5 +370,20 @@ extension Recodecontroller: UITableViewDataSource {
         
          
         return cell
+    }
+}
+
+
+
+
+
+
+
+
+
+// MARK: - 간편 작성 화면 델리게이트
+extension Recodecontroller: EasyWritingScreenDelegate {
+    func expansionBtnTapped() {
+        self.pushToDetailWritingScreen()
     }
 }

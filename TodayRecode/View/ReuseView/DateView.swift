@@ -53,7 +53,7 @@ final class DateView: UIView {
     
     // MARK: - 날짜 설정
     func configureDate(selectedDate: Date = Date()) {
-        self.dateLabel.text = self.todayReturn(todayFormat: .monthAndDay_Md,
+        self.dateLabel.text = self.todayReturn(todayFormat: .monthAndDay_Mdd,
                                                date: selectedDate)
     }
 }

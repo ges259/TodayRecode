@@ -9,13 +9,13 @@
 enum TodayFormatEnum {
     case day_d
     case detaildayAndTime_Mdahm
-    case monthAndDay_Md
+    case monthAndDay_Mdd
     
     var today: String {
         switch self {
         case .day_d: return "d"
         case .detaildayAndTime_Mdahm: return "M/d a h:m"
-        case .monthAndDay_Md: return "M월 d일"
+        case .monthAndDay_Mdd: return "M월 dd일"
         }
     }
 }
@@ -27,6 +27,8 @@ enum ImageEnum {
     case send
     case blueSky
     case plus
+    case keyboardDown
+    case recodeShow
     
     var imageString: String {
         switch self {
@@ -36,6 +38,14 @@ enum ImageEnum {
         case .send: return "checkmark"
         case .blueSky: return "blueSky"
         case .plus: return "plus"
+        case .keyboardDown: return "chevron.down"
+        case .recodeShow: return "doc.plaintext"
         }
     }
+}
+
+
+enum WritingScreenEnum {
+    case easyWritingScreen
+    case detailWritingScreen
 }

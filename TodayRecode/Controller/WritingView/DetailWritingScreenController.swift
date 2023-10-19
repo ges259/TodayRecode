@@ -16,69 +16,93 @@ final class DetailWritingScreenController: UIViewController {
         image: UIImage(named: ImageEnum.blueSky.imageString))
     
     
+    // MARK: - Fix
+    /// 이미지뷰
+    private lazy var imageView: UIImageView = UIImageView(
+        image: UIImage(named: "cat"))
     
-    
-    /// 하단 악세서리 뷰
-    private lazy var accessoryCustomView: InputAccessoryCustomView = {
+    /// 시간을 나타내주는 뷰
+    private lazy var bottomAccessoryView: InputAccessoryCustomView = {
         let view = InputAccessoryCustomView()
             view.delegate = self
-            view.backgroundColor = .white
+            view.backgroundColor = UIColor.customWhite5
         return view
     }()
-    
     
     /// 날짜 표시해주는 뷰 (+ 레이블)
     private lazy var dateView: DateView = DateView()
     
-    
     /// 스크롤뷰
-    private lazy var scrollView: CustomScrollView = {
-        let scrollView = CustomScrollView()
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
             scrollView.delegate = self
-            scrollView.bounces = false
-
+            scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
-    /// 컨텐트뷰
+    /// 컨텐트뷰 (- 스크롤뷰)
     private lazy var contentView: UIView = UIView()
     
     /// 텍스트뷰
     private lazy var diaryTextView: UITextView = {
         let tv = UITextView.configureTV(fontSize: 14)
             tv.delegate = self
-        
-            tv.textContainerInset = UIEdgeInsets(
-                top: 18, left: 10, bottom: 18, right: 10)
-        
-        tv.isScrollEnabled = false
+            tv.backgroundColor = UIColor.customWhite5
+            tv.textContainerInset = UIEdgeInsets(top: 18, left: 10, bottom: 18, right: 10)
+            tv.isScrollEnabled = false
+            // 인풋 악세사리뷰 넣기 -> 키보드가 올라올 때 같이 올라옴
+            tv.inputAccessoryView = self.accessoryCustomView
         return tv
     }()
     
-    /// 레이블
+    /// 플레이스홀더 레이블
     private let placeholderLbl: UILabel = UILabel.configureLbl(
         text: "오늘 무슨 일이 있었지?",
         font: UIFont.systemFont(ofSize: 14),
         textColor: UIColor.gray)
     
+    /// 스크롤뷰 내부 스택뷰
+    private lazy var stackView: UIStackView = UIStackView.configureStackView(
+        arrangedSubviews: [self.imageView,
+                           self.diaryTextView,
+                           self.bottomAccessoryView],
+        axis: .vertical,
+        spacing: 10,
+        alignment: .fill,
+        distribution: .fill)
+
+    /// 기록 확인 버튼
+    private let recodeShowBtn: UIButton = UIButton.configureBtn(
+        image: ImageEnum.recodeShow,
+        tintColor: UIColor.black,
+        backgroundColor: UIColor.white)
     
-    /// 기록 보기 버튼
-    
-    
-    
-    /// 이미지뷰
-    private lazy var imageView: UIImageView = UIImageView(
-        image: UIImage(named: "cat"))
-    
-    private lazy var stackView: UIStackView = {
-        let stv = UIStackView(arrangedSubviews: [self.imageView,
-                                                 self.diaryTextView])
-        stv.axis = .vertical
-        stv.spacing = 10
-        stv.alignment = .fill
-        stv.distribution = .fill
+    /// 인풋 악세서리 뷰 (키보드)
+    private lazy var accessoryCustomView: InputAccessoryCustomView = {
+        let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50)
         
-        return stv
+        let view = InputAccessoryCustomView(frame: frame)
+            view.currentWritingScreen = .detailWritingScreen
+            view.delegate = self
+            view.backgroundColor = .white
+        return view
     }()
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -86,6 +110,11 @@ final class DetailWritingScreenController: UIViewController {
     
     // MARK: - 프로퍼티
     private lazy var size = CGSize(width: self.view.frame.width, height: .infinity)
+    
+    private var keyboardShow: Bool = false
+    
+    
+    
     
     
     
@@ -100,7 +129,6 @@ final class DetailWritingScreenController: UIViewController {
         self.configreUI()
         self.configureAutoLayout()
         self.configureAction()
-        
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -117,7 +145,7 @@ final class DetailWritingScreenController: UIViewController {
 
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(self.keyboardWillHide(_:)),
+            selector: #selector(self.keyboardWillShow(_:)),
             name: UIResponder.keyboardWillHideNotification,
             object: nil)
     }
@@ -129,54 +157,73 @@ final class DetailWritingScreenController: UIViewController {
     }
     
     
-        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     // MARK: - 화면 설정
     private func configreUI() {
+        // 네비게이션 타이틀 설정
         self.navigationItem.title = "오늘 일기"
         
-        self.diaryTextView.backgroundColor = UIColor.customWhite5
-        self.diaryTextView.clipsToBounds = true
-        self.diaryTextView.layer.cornerRadius = 10
+        // cornerRadius 설정
+        [self.imageView,
+         self.diaryTextView,
+         self.bottomAccessoryView].forEach { view in
+            view.clipsToBounds = true
+            view.layer.cornerRadius = 10
+        }
+        self.recodeShowBtn.clipsToBounds = true
+        self.recodeShowBtn.layer.cornerRadius = 50 / 2
     }
     
     
     
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
+        // ********** addSubViews 설정 **********
         [self.backgroundImg,
          self.dateView,
          self.scrollView,
-         self.accessoryCustomView].forEach { view in
+         self.recodeShowBtn].forEach { view in
             self.view.addSubview(view)
         }
         self.diaryTextView.addSubview(self.placeholderLbl)
         self.scrollView.addSubview(self.contentView)
         self.contentView.addSubview(self.stackView)
         
+        
+        // ********** 오토레이아웃 설정 **********
         // 배경화면
         self.backgroundImg.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        // 하단 악세서리 뷰 (스택뷰 (카메라/앨범/날짜))
-        self.accessoryCustomView.snp.makeConstraints { make in
-            make.leading.trailing.bottom.equalToSuperview()
-            make.height.equalTo(80)
-//            make.height.equalTo(50)
-        }
         // 날짜 뷰
         self.dateView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(10)
-            make.leading.equalToSuperview().offset(10)
-            make.trailing.equalToSuperview().offset(-10)
+            make.leading.equalToSuperview().offset(11)
+            make.trailing.equalToSuperview().offset(-11)
             make.height.equalTo(40)
         }
         // 스크롤뷰
         self.scrollView.snp.makeConstraints { make in
             make.top.equalTo(self.dateView.snp.bottom)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(self.accessoryCustomView.snp.top)
+            make.bottom.equalToSuperview()
         }
         // 컨텐트뷰
         self.contentView.snp.makeConstraints { make in
@@ -192,11 +239,14 @@ final class DetailWritingScreenController: UIViewController {
             make.height.greaterThanOrEqualTo(270)
             make.height.lessThanOrEqualTo(1000)
         }
+        self.bottomAccessoryView.snp.makeConstraints { make in
+            make.height.equalTo(50)
+        }
         // 스택뷰
         self.stackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(5)
-            make.leading.equalToSuperview().offset(10)
-            make.trailing.equalToSuperview().offset(-10)
+            make.top.equalToSuperview().offset(10)
+            make.leading.equalToSuperview().offset(11)
+            make.trailing.equalToSuperview().offset(-11)
             make.bottom.equalTo(self.contentView.snp.bottom).offset(-10)
         }
         // 플레이스 홀더
@@ -204,46 +254,46 @@ final class DetailWritingScreenController: UIViewController {
             make.top.equalTo(self.diaryTextView).offset(18)
             make.leading.equalTo(self.diaryTextView).offset(14)
         }
+        
+        
+        // ********** 프레임 설정 **********
+        // 기록 확인 버튼
+        self.recodeShowBtn.frame = CGRect(x: self.view.frame.width - 53 - 15,
+                                          y: self.view.frame.height - 53 - 30,
+                                          width: 53,
+                                          height: 53)
     }
     
-    
-    
-
-    
-    
-
-    
-
     
     
     // MARK: - 액션 설정
     private func configureAction() {
-        // 위로 스와이프
-    let swipeUp = UISwipeGestureRecognizer(target: self,
-                                           action: #selector(self.swipeUpAction))
-        swipeUp.direction = .up
-    self.scrollView.addGestureRecognizer(swipeUp)
-        
-        
-        
-    }
-    
-    @objc private func swipeUpAction() {
-        print(#function)
-        self.diaryTextView.resignFirstResponder()
+        self.recodeShowBtn.addTarget(self, action: #selector(self.recodeShowBtnTapped), for: .touchUpInside)
     }
     
     
     
     
     
+    // MARK: - 기록 확인 버튼 액션
+    @objc private func recodeShowBtnTapped() {
+        self.imageView.isHidden = true
+    }
+    
+    
+    
+    
+
     
     
     
     
     
     
-    private var keyboardShow: Bool = false
+    
+    
+    
+    
     
     
     
@@ -251,49 +301,50 @@ final class DetailWritingScreenController: UIViewController {
     
     // MARK: - 노티피케이션 액션
     @objc private func keyboardWillShow(_ notification: Notification) {
+        // 키보드 높이 가져오기
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
+        
         // 악세서리뷰 올리기
-        if self.keyboardShow == false {
-            // 키보드 높이 가져오기
-            guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
+        _ = self.keyboardShow == false
+        ? self.bottomAccessoryViewIsHidden(true, keyboardSize: keyboardSize)
+        : self.bottomAccessoryViewIsHidden(false, keyboardSize: keyboardSize)
+        
+        self.keyboardShow.toggle()
+    }
+    /// 하단 악세서리뷰 isHidden 설정
+    /// 기록 확인 버튼 위치 변경
+    private func bottomAccessoryViewIsHidden(_ isHidden: Bool, keyboardSize: CGFloat) {
+        // 키보드 올리는 상황
+        if isHidden {
+            // [기록 확인 버튼] 키보드에 맞춰 올리기
+            self.recodeShowBtn.frame.origin.y -= keyboardSize - 20
+            // [하단 악세서리뷰] 안보이도록 설정
+            self.bottomAccessoryView.alpha = 0
+            // 애니메이션 효과를 조금 더 자연스럽게 하기 위해 설정
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+                // 키보드가 올라와있을 때 스크롤뷰를 스크롤할 수 있도록
+                    // 스택뷰의 spacing을 넓혀 공간을 만듦
+                self.stackView.setCustomSpacing(keyboardSize - 40, after: self.diaryTextView)
+            }
             
             
-            // 뷰 올리기
-            self.view.frame.origin.y -= keyboardSize - 34
+        // 키보드 내리는 상황
+        } else {
+            // [기록 확인 버튼] 키보드에 맞춰 내리기
+            self.recodeShowBtn.frame.origin.y += keyboardSize - 20
+            // 스택뷰의 spacing 원상복구
+            self.stackView.setCustomSpacing(10, after: self.diaryTextView)
+            // 애니메이션 효과를 조금 더 자연스럽게 하기 위해 설정
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+                // [하단 악세서리뷰] 보이게 설정
+                UIView.animate(withDuration: 0.2) {
+                    self.bottomAccessoryView.alpha = 1
+                }
+                
+            }
             
-//            self.accessoryCustomView.frame.origin.y -= keyboardSize - 34
-            
-            
-            self.keyboardShow = true
         }
     }
-    @objc private func keyboardWillHide(_ notification: Notification) {
-        if self.keyboardShow == true {
-            self.view.frame.origin.y = 0
-            self.keyboardShow = false
-            
-            
-            // 키보드 높이 가져오기
-//            guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
-//
-//            self.accessoryCustomView.frame.origin.y += keyboardSize - 34
-        }
-    }
-
-    
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -302,25 +353,46 @@ final class DetailWritingScreenController: UIViewController {
     
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 // MARK: - 악세서리 델리게이트
 extension DetailWritingScreenController: AccessoryViewDelegate {
+    /// 카메라 버튼이 눌리면 호출 됨
     func cameraBtnTapped() {
         print("Detail --- \(#function)")
     }
-
+    
+    /// 앨범 버튼이 눌리면 호출 됨
     func albumBtnTapped() {
         print("Detail --- \(#function)")
     }
-
-    func sendBtnTapped() {
+    
+    /// (키보드 닫기) 버튼이 눌리면 호출 됨
+    func accessoryRightBtnTapped() {
         print("Detail --- \(#function)")
-        
         self.diaryTextView.resignFirstResponder()
     }
 }
+
+
 
 
 
@@ -331,15 +403,17 @@ extension DetailWritingScreenController: AccessoryViewDelegate {
 
 // MARK: - 스크롤뷰 델리게이트
 extension DetailWritingScreenController: UIScrollViewDelegate {
-    // 사진의 높이(맨 밑)에까지 올리면 자동으로 키보드가 내려가도록 설정
+    /// 사진의 높이(맨 밑)에까지 올리면 자동으로 키보드가 내려가도록 설정
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         self.keyboardHide()
     }
     
+    /// 스크롤이 끝났을 때 호출
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.keyboardHide()
     }
     
+    /// 스크뷰 오프셋이 1보다 작으면 키보드 내리기
     private func keyboardHide() {
         if self.keyboardShow && scrollView.contentOffset.y < 1 {
             self.diaryTextView.resignFirstResponder()
@@ -354,85 +428,34 @@ extension DetailWritingScreenController: UIScrollViewDelegate {
 
 
 
+
+
 // MARK: - 텍스트뷰 델리게이트
 extension DetailWritingScreenController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
+        // ********** 플레이스 홀더 설정 **********
+        self.placeholderLbl.isHidden = textView.text.count == 0
+        ? false // 텍스트뷰에 텍스트의 개수가 0개라면 ---> 플레이스홀더 띄우기
+        : true // 텍스트뷰에 텍스트가 있다면 ---> 플레이스홀더 없애기
         
-        // 텍스트뷰에 텍스트의 개수가 0개라면
-        if textView.text.count == 0 {
-            // 플레이스홀더 띄우기
-            self.placeholderLbl.isHidden = false
-        // 텍스트뷰에 텍스트가 있다면
-        } else {
-            // 플레이스홀더 없애기
-            self.placeholderLbl.isHidden = true
-        }
-        
-        
-        
+        // ********** 키보드 높이 설정 **********
+        self.configureKeyboardHeight()
+    }
+    
+    /// 키보드 높이 설정
+    private func configureKeyboardHeight() {
         // 예상 높이 구하기
-        let estimatedSize = textView.sizeThatFits(self.size).height
-        
-        // 텍스트뷰의 높이가 300보다 크다면
-            // - 최소 높이가 300이기 때문
+        let estimatedSize = self.diaryTextView.sizeThatFits(self.size).height
+        // 텍스트뷰의 높이가 300보다 크다면 (- 최소 높이가 300이기 때문)
         if estimatedSize >= 300 {
             // 텍스트뷰의 제약 forEach
-            textView.constraints.forEach{ (constraint) in
+            self.diaryTextView.constraints.forEach{ (constraint) in
                 // 높이 제약이라면
                 if constraint.firstAttribute == .height {
                     // 높이 재설정
                     constraint.constant = estimatedSize
                 }
             }
-        }
-    }
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        print(textView.numberOfLine())
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-final class CustomScrollView: UIScrollView {
-    /// 스크롤뷰 내부의 원하는 레이아웃 위치로 이동
-    func scrollToView(view: UIView,
-                      animated: Bool = true) {
-        
-        if let origin = view.superview {
-            // scrollView로 부터 원하는 레이아웃(textField)의 거리를 구함
-            let childStartPoint = origin.convert(view.frame.origin,
-                                                 to: self)
-            // (현재 높이) - (키보드 크기) - (텍스트뷰의 크기)
-            let height: CGFloat = (self.frame.size.height) - view.frame.height
-            
-            let offset: CGFloat = height > 0
-            ? childStartPoint.y - height // textView의 크기가 작음
-            : childStartPoint.y + height // textView의 크기가 큼
-            
-            // 스크롤뷰 이동
-            self.scrollRectToVisible(
-                CGRect(x: 0,
-                       y: offset,
-                       width: 1,
-                       height: self.frame.height),
-                animated: animated)
         }
     }
 }
