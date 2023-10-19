@@ -146,6 +146,9 @@ final class Recodecontroller: UIViewController {
          self.plusBtn].forEach { views in
             self.view.addSubview(views)
         }
+        self.scrollView.addSubview(self.contentView)
+        self.contentView.addSubview(self.tableView)
+        
         // 배경화면
         self.backgroundImg.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -172,13 +175,11 @@ final class Recodecontroller: UIViewController {
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
         }
         // 컨텐트뷰
-        self.scrollView.addSubview(self.contentView)
         self.contentView.snp.makeConstraints { make in
             make.edges.equalTo(self.scrollView.contentLayoutGuide)
             make.width.equalTo(self.scrollView.frameLayoutGuide)
         }
         // 테이블뷰
-        self.contentView.addSubview(self.tableView)
         self.tableView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview().offset(10)
@@ -188,9 +189,10 @@ final class Recodecontroller: UIViewController {
         // 플러스 버튼
         self.plusBtn.snp.makeConstraints { make in
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-10)
-            make.trailing.equalToSuperview().offset(-10)
-            make.width.height.equalTo(50)
+            make.trailing.equalToSuperview().offset(-15)
+            make.width.height.equalTo(53)
         }
+
     }
     
     
@@ -294,7 +296,7 @@ extension Recodecontroller: FSCalendarDelegate, FSCalendarDataSource {
 
 
 // MARK: - 스크롤뷰
-extension Recodecontroller {
+extension Recodecontroller: UIScrollViewDelegate {
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         // 스크롤이 끝났을 때
         if scrollView.contentOffset.y == 0 && self.calendar.scope == .week {

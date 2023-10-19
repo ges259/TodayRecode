@@ -12,20 +12,40 @@ extension UITextView {
         let tv = UITextView()
         
         // 기본 설정
-        tv.autocorrectionType = .no
+        
+        tv.autocapitalizationType = .none
         tv.autocorrectionType = .no
         tv.smartDashesType = .no
-        tv.smartQuotesType =  .no
         tv.smartInsertDeleteType = .no
+        tv.smartQuotesType =  .no
+        tv.spellCheckingType = .no
+        
         tv.keyboardType = .default
         tv.returnKeyType = .done
         
         tv.sizeToFit()
         
+        tv.backgroundColor = .white
+//        tv.isScrollEnabled = false
         
         
         // 폰트 크기
         tv.font = UIFont.systemFont(ofSize: fontSize)
         return tv
     }
+    
+    
+    
+    
+    
+    func numberOfLine() -> CGFloat {
+        let size = CGSize(width: self.frame.width, height: .infinity)
+        let estimatedSize = sizeThatFits(size)
+        return (estimatedSize.height - 36) / (self.font!.lineHeight)
+    }
+    
+//    func getLineString() -> String {
+//        return (self.text! as NSString).substring(with: (self.text! as NSString).lineRange(for: self.selectedRange))
+//    }
+    
 }

@@ -27,7 +27,7 @@ final class InputAccessoryCustomView: UIView {
 
     // 레이블
     private lazy var dateLbl: UILabel = UILabel.configureLbl(
-        font: UIFont.systemFont(ofSize: 12),
+        font: UIFont.systemFont(ofSize: 13),
         textColor: UIColor.btnGrayColor)
     
     
@@ -35,11 +35,11 @@ final class InputAccessoryCustomView: UIView {
     private lazy var horizontalStackView: UIStackView = {
         let stv = UIStackView(arrangedSubviews: [self.cameraBtn,
                                                  self.albumBtn,
-                                                 self.dateLbl])
+                                                 self.dateLbl, self.sendButton])
             stv.axis = .horizontal
             stv.spacing = 12
-            stv.alignment = .fill
-            stv.distribution = .fill
+            stv.alignment = .center
+//            stv.distribution = .fill
         return stv
     }()
     
@@ -59,7 +59,6 @@ final class InputAccessoryCustomView: UIView {
         
 
         self.configureUI()
-        
         self.configureAutoLayout()
         self.configureAction()
     }
@@ -71,46 +70,46 @@ final class InputAccessoryCustomView: UIView {
     
     
     private func configureUI() {
-        let formatter = DateFormatter()
-            formatter.dateFormat = "M/d a h:m"
-        self.dateLbl.text = formatter.string(from: Date())
+        self.dateLbl.text = self.todayReturn(todayFormat: .detaildayAndTime_Mdahm)
+        
         
         self.sendButton.layer.cornerRadius = 10
         self.sendButton.clipsToBounds = true
-        
-        self.backgroundColor = .white
     }
     
     
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         self.addSubview(self.horizontalStackView)
-        self.addSubview(self.sendButton)
+//        self.addSubview(self.sendButton)
         // 카메라 버튼
         self.cameraBtn.snp.makeConstraints { make in
-            make.width.equalTo(30)
-            make.height.equalTo(25)
+            make.width.height.equalTo(30)
         }
         // 앨범 버튼
         self.albumBtn.snp.makeConstraints { make in
-            make.width.equalTo(30)
-            make.height.equalTo(25)
+            make.width.height.equalTo(30)
         }
         // 날짜 레이블
         self.dateLbl.snp.makeConstraints { make in
-            make.height.equalTo(25)
+            make.height.equalTo(30)
         }
         // 보내기 버튼
         self.sendButton.snp.makeConstraints { make in
-            make.trailing.bottom.equalToSuperview()
+//            make.trailing.equalToSuperview().offset(-10)
+//            make.top.equalToSuperview().offset(10)
             make.width.equalTo(70)
             make.height.equalTo(30)
         }
         // 스택뷰 (카메라/앨범/날짜 / 보내기)
         self.horizontalStackView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(10)
-            make.trailing.equalTo(self.sendButton.snp.leading)
-            make.centerY.equalTo(self.sendButton)
+//            make.trailing.equalTo(self.sendButton.snp.leading)
+//            make.centerY.equalTo(self.sendButton)
+            
+            
+            make.trailing.equalToSuperview().offset(-10)
+            make.top.equalToSuperview().offset(10)
         }
     }
     
