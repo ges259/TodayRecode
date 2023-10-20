@@ -200,14 +200,19 @@ final class EasyWritingScreenController: UIViewController {
     
     
     // MARK: - 노티피케이션 액션
+    /// 키보드가 올라갈 때 호출 됨
     @objc private func keyboardWillShow(_ notification: Notification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            if self.view.frame.origin.y == 0 {
-                self.view.frame.origin.y -= keyboardSize.height
-            }
+        if self.view.frame.origin.y == 0 {
+            // 키보드 높이 구하기
+            guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+            
+            // 키보드 높이만큼 뷰 올리기
+            self.view.frame.origin.y -= keyboardSize.height
         }
     }
+    /// 키보드가 낼려갈 때 호출 됨
     @objc private func keyboardWillHide() {
+        // 뷰 다시 내리기
         self.view.frame.origin.y = 0
     }
     
@@ -220,8 +225,11 @@ final class EasyWritingScreenController: UIViewController {
     
     
     // MARK: - 확장 버튼 액션
+    /// 확장 버튼을 누르면 호출 됨
     @objc private func expansionBtnTapped() {
+        // 뒤로가기
         self.dismiss(animated: false)
+        // DetailWritingScreen으로 진입
         self.delegate?.expansionBtnTapped()
     }
     

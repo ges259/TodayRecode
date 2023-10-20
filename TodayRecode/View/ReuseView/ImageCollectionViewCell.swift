@@ -9,10 +9,7 @@ import UIKit
 
 final class ImageCollectionViewCell: UICollectionViewCell {
     
-    
-    
-    
-    
+    // MARK: - 레이아웃
     /// 이미지뷰
     private lazy var imageView: UIImageView = UIImageView(
         image: UIImage(named: "cat"))
@@ -20,9 +17,17 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - 라이프사이클
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        self.backgroundColor = .red
         
     }
     required init?(coder: NSCoder) {
@@ -32,12 +37,16 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     
     
     
+    
+    
+    
+    
     // MARK: - 화면 설정
-    private func configreUI() {
+    private func configureUI() {
         
     }
     // MARK: - 오토레이아웃 설정
-    private func configreAutoLayout() {
+    private func configureAutoLayout() {
         self.addSubview(self.imageView)
         // 이미지뷰
         self.imageView.snp.makeConstraints { make in
@@ -45,7 +54,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         }
     }
     // MARK: - 액션 설정
-    private func configreAction() {
+    private func configureAction() {
         
     }
     

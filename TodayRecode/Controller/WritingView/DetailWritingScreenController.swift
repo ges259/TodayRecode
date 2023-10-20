@@ -21,6 +21,16 @@ final class DetailWritingScreenController: UIViewController {
     private lazy var imageView: UIImageView = UIImageView(
         image: UIImage(named: "cat"))
     
+//    private lazy var imageView: ImageCollectionView = {
+//        let collectionView = ImageCollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+//        return collectionView
+//    }()
+//
+    
+    
+    
+    
+    
     /// 시간을 나타내주는 뷰
     private lazy var bottomAccessoryView: InputAccessoryCustomView = {
         let view = InputAccessoryCustomView()
@@ -120,7 +130,7 @@ final class DetailWritingScreenController: UIViewController {
     
     
     
-    
+    private lazy var viewHeight: CGFloat = self.view.frame.height
     
     // MARK: - 라이프사이클
     override func viewDidLoad() {
@@ -129,6 +139,7 @@ final class DetailWritingScreenController: UIViewController {
         self.configreUI()
         self.configureAutoLayout()
         self.configureAction()
+        
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -145,7 +156,7 @@ final class DetailWritingScreenController: UIViewController {
 
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(self.keyboardWillShow(_:)),
+            selector: #selector(self.keyboardWillHide(_:)),
             name: UIResponder.keyboardWillHideNotification,
             object: nil)
     }
@@ -155,6 +166,7 @@ final class DetailWritingScreenController: UIViewController {
         // 노티피케이션 삭제
         NotificationCenter.default.removeObserver(self)
     }
+    
     
     
     
@@ -262,6 +274,11 @@ final class DetailWritingScreenController: UIViewController {
                                           y: self.view.frame.height - 53 - 30,
                                           width: 53,
                                           height: 53)
+        
+        
+//        self.diaryTextView.becomeFirstResponder()
+//        let notification = Notification(name: UIResponder.keyboardWillShowNotification)
+//        self.keyboardWillHide(notification)
     }
     
     
@@ -301,50 +318,54 @@ final class DetailWritingScreenController: UIViewController {
     
     // MARK: - 노티피케이션 액션
     @objc private func keyboardWillShow(_ notification: Notification) {
+        
         // 키보드 높이 가져오기
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
         
-        // 악세서리뷰 올리기
-        _ = self.keyboardShow == false
-        ? self.bottomAccessoryViewIsHidden(true, keyboardSize: keyboardSize)
-        : self.bottomAccessoryViewIsHidden(false, keyboardSize: keyboardSize)
-        
-        self.keyboardShow.toggle()
+        // 키보드가 올라와 있는 상태
+        if !self.keyboardShow {
+            self.bottomAccessoryViewIsHidden(true, keyboardSize: keyboardSize)
+        }
     }
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        // 키보드 높이 가져오기
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
+        
+        self.bottomAccessoryViewIsHidden(false, keyboardSize: keyboardSize)
+    }
+    
+    
+    
+    
     /// 하단 악세서리뷰 isHidden 설정
     /// 기록 확인 버튼 위치 변경
     private func bottomAccessoryViewIsHidden(_ isHidden: Bool, keyboardSize: CGFloat) {
         // 키보드 올리는 상황
         if isHidden {
             // [기록 확인 버튼] 키보드에 맞춰 올리기
-            self.recodeShowBtn.frame.origin.y -= keyboardSize - 20
-            // [하단 악세서리뷰] 안보이도록 설정
-            self.bottomAccessoryView.alpha = 0
-            // 애니메이션 효과를 조금 더 자연스럽게 하기 위해 설정
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
-                // 키보드가 올라와있을 때 스크롤뷰를 스크롤할 수 있도록
-                    // 스택뷰의 spacing을 넓혀 공간을 만듦
-                self.stackView.setCustomSpacing(keyboardSize - 40, after: self.diaryTextView)
-            }
+            self.recodeShowBtn.frame.origin.y = self.viewHeight - keyboardSize - 53 - 20
+            // 스택뷰의 spacing 거리를 늘려서 스크롤할 수 있는 공간 만들기
+            self.stackView.setCustomSpacing(keyboardSize - 40, after: self.diaryTextView)
+            self.keyboardShow = true
             
             
         // 키보드 내리는 상황
         } else {
             // [기록 확인 버튼] 키보드에 맞춰 내리기
-            self.recodeShowBtn.frame.origin.y += keyboardSize - 20
+            self.recodeShowBtn.frame.origin.y = self.viewHeight - 53 - 20
             // 스택뷰의 spacing 원상복구
             self.stackView.setCustomSpacing(10, after: self.diaryTextView)
-            // 애니메이션 효과를 조금 더 자연스럽게 하기 위해 설정
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
-                // [하단 악세서리뷰] 보이게 설정
-                UIView.animate(withDuration: 0.2) {
-                    self.bottomAccessoryView.alpha = 1
-                }
-                
-            }
-            
+            self.keyboardShow = false
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     

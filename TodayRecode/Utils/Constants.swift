@@ -31,6 +31,9 @@ struct APIConstants {
 
 enum Identifier {
     static let recodeTableCell: String = "RecodeTableViewCell"
+    static let imageCollectionViewCell: String = "ImageCollectionViewCell"
+    static let diaryListCollectionViewCell: String = "DiaryListCollectionViewCell"
+    static let diaryListHeader: String = "DiaryListHeader"
 }
 
 

@@ -46,6 +46,7 @@ final class TabBarController: UITabBarController {
             unselectedImg: "\(today).square",
             selectedImg: "\(today).square.fill",
             rootController: DiaryListController())
+        // collectionViewLayout: UICollectionViewFlowLayout()
         // 설정 화면
         let setting = self.templateNavContoller(
             unselectedImg: "square.and.pencil.circle",

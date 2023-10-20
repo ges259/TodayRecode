@@ -35,16 +35,19 @@ final class InputAccessoryCustomView: UIView {
         textColor: UIColor.btnGrayColor)
     
     // 스택뷰
-    private lazy var horizontalStackView: UIStackView = {
-        let stv = UIStackView(arrangedSubviews: [self.cameraBtn,
-                                                 self.albumBtn,
-                                                 self.dateLbl])
-            stv.axis = .horizontal
-            stv.spacing = 12
-            stv.alignment = .center
-//            stv.distribution = .fill
-        return stv
-    }()
+    private lazy var horizontalStackView: UIStackView = UIStackView.configureStackView(
+        arrangedSubviews: [self.cameraBtn,
+                           self.albumBtn,
+                           self.dateLbl],
+        axis: .horizontal,
+        spacing: 12,
+        alignment: .center,
+        distribution: .fill)
+    
+    
+    
+    
+    
     
     
     
