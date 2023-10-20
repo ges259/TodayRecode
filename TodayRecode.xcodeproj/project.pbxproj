@@ -48,6 +48,7 @@
 		5FAA76402ADBA8220024B810 /* RecodeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA763F2ADBA8220024B810 /* RecodeTableViewCell.swift */; };
 		5FAA76422ADC13340024B810 /* CustomTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA76412ADC13340024B810 /* CustomTableView.swift */; };
 		5FAF543D2ADA907100BD849C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAF543C2ADA907100BD849C /* Constants.swift */; };
+		5FD436922AE2DB9B00CA79AD /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,6 +87,7 @@
 		5FAA763F2ADBA8220024B810 /* RecodeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeTableViewCell.swift; sourceTree = "<group>"; };
 		5FAA76412ADC13340024B810 /* CustomTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableView.swift; sourceTree = "<group>"; };
 		5FAF543C2ADA907100BD849C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +201,7 @@
 				5F785B892ADEA81100955C4A /* UILabel+Ext.swift */,
 				5F07BF0A2AE0F1C800C471B4 /* UIScrollView+Ext.swift */,
 				5F07BF0C2AE11B7A00C471B4 /* UIStackView+Ext.swift */,
+				5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */,
 			);
 			path = Extenstion;
 			sourceTree = "<group>";
@@ -360,6 +363,7 @@
 				5F785B8E2ADEA8AB00955C4A /* InputAccessoryCustomView.swift in Sources */,
 				5F785B822ADEA7AF00955C4A /* Enum.swift in Sources */,
 				5F6EECDD2ADA3F490046E686 /* RecodeController.swift in Sources */,
+				5FD436922AE2DB9B00CA79AD /* UIImage+Ext.swift in Sources */,
 				5FAA76422ADC13340024B810 /* CustomTableView.swift in Sources */,
 				5FAF543D2ADA907100BD849C /* Constants.swift in Sources */,
 			);

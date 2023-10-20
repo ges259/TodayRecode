@@ -23,7 +23,7 @@ final class TabBarController: UITabBarController {
     // MARK: - 화면 설정
     /// 뷰의 배경, 탭바, 네비게이션 바 설정
     private func configureUI() {
-        self.tabBar.tintColor = UIColor.customblue3
+        self.tabBar.tintColor = UIColor.blue.withAlphaComponent(0.3)
         self.tabBar.backgroundColor = UIColor.white
     }
     
@@ -37,20 +37,19 @@ final class TabBarController: UITabBarController {
         
         // 기록 화면
         let recode = self.templateNavContoller(
-            unselectedImg: "pencil.circle",
-            selectedImg: "pencil.circle.fill",
+            unselectedImg: UIImage.recode,
+            selectedImg: UIImage.recode_fill,
             rootController: Recodecontroller())
         // 일기 목록 화면
             // 오늘 날짜에 따라 탭바 이미지 다르게 설정
         let diaryList = self.templateNavContoller(
-            unselectedImg: "\(today).square",
-            selectedImg: "\(today).square.fill",
+            unselectedImg: UIImage(systemName: "\(today).circle"),
+            selectedImg: UIImage(systemName: "\(today).circle.fill"),
             rootController: DiaryListController())
-        // collectionViewLayout: UICollectionViewFlowLayout()
         // 설정 화면
         let setting = self.templateNavContoller(
-            unselectedImg: "square.and.pencil.circle",
-            selectedImg: "square.and.pencil.circle.fill",
+            unselectedImg: UIImage.setup,
+            selectedImg: UIImage.setup_fill,
             rootController: SettingController())
         
         // 탭바 추가
@@ -58,18 +57,21 @@ final class TabBarController: UITabBarController {
     }
     
     
-//unselectedImg: UIImage(systemName: "pencil.circle")!,
+
     /// 탭바의 이미지 및
     /// - Parameters:
     ///   - unselectedImg: 선택되지 않은 상태의 이미지
     ///   - selectedImg: 선택되었을 때 이미지
     ///   - rootController: 화면
-    private func templateNavContoller(unselectedImg: String,
-                                      selectedImg: String,
+    private func templateNavContoller(unselectedImg: UIImage?,
+                                      selectedImg: UIImage?,
                                       rootController: UIViewController) -> UINavigationController {
         let nav = UINavigationController(rootViewController: rootController)
-            nav.tabBarItem.image = UIImage(systemName: unselectedImg)
-            nav.tabBarItem.selectedImage = UIImage(systemName: selectedImg)
+//            nav.tabBarItem.image = UIImage(systemName: unselectedImg)
+//            nav.tabBarItem.selectedImage = UIImage(systemName: selectedImg)
+        nav.tabBarItem.image = unselectedImg
+        nav.tabBarItem.selectedImage = selectedImg
+        
 //            nav.navigationBar.tintColor = UIColor.black
         return nav
     }

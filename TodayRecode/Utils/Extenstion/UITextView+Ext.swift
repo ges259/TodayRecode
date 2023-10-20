@@ -17,7 +17,7 @@ extension UITextView {
         tv.smartDashesType = .no
         tv.smartInsertDeleteType = .no
         tv.smartQuotesType =  .no
-//        tv.spellCheckingType = .no
+        tv.spellCheckingType = .no
         
         tv.keyboardType = .default
         tv.returnKeyType = .done
@@ -30,4 +30,8 @@ extension UITextView {
         tv.font = UIFont.systemFont(ofSize: fontSize)
         return tv
     }
+    
+    
+    
+    
 }

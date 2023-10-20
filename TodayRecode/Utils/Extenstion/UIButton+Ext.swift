@@ -8,12 +8,12 @@
 import UIKit
 
 extension UIButton {
-    static func configureBtn(image: ImageEnum,
+    static func configureBtn(image: UIImage?,
                              tintColor: UIColor,
                              backgroundColor: UIColor? = UIColor.clear)
     -> UIButton {
         let btn = UIButton(type: .system)
-            btn.setImage(UIImage(systemName: image.imageString), for: .normal)
+            btn.setImage(image, for: .normal)
             btn.tintColor = tintColor
         
             btn.backgroundColor = backgroundColor

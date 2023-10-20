@@ -4,6 +4,7 @@
 //
 //  Created by 계은성 on 2023/10/17.
 //
+import UIKit
 
 /// 시간의 형식을 리턴하는 열거형
 enum TodayFormatEnum {
@@ -19,33 +20,28 @@ enum TodayFormatEnum {
         }
     }
 }
-/// 이미지의 String값을 리턴하는 열거형
-enum ImageEnum {
-    case expansion
-    case camera
-    case album
-    case send
-    case blueSky
-    case plus
-    case keyboardDown
-    case recodeShow
-    
-    var imageString: String {
-        switch self {
-        case .expansion: return "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left"
-        case .camera: return "camera"
-        case .album: return "photo"
-        case .send: return "checkmark"
-        case .blueSky: return "blueSky"
-        case .plus: return "plus"
-        case .keyboardDown: return "chevron.down"
-        case .recodeShow: return "doc.plaintext"
-        }
-    }
+
+
+
+/// 상세 작성 화면 및 간편 작성 화면,
+/// 오른쪽 버튼을 설정하기 위한 열겨형
+enum AccessoryViewMode {
+    case easyWritingScreen // 간편 작성 화면
+    case detailWritingScreen // 상세 작성 화면
 }
 
 
-enum WritingScreenEnum {
-    case easyWritingScreen
-    case detailWritingScreen
+
+
+
+
+/// 상세 작성 화면 쓰기모드 / 저장모드 설정 열거형
+enum DetailEditMode {
+    case writingMode // 쓰기 모드
+    case saveMode // 저장 모드
+}
+/// 상세 작성 화면 일기모드 / 기록모드 설정 열거형
+enum DetailViewMode {
+    case diary // 일기
+    case recode // 기록
 }

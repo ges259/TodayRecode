@@ -65,12 +65,6 @@ final class EasyWritingScreenController: UIViewController {
         self.configureAotoLayout()
         self.configureUI()
     }
-    override var canBecomeFirstResponder: Bool {
-        return false
-    }
-    override var canResignFirstResponder: Bool {
-        return true
-    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.containerView.isHidden = false
@@ -290,6 +284,16 @@ extension EasyWritingScreenController: UITextViewDelegate {
         ? true
         : false
     }
+    
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            
+            // MARK: - Fix
+            self.dismissView()
+        }
+        return true
+    }
 }
 
 
@@ -307,6 +311,7 @@ extension EasyWritingScreenController: AccessoryViewDelegate {
     }
     
     func accessoryRightBtnTapped() {
-        print("Easy --- \(#function)")
+        // MARK: - Fix
+        self.dismissView()
     }
 }

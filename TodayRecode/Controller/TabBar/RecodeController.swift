@@ -14,14 +14,14 @@ final class Recodecontroller: UIViewController {
     // MARK: - 레이아웃
     /// 배경 이미지
     private lazy var backgroundImg: UIImageView = UIImageView(
-        image: UIImage(named: ImageEnum.blueSky.imageString))
+        image: UIImage.blueSky)
     
     /// 날짜 표시해주는 뷰 (+ 레이블)
     private lazy var dateView: DateView = DateView()
     
     /// +버튼
     private lazy var plusBtn: UIButton = UIButton.configureBtn(
-        image: ImageEnum.plus,
+        image: UIImage.plus,
         tintColor: UIColor.black,
         backgroundColor: UIColor.white)
     
@@ -254,13 +254,21 @@ final class Recodecontroller: UIViewController {
             vc.delegate = self
         self.present(vc, animated: false)
     }
+    
     // MARK: - 상세 작성 화면으로 이동
     private func pushToDetailWritingScreen() {
         let vc = DetailWritingScreenController()
             // 상세 작성뷰에서 탭바 없애기
             vc.hidesBottomBarWhenPushed = true
-            
+            vc.detailViewMode = .recode
+            vc.detailEditMode = .writingMode
         self.navigationController?.pushViewController(vc, animated: true)
+        // MARK: - Fix
+        /*
+         추가해야할 것
+         - 셀을 눌러서 넘어갈 때 -> 셀의 데이터 가져가기
+         - 확대 버튼을 눌러서 넘어갈 때 -> easyWritingScreen에 있는 텍스트 및 이미지 가져가기
+         */
     }
 }
 

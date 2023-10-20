@@ -13,7 +13,7 @@ final class DetailWritingScreenController: UIViewController {
     // MARK: - 레이아웃
     /// 배경 뷰
     private lazy var backgroundImg: UIImageView = UIImageView(
-        image: UIImage(named: ImageEnum.blueSky.imageString))
+        image: UIImage.blueSky)
     
     
     // MARK: - Fix
@@ -47,6 +47,7 @@ final class DetailWritingScreenController: UIViewController {
         let scrollView = UIScrollView()
             scrollView.delegate = self
             scrollView.showsVerticalScrollIndicator = false
+        scrollView.bounces = false
         return scrollView
     }()
     /// 컨텐트뷰 (- 스크롤뷰)
@@ -72,7 +73,8 @@ final class DetailWritingScreenController: UIViewController {
     
     /// 스크롤뷰 내부 스택뷰
     private lazy var stackView: UIStackView = UIStackView.configureStackView(
-        arrangedSubviews: [self.imageView,
+        arrangedSubviews: [self.dateView,
+                           self.imageView,
                            self.diaryTextView,
                            self.bottomAccessoryView],
         axis: .vertical,
@@ -82,11 +84,11 @@ final class DetailWritingScreenController: UIViewController {
 
     /// 기록 확인 버튼
     private let recodeShowBtn: UIButton = UIButton.configureBtn(
-        image: ImageEnum.recodeShow,
+        image: UIImage.recodeShow,
         tintColor: UIColor.black,
         backgroundColor: UIColor.white)
     
-    /// 인풋 악세서리 뷰 (키보드)
+    /// 인풋 악세서리 뷰 (키보드 올라올 때 같이 생기는뷰)
     private lazy var accessoryCustomView: InputAccessoryCustomView = {
         let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50)
         
@@ -117,20 +119,50 @@ final class DetailWritingScreenController: UIViewController {
     
     
     
-    
     // MARK: - 프로퍼티
+    // 텍스트뷰의 높이를 바꿀 때 사용
     private lazy var size = CGSize(width: self.view.frame.width, height: .infinity)
-    
+    /// 키보드가 올라와있는지 확인하는 변수
     private var keyboardShow: Bool = false
-    
-    
-    
-    
-    
-    
-    
-    
+    /// 뷰의 높이 (기록 확인 버튼 위치를 옮길 때 사용)
     private lazy var viewHeight: CGFloat = self.view.frame.height
+    /// safeArea 설정
+    private lazy var safeArea: CGFloat = 49
+    
+    
+    /*
+     - DetailEditMode
+        - writingMode (수정 모드)
+        - safeMode (저장 모드)
+     */
+    /// 수정모드 / 저장모드를 알 수 있는 enum변수
+    var detailEditMode: DetailEditMode? {
+        // 네비게이션 이미지 설정
+        didSet { self.configureNavRightBtn() }
+    }
+    /*
+     - DetailViewMode
+        - diary (일기 모드)
+        - recode (기록 모드)
+     */
+    /// 일기 모드 / 기록 모드를 알 수 있는 enum변수
+    var detailViewMode: DetailViewMode? {
+        didSet {
+            // 타이틀 레이블 설정
+            self.navigationItem.title = self.detailViewMode == .diary
+            ? "오늘 일기"
+            : "오늘 기록"
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     // MARK: - 라이프사이클
     override func viewDidLoad() {
@@ -139,7 +171,6 @@ final class DetailWritingScreenController: UIViewController {
         self.configreUI()
         self.configureAutoLayout()
         self.configureAction()
-        
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -189,9 +220,6 @@ final class DetailWritingScreenController: UIViewController {
     
     // MARK: - 화면 설정
     private func configreUI() {
-        // 네비게이션 타이틀 설정
-        self.navigationItem.title = "오늘 일기"
-        
         // cornerRadius 설정
         [self.imageView,
          self.diaryTextView,
@@ -209,7 +237,6 @@ final class DetailWritingScreenController: UIViewController {
     private func configureAutoLayout() {
         // ********** addSubViews 설정 **********
         [self.backgroundImg,
-         self.dateView,
          self.scrollView,
          self.recodeShowBtn].forEach { view in
             self.view.addSubview(view)
@@ -226,14 +253,11 @@ final class DetailWritingScreenController: UIViewController {
         }
         // 날짜 뷰
         self.dateView.snp.makeConstraints { make in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(10)
-            make.leading.equalToSuperview().offset(11)
-            make.trailing.equalToSuperview().offset(-11)
             make.height.equalTo(40)
         }
         // 스크롤뷰
         self.scrollView.snp.makeConstraints { make in
-            make.top.equalTo(self.dateView.snp.bottom)
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
@@ -251,6 +275,7 @@ final class DetailWritingScreenController: UIViewController {
             make.height.greaterThanOrEqualTo(270)
             make.height.lessThanOrEqualTo(1000)
         }
+        // 바텀 악세서리 뷰
         self.bottomAccessoryView.snp.makeConstraints { make in
             make.height.equalTo(50)
         }
@@ -267,18 +292,12 @@ final class DetailWritingScreenController: UIViewController {
             make.leading.equalTo(self.diaryTextView).offset(14)
         }
         
-        
         // ********** 프레임 설정 **********
         // 기록 확인 버튼
         self.recodeShowBtn.frame = CGRect(x: self.view.frame.width - 53 - 15,
-                                          y: self.view.frame.height - 53 - 30,
+                                          y: self.viewHeight - self.safeArea - 53,
                                           width: 53,
                                           height: 53)
-        
-        
-//        self.diaryTextView.becomeFirstResponder()
-//        let notification = Notification(name: UIResponder.keyboardWillShowNotification)
-//        self.keyboardWillHide(notification)
     }
     
     
@@ -290,17 +309,30 @@ final class DetailWritingScreenController: UIViewController {
     
     
     
+    // MARK: - 오른쪽 네비게이션바 설정
+    private func configureNavRightBtn() {
+        // 오른쪽 네비게이션 버튼 생성
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: self.navRightBtnImg(currentEditMode: self.detailEditMode),
+            style: .done,
+            target: self,
+            action: #selector(self.navRightBtnTapped))
+    }
     
     
-    // MARK: - 기록 확인 버튼 액션
-    @objc private func recodeShowBtnTapped() {
-        self.imageView.isHidden = true
+    
+    // MARK: - 네비게이션바 이미지 설정
+    /// 모드에 따라 오른쪽 네비게이션 버튼 이미지 반환하는 변수
+    private func navRightBtnImg(currentEditMode: DetailEditMode?) -> UIImage? {
+        return currentEditMode == .writingMode
+        ? UIImage.check // 수정 모드라면 -> 체크마크
+        : UIImage.option // 저장 모드라면 -> 옵션
     }
     
     
     
     
-
+    
     
     
     
@@ -318,61 +350,90 @@ final class DetailWritingScreenController: UIViewController {
     
     // MARK: - 노티피케이션 액션
     @objc private func keyboardWillShow(_ notification: Notification) {
-        
         // 키보드 높이 가져오기
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
         
         // 키보드가 올라와 있는 상태
         if !self.keyboardShow {
+            // 기록 확인 버튼 위로 올리기
+            // 바텀 악세서리뷰 숨기기
             self.bottomAccessoryViewIsHidden(true, keyboardSize: keyboardSize)
+            self.keyboardShow = true
         }
     }
     @objc private func keyboardWillHide(_ notification: Notification) {
         // 키보드 높이 가져오기
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
-        
-        self.bottomAccessoryViewIsHidden(false, keyboardSize: keyboardSize)
+        // 키보드가 올라와있다면
+        if self.keyboardShow {
+            // 기록 확인 버튼 내리기
+            // 바텀 악세서리뷰 보이게 하기
+            self.bottomAccessoryViewIsHidden(false, keyboardSize: keyboardSize)
+            self.keyboardShow = false
+        }
     }
-    
-    
-    
-    
     /// 하단 악세서리뷰 isHidden 설정
     /// 기록 확인 버튼 위치 변경
     private func bottomAccessoryViewIsHidden(_ isHidden: Bool, keyboardSize: CGFloat) {
-        // 키보드 올리는 상황
+        // 키보드 올리는 상황 -> 바텀 악세서리뷰 없애기
         if isHidden {
             // [기록 확인 버튼] 키보드에 맞춰 올리기
-            self.recodeShowBtn.frame.origin.y = self.viewHeight - keyboardSize - 53 - 20
-            // 스택뷰의 spacing 거리를 늘려서 스크롤할 수 있는 공간 만들기
-            self.stackView.setCustomSpacing(keyboardSize - 40, after: self.diaryTextView)
-            self.keyboardShow = true
+            self.recodeShowBtn.frame.origin.y = self.viewHeight - keyboardSize - 53 - 10
+            
+            // ********** 바텀 악세서리뷰 위치 설정 **********
+            // 부드러운 애니메이션을 위한 설정
+            self.bottomAccessoryView.alpha = 0
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+                // 스택뷰의 spacing 거리를 늘려서 스크롤할 수 있는 공간 만들기
+                self.stackView.setCustomSpacing(keyboardSize - 50 - 34, after: self.diaryTextView)
+            }
             
             
-        // 키보드 내리는 상황
+            
+        // 키보드 내리는 상황 -> 바텀 악세서리뷰 보이게 하기
         } else {
             // [기록 확인 버튼] 키보드에 맞춰 내리기
-            self.recodeShowBtn.frame.origin.y = self.viewHeight - 53 - 20
+            // self.viewHeight - 53 - 45 - self.safeArea
+            self.recodeShowBtn.frame.origin.y = self.viewHeight - self.safeArea - 53
+            
+            // ********** 바텀 악세서리뷰 위치 설정 **********
             // 스택뷰의 spacing 원상복구
             self.stackView.setCustomSpacing(10, after: self.diaryTextView)
-            self.keyboardShow = false
+            // 부드러운 애니메이션을 위한 설정
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.4) {
+                UIView.animate(withDuration: 0.3) {
+                    self.bottomAccessoryView.alpha = 1
+                }
+            }
         }
     }
     
     
     
+    // MARK: - 네비게이션 아이템 액션
+    /// 오른쪽 네비게이션 버튼을 누르면
+    @objc private func navRightBtnTapped() {
+        // 수정 모드라면 -> 저장 모드로 바꾸기
+        if self.detailEditMode == .writingMode {
+            self.navigationItem.rightBarButtonItem?.image = self.navRightBtnImg(currentEditMode: .saveMode)
+            self.detailEditMode = .saveMode
+            
+        // 저장 모드라면
+            // ->
+                // -> 수정 모드로 바꾸기
+                // -> 삭제
+        } else {
+            self.navigationItem.rightBarButtonItem?.image = self.navRightBtnImg(currentEditMode: .writingMode)
+            self.detailEditMode = .writingMode
+        }
+    }
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    // MARK: - 기록 확인 버튼 액션
+    @objc private func recodeShowBtnTapped() {
+        self.imageView.isHidden = true
+    }
 }
 
 
@@ -424,12 +485,12 @@ extension DetailWritingScreenController: AccessoryViewDelegate {
 
 // MARK: - 스크롤뷰 델리게이트
 extension DetailWritingScreenController: UIScrollViewDelegate {
-    /// 사진의 높이(맨 밑)에까지 올리면 자동으로 키보드가 내려가도록 설정
+    /// /// 스크롤이 끝났을 때 호출
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         self.keyboardHide()
     }
     
-    /// 스크롤이 끝났을 때 호출
+    /// 사진의 높이(맨 밑)에까지 올리면 자동으로 키보드가 내려가도록 설정
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.keyboardHide()
     }
@@ -461,7 +522,17 @@ extension DetailWritingScreenController: UITextViewDelegate {
         
         // ********** 키보드 높이 설정 **********
         self.configureKeyboardHeight()
+        
+    
+        /*
+         1. line을 구해서 -> offset을 구해서 그만큼 내리기
+         */
+        // 텍스트뷰의 크기
+//        print(textView.textContainer.size.height)
+        //        print(textView.selectedTextRange)
     }
+    
+    
     
     /// 키보드 높이 설정
     private func configureKeyboardHeight() {

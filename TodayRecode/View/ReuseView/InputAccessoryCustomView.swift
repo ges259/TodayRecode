@@ -13,20 +13,20 @@ final class InputAccessoryCustomView: UIView {
     // MARK: - 레이아웃
     /// 카메라 버튼
     private let cameraBtn: UIButton = UIButton.configureBtn(
-        image: ImageEnum.camera,
+        image: UIImage.camera,
         tintColor: UIColor.btnGrayColor)
     /// 앨범 버튼
     private let albumBtn: UIButton = UIButton.configureBtn(
-        image: ImageEnum.album,
+        image: UIImage.album,
         tintColor: UIColor.btnGrayColor)
     /// 보내기 버튼
     private let sendBtn: UIButton = UIButton.configureBtn(
-        image: ImageEnum.send,
+        image: UIImage.check,
         tintColor: UIColor.white,
         backgroundColor: UIColor.btnGrayColor)
     /// 키보드 내리기 버튼
     private let keyboardDownBtn: UIButton = UIButton.configureBtn(
-        image: ImageEnum.keyboardDown,
+        image: UIImage.keyboardDown,
         tintColor: UIColor.btnGrayColor)
     
     /// 날짜 레이블
@@ -57,7 +57,7 @@ final class InputAccessoryCustomView: UIView {
     weak var delegate: AccessoryViewDelegate?
     
     
-    var currentWritingScreen: WritingScreenEnum? {
+    var currentWritingScreen: AccessoryViewMode? {
         didSet { self.configureRightBtn() }
     }
     
