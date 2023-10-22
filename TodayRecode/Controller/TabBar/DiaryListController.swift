@@ -18,38 +18,46 @@ final class DiaryListController: UIViewController {
     private lazy var backgroundImg: UIImageView = UIImageView(
         image: UIImage.blueSky)
     
-    
+    /// 콜렉션뷰
     private lazy var collectionView: UICollectionView = {
+        // 수평스크롤 설정
         let flowLayout = UICollectionViewFlowLayout()
             flowLayout.scrollDirection = .horizontal
-        
+        // 콜렉션뷰 설정
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: flowLayout)
+        
             collectionView.dataSource = self
             collectionView.delegate = self
+            // 배경 설정
             collectionView.backgroundColor = UIColor.clear
         
-        
+            // 콜렉션뷰 옆으로 넘길 때 속도 설정
             collectionView.decelerationRate = UIScrollView.DecelerationRate.fast
+            // 인디케이터 없애기
             collectionView.showsHorizontalScrollIndicator = false
-        
-        collectionView.bounces = false
-        
-//        collectionView.isPagingEnabled = true
-        
-        
+            // 콜렉션뷰가 바운스되지 않도록 설정
+            collectionView.bounces = false
         return collectionView
     }()
     
-//    private lazy var stackView: UIStackView = UIStackView.configureStackView(
-//        arrangedSubviews: [self.dateView,
-//                           self.collectionView],
-//        axis: .vertical,
-//        spacing: 10,
-//        alignment: .fill,
-//        distribution: .fill)
+    private lazy var calendar: CalendarView = {
+        let calendar = CalendarView()
+            calendar.delegate = self
+        return calendar
+    }()
+    /// 달력의 높이 제약
+    private var calendarHeight: NSLayoutConstraint?
     
+    
+    private lazy var stackView: UIStackView = UIStackView.configureStackView(
+        arrangedSubviews: [self.calendar,
+                           self.dateView],
+        axis: .vertical,
+        spacing: 5,
+        alignment: .fill,
+        distribution: .fill)
     
     
     
@@ -68,8 +76,8 @@ final class DiaryListController: UIViewController {
     
     var currentPage: CGFloat = 0
     
-    
-    
+    private var num: Int = 32
+    private lazy var isHidden: Bool = false
     
     
     // MARK: - 라이프 사이클
@@ -78,7 +86,7 @@ final class DiaryListController: UIViewController {
         
         self.configureUI()
         self.configureAutoLayout()
-        self.configureAction()
+        self.configureNavBtn()
     }
     
     
@@ -89,12 +97,19 @@ final class DiaryListController: UIViewController {
     // MARK: - 화면 설정
     private func configureUI() {
         self.navigationItem.title = "하루 일기"
+//        self.calendar.isHidden = true
+        
+        self.calendar.clipsToBounds = true
+        self.calendar.layer.cornerRadius = 10
+        
+        
         // 콜렉션뷰
         self.collectionView.register(
             DiaryListCollectionViewCell.self,
             forCellWithReuseIdentifier: Identifier.diaryListCollectionViewCell)
         
         
+        self.collectionView.clipsToBounds = true
     }
     
     // MARK: - 오토레이아웃 설정
@@ -102,11 +117,9 @@ final class DiaryListController: UIViewController {
         // ********** addSubview 설정 **********
         [self.backgroundImg,
          self.collectionView,
-         self.dateView].forEach { view in
+         self.stackView].forEach { view in
             self.view.addSubview(view)
         }
-        
-
         // ********** 오토레이아웃 설정 **********
         // 배경화면
         self.backgroundImg.snp.makeConstraints { make in
@@ -114,42 +127,73 @@ final class DiaryListController: UIViewController {
         }
         // 날짜 뷰
         self.dateView.snp.makeConstraints { make in
+            make.height.equalTo(40)
+        }
+        // 달력
+        self.calendar.translatesAutoresizingMaskIntoConstraints = false
+        self.calendarHeight = self.calendar.heightAnchor.constraint(equalToConstant: 280)
+        self.calendarHeight?.isActive = true
+        
+        // 스택뷰
+        self.stackView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(10)
             make.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
-            make.height.equalTo(40)
         }
         /// 콜렉션 뷰
         self.collectionView.snp.makeConstraints { make in
-//            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-            make.top.equalTo(self.dateView.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(self.dateView)
-//            make.bottom.equalToSuperview().offset(-10)
+            make.top.equalTo(self.stackView.snp.bottom).offset(5)
+            make.leading.trailing.equalTo(self.stackView)
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-10)
         }
-        
-        
-        
-        
-//        [self.backgroundImg,
-//         self.stackView].forEach { view in
-//            self.view.addSubview(view)
-//        }
-//        self.stackView.snp.makeConstraints { make in
-//            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(10)
-//            make.leading.equalToSuperview().offset(10)
-//            make.trailing.equalToSuperview().offset(-10)
-//            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
-//        }
     }
     
-    // MARK: - 액션 설정
-    private func configureAction() {
+    // MARK: - 네비게이션 아이템 설정
+    private func configureNavBtn() {
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage.calendar,
+            style: .done,
+            target: self,
+            action: #selector(self.calendarTapped))
+        self.navigationItem.rightBarButtonItem?.tintColor = .black
+    }
+    
+    
+    
+    
+    
+    // MARK: - 캘린더 액션
+    @objc private func calendarTapped() {
+        UIView.animate(withDuration: 0.5) {
+            self.calendar.isHidden.toggle()
+
+            if self.isHidden {
+                self.collectionView.frame.origin.y -= 340
+            } else {
+                self.collectionView.frame.origin.y += 340
+            }
+            self.view.layoutIfNeeded()
+        }
+        self.isHidden.toggle()
+        
         
     }
     
-    private var num: Int = 32
     
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - 날짜 설정
+    /// dateLabel에 날짜를 띄우는 메서드
+    /// 기본값: 오늘 날짜를 띄운다.
+    /// - Parameter selectedDate: 선택된 날짜를 띄운다.
+    func configureDate(selectedDate: Date = Date()) {
+        self.dateView.configureDate(selectedDate: selectedDate)
+    }
 }
 
 
@@ -165,7 +209,6 @@ final class DiaryListController: UIViewController {
 extension DiaryListController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate,  UICollectionViewDataSource {
     /// 아이템의 개수 설정
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         return 31
     }
     /// 셀 설정
@@ -226,10 +269,10 @@ extension DiaryListController: UICollectionViewDelegateFlowLayout, UICollectionV
 
 
 
-
+// MARK: - 스크롤뷰 델리게이트
 extension DiaryListController {
+    /// 스크롤이 시작되었을 때
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
         let offset = (scrollView.contentOffset.x) / (self.viewWidth + 15)
         print(Int(offset))
         
@@ -241,6 +284,12 @@ extension DiaryListController {
 //            print(Int(offset))
 //        }
     }
+    
+    
+    
+    
+    
+    
     
     
     
@@ -283,5 +332,29 @@ extension DiaryListController {
         targetContentOffset.pointee = CGPoint(
             x: index * cellWidth - scrollView.contentInset.left,
             y: scrollView.contentInset.top)
+    }
+}
+
+
+
+
+
+
+// MARK: - 켈린더 델리게이트
+extension DiaryListController: CalendarDelegate {
+    func selectDate(date: Date) {
+        self.configureDate(selectedDate: date)
+        
+        
+        
+    }
+    
+    func heightChanged(height: CGFloat) {
+        // 높이 바꾸기
+        self.calendarHeight?.constant = height
+        // 뷰(켈린더) 다시 그리기
+        UIView.animate(withDuration: 0.2) {
+            self.view.layoutIfNeeded()
+        }
     }
 }

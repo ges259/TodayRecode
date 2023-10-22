@@ -13,14 +13,14 @@ final class CalendarView: UIView {
     
     // MARK: - 레이아웃
     /// 달력
-    private lazy var calendar: FSCalendar = {
+    lazy var calendar: FSCalendar = {
         let calendar = FSCalendar()
             calendar.delegate = self
             calendar.dataSource = self
             // 배경 색상 설정
             calendar.backgroundColor = .customWhite5
             // 처음에는 일주일만 보이도록 설정
-            calendar.scope = .week
+//            calendar.scope = .week
             // (월/화/수~~)한글로 표시
             calendar.locale = Locale(identifier: "ko_KR")
                 // 폰트 크기 설정
@@ -49,7 +49,7 @@ final class CalendarView: UIView {
     
     
     // MARK: - 프로퍼티
-    private var delegate: CalendarDelegate?
+    var delegate: CalendarDelegate?
     
     
     
@@ -76,16 +76,12 @@ final class CalendarView: UIView {
         
     }
     private func configureAutoLayout() {
+        // ********** addSubview 설정 **********
         self.addSubview(self.calendar)
-        
+        // ********** 오토레이아웃 설정 **********
         self.calendar.snp.makeConstraints { make in
-//            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(10)
-//            make.top.leading.equalToSuperview().offset(10)
-//            make.trailing.equalToSuperview().offset(-10)
             make.edges.equalToSuperview()
         }
-//        self.calendarHeight = self.calendar.heightAnchor.constraint(equalToConstant: 250)
-//        self.calendarHeight?.isActive = true
     }
     
     
@@ -102,6 +98,13 @@ final class CalendarView: UIView {
         up == true
         ? self.calendar.setScope(.week, animated: true)
         : self.calendar.setScope(.month, animated: true)
+    }
+    
+    
+    
+    
+    func currentCalendarScope() -> FSCalendarScope {
+        return self.calendar.scope
     }
 }
 
@@ -123,23 +126,12 @@ final class CalendarView: UIView {
 // MARK: - 켈린더 델리게이트
 extension CalendarView: FSCalendarDelegate, FSCalendarDataSource {
     func calendar(_ calendar: FSCalendar, boundingRectWillChange bounds: CGRect, animated: Bool) {
-        // 높이 바꾸기
-//        self.calendarHeight?.constant = bounds.height
-        // 뷰(켈린더) 다시 그리기
-//        UIView.animate(withDuration: 0.2) {
-//            self.layoutIfNeeded()
-//        }
-        
+        // 캘린더 높이 재설정
         self.delegate?.heightChanged(height: bounds.height)
     }
     /// 날짜를 선택했을 때
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         // dateLabel에 선택된 날짜 띄우기
-//        self.configureDate(selectedDate: date)
         self.delegate?.selectDate(date: date)
-    }
-    /// 이벤트가 표시되는 개수
-    func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
-        return 0
     }
 }
