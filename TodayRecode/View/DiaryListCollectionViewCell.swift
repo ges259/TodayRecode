@@ -18,7 +18,7 @@ final class DiaryListCollectionViewCell: UICollectionViewCell {
         return img
     }()
     /// 날짜 레이블
-    private lazy var dateLbl: UILabel = {
+    lazy var dateLbl: UILabel = {
         let lbl = UILabel.configureLbl(
             font: UIFont.boldSystemFont(ofSize: 30),
             textColor: UIColor.black)
@@ -65,6 +65,12 @@ final class DiaryListCollectionViewCell: UICollectionViewCell {
     private func configureUI() {
         self.clipsToBounds = true
         self.layer.cornerRadius = 10
+//        self.imageView.clipsToBounds = true
+//        self.imageView.layer.cornerRadius = 10
+//        self.layoutArray.forEach { view in
+//            view.clipsToBounds = true
+//            view.layer.cornerRadius = 10
+//        }
         
         // MARK: - Fix
         self.dateLbl.text = "10"

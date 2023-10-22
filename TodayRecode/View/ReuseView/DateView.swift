@@ -15,6 +15,18 @@ final class DateView: UIView {
         font: UIFont.systemFont(ofSize: 13),
         textColor: UIColor.black)
     
+    
+    lazy var date: Int = 1 {
+        didSet {
+            
+            // MARK: - Fix
+            self.dateLabel.text = "10월 \(self.date + 1)일"
+        }
+    }
+    
+    
+    
+    
     // MARK: - 라이프사이클
     override init(frame: CGRect) {
         super.init(frame: frame)

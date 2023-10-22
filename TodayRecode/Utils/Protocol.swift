@@ -21,3 +21,10 @@ protocol AccessoryViewDelegate: AnyObject {
 protocol EasyWritingScreenDelegate: AnyObject {
     func expansionBtnTapped()
 }
+
+
+
+protocol CalendarDelegate: AnyObject {
+    func selectDate(date: Date)
+    func heightChanged(height: CGFloat)
+}
