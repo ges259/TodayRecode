@@ -11,12 +11,14 @@ enum TodayFormatEnum {
     case day_d
     case detaildayAndTime_Mdahm
     case monthAndDay_Mdd
+    case month_M
     
     var today: String {
         switch self {
         case .day_d: return "d"
         case .detaildayAndTime_Mdahm: return "M/d a h:m"
         case .monthAndDay_Mdd: return "M월 dd일"
+        case .month_M: return "M월"
         }
     }
 }

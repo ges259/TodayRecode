@@ -29,6 +29,13 @@ final class TabBarController: UITabBarController {
     
     
     
+    
+    
+    
+    
+    
+    
+    
     // MARK: - 탭바 설정
     /// 탭바 설정
     private func configureTabBar() {
@@ -57,7 +64,8 @@ final class TabBarController: UITabBarController {
     }
     
     
-
+    
+    // MARK: - 탭바 이미지 설정
     /// 탭바의 이미지 및
     /// - Parameters:
     ///   - unselectedImg: 선택되지 않은 상태의 이미지

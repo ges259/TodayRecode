@@ -27,4 +27,5 @@ protocol EasyWritingScreenDelegate: AnyObject {
 protocol CalendarDelegate: AnyObject {
     func selectDate(date: Date)
     func heightChanged(height: CGFloat)
+    func monthChanged(month: String)
 }

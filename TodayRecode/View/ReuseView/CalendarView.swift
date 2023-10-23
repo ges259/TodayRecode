@@ -27,15 +27,21 @@ final class CalendarView: UIView {
             calendar.appearance.weekdayFont = UIFont.systemFont(ofSize: 12)
                 // 색상
             calendar.appearance.weekdayTextColor = .black.withAlphaComponent(0.7)
-            // 헤더 높이 설정
-            calendar.appearance.headerDateFormat = "M월"
-            calendar.appearance.headerTitleFont = .boldSystemFont(ofSize: 17)
-            calendar.appearance.headerTitleColor = .black
-            calendar.appearance.headerMinimumDissolvedAlpha = 0
             // 이벤트 - 선택되지 않은 날짜 색깔
             calendar.appearance.eventDefaultColor = UIColor.green
             // 이벤트 - 선택된 날짜 색깔
             calendar.appearance.eventSelectionColor = .clear
+            // 헤더(10월) 없애기
+            calendar.headerHeight = 0
+            // 주(월,화,수)와 상단의 간격 넓히기
+            calendar.weekdayHeight = 40
+        
+        // 달력의 평일 날짜 색깔
+        calendar.appearance.titleDefaultColor = .black
+        // 달력의 토,일 날짜 색깔
+        calendar.appearance.titleWeekendColor = .red
+//        // 달력의 요일 글자 색깔
+//        calendar.appearance.weekdayTextColor = .orange
         return calendar
     }()
     
@@ -133,5 +139,14 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource {
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         // dateLabel에 선택된 날짜 띄우기
         self.delegate?.selectDate(date: date)
+    }
+    
+    
+    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
+        
+        let currentMonth = self.todayReturn(
+            todayFormat: .month_M,
+            date: calendar.currentPage)
+        self.delegate?.monthChanged(month: currentMonth)
     }
 }

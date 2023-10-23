@@ -16,6 +16,15 @@ final class Recodecontroller: UIViewController {
     private lazy var backgroundImg: UIImageView = UIImageView(
         image: UIImage.blueSky)
     
+    /// 네비게이션 타이틀 레이블
+    private lazy var NavTitle: UILabel = {
+        let lbl = UILabel()
+            lbl.numberOfLines = 2
+            lbl.textAlignment = .center
+            lbl.textColor = .black
+        return lbl
+    }()
+    
     /// 날짜 표시해주는 뷰 (+ 레이블)
     private lazy var dateView: DateView = DateView()
     
@@ -39,7 +48,7 @@ final class Recodecontroller: UIViewController {
     private lazy var tableView: CustomTableView = {
         let tableView = CustomTableView()
             tableView.register(RecodeTableViewCell.self,
-                                forCellReuseIdentifier: Identifier.recodeTableCell)
+                               forCellReuseIdentifier: Identifier.recodeTableCell)
             tableView.delegate = self
             tableView.dataSource = self
             // 배경 색상 설정
@@ -53,8 +62,8 @@ final class Recodecontroller: UIViewController {
             // 테이블뷰가 스크롤되지 않도록 설정(스크롤뷰가 대신 스크롤 됨)
             tableView.isScrollEnabled = false
             // 테이블뷰 높이 설정
-            tableView.estimatedRowHeight = 120
-            tableView.rowHeight = 70
+            tableView.estimatedRowHeight = 200
+            tableView.rowHeight = UITableView.automaticDimension
         return tableView
     }()
     
@@ -67,6 +76,18 @@ final class Recodecontroller: UIViewController {
     }()
     /// 달력의 높이 제약
     private var calendarHeight: NSLayoutConstraint?
+    
+    /// 스택뷰
+    private lazy var stackView: UIStackView = UIStackView.configureStackView(
+        arrangedSubviews: [self.calendar,
+                           self.dateView],
+        axis: .vertical,
+        spacing: 5,
+        alignment: .fill,
+        distribution: .fill)
+    
+    
+    
     
     
     
@@ -82,13 +103,9 @@ final class Recodecontroller: UIViewController {
     
     
     
-    private lazy var stackView: UIStackView = UIStackView.configureStackView(
-        arrangedSubviews: [self.calendar,
-                           self.dateView],
-        axis: .vertical,
-        spacing: 5,
-        alignment: .fill,
-        distribution: .fill)
+    
+    
+    
     
     
     // MARK: - 라이프사이클
@@ -101,12 +118,37 @@ final class Recodecontroller: UIViewController {
         // dateLabel에 날짜 띄우기
         self.configureDate()
     }
+}
     
     
     
-    // MARK: - 화면 구성
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+// MARK: - 화면 설정
+
+extension Recodecontroller {
+    
+    // MARK: - UI 구성
     private func configureUI() {
-        self.navigationItem.title = "하루 기록"
+        // 네비게이션 타이틀 설정
+        self.navigationItem.titleView = self.NavTitle
+        // MARK: - Fix
+        self.setNavTitle(month: "10월")
         
         // cornerRadius
         [self.calendar,
@@ -122,10 +164,8 @@ final class Recodecontroller: UIViewController {
     
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
-        // addSubView
+        // ********** addSubview 설정 **********
         [self.backgroundImg,
-//         self.calendar,
-//         self.dateView,
          self.stackView,
          self.scrollView,
          self.plusBtn].forEach { views in
@@ -134,30 +174,24 @@ final class Recodecontroller: UIViewController {
         self.scrollView.addSubview(self.contentView)
         self.contentView.addSubview(self.tableView)
         
+        
+        // ********** 오토레이아웃 설정 **********
         // 배경화면
         self.backgroundImg.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
         // 달력
-        self.calendar.snp.makeConstraints { make in
-//            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(10)
-//            make.leading.equalToSuperview().offset(10)
-//            make.trailing.equalToSuperview().offset(-10)
-        }
+        self.calendar.translatesAutoresizingMaskIntoConstraints = false
         self.calendarHeight = self.calendar.heightAnchor.constraint(equalToConstant: 280)
         self.calendarHeight?.isActive = true
         // 날짜 뷰
         self.dateView.snp.makeConstraints { make in
-//            make.top.equalTo(self.calendar.snp.bottom).offset(5)
-//            make.leading.equalTo(self.calendar)
-//            make.trailing.equalTo(self.calendar)
             make.height.equalTo(35)
         }
         self.stackView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(10)
             make.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
-//            make.bottom.equalToSuperview()
         }
         // 스크롤뷰
         self.scrollView.snp.makeConstraints { make in
@@ -186,20 +220,20 @@ final class Recodecontroller: UIViewController {
     }
     
     
-        
+    
     // MARK: - 액션 설정
     private func configureAction() {
         // 뷰 액션 설정
-            // 위로 스와이프
+        // 위로 스와이프
         let swipeUp = UISwipeGestureRecognizer(target: self,
                                                action: #selector(self.swipeAction(_:)))
-            swipeUp.direction = .up
+        swipeUp.direction = .up
         self.view.addGestureRecognizer(swipeUp)
         
-            // 아래로 스와이프
+        // 아래로 스와이프
         let swipeDown = UISwipeGestureRecognizer(target: self,
                                                  action: #selector(self.swipeAction(_:)))
-            swipeDown.direction = .down
+        swipeDown.direction = .down
         self.view.addGestureRecognizer(swipeDown)
         
         // 플러스 버튼 액션 설정
@@ -209,7 +243,7 @@ final class Recodecontroller: UIViewController {
     }
     
     
-    
+    // MARK: - 네비게이션 버튼 설정
     private func configureNavBtn() {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage.calendar,
@@ -218,34 +252,57 @@ final class Recodecontroller: UIViewController {
             action: #selector(self.calendarTapped))
         self.navigationItem.rightBarButtonItem?.tintColor = .black
     }
+}
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// MARK: - 액션
+
+extension Recodecontroller {
+    
+    // MARK: - 네비게이션 버튼 액션
     @objc private func calendarTapped() {
-        
-        
         UIView.animate(withDuration: 0.5) {
             self.calendar.isHidden.toggle()
             self.view.layoutIfNeeded()
-            
         }
     }
     
     
     
+    // MARK: - 네비게이션 타이틀 재설정
+    private func setNavTitle(month: String) {
+        self.NavTitle.attributedText = self.configureNavTitle("하루 기록", month: month)
+    }
     
     
     
-    
-    // MARK: - 날짜 설정
+    // MARK: - 날짜 설정 액션
     /// dateLabel에 날짜를 띄우는 메서드
-    /// 기본값: 오늘 날짜를 띄운다.
-    /// - Parameter selectedDate: 선택된 날짜를 띄운다.
     func configureDate(selectedDate: Date = Date()) {
         self.dateView.configureDate(selectedDate: selectedDate)
     }
     
     
     
-    // MARK: - 위/아래 스와이프 액션
+    // MARK: - 위/아래 스와이프
     /// 스와이프를 하면 자동으로 불리는 메서드
     /// up: 달력을 한 주만 보이도록 설정
     /// down: 달력을 한 달 전체가 보이도록 설정
@@ -259,7 +316,7 @@ final class Recodecontroller: UIViewController {
     
     
     
-    // MARK: - 플러스 버튼 액션
+    // MARK: - 플러스 버튼
     /// 간편 작성 화면으로 이동
     @objc private func plusBtnTapped() {
         let vc = EasyWritingScreenController()
@@ -267,6 +324,8 @@ final class Recodecontroller: UIViewController {
             vc.delegate = self
         self.present(vc, animated: false)
     }
+    
+    
     
     // MARK: - 상세 작성 화면으로 이동
     private func pushToDetailWritingScreen() {
@@ -295,6 +354,15 @@ final class Recodecontroller: UIViewController {
 
 
 
+
+
+
+
+
+
+
+
+
 // MARK: - 켈린더 델리게이트
 extension Recodecontroller: CalendarDelegate {
     func selectDate(date: Date) {
@@ -309,10 +377,11 @@ extension Recodecontroller: CalendarDelegate {
             self.view.layoutIfNeeded()
         }
     }
+    
+    func monthChanged(month: String) {
+        self.setNavTitle(month: month)
+    }
 }
-
-
-
 
 
 
