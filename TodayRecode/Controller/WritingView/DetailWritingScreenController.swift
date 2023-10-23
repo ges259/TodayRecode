@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import PanModal
 
 final class DetailWritingScreenController: UIViewController {
     
@@ -21,11 +22,11 @@ final class DetailWritingScreenController: UIViewController {
     private lazy var imageView: UIImageView = UIImageView(
         image: UIImage(named: "cat"))
     
-//    private lazy var imageView: ImageCollectionView = {
-//        let collectionView = ImageCollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-//        return collectionView
-//    }()
-//
+    //    private lazy var imageView: ImageCollectionView = {
+    //        let collectionView = ImageCollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    //        return collectionView
+    //    }()
+    //
     
     
     
@@ -34,8 +35,8 @@ final class DetailWritingScreenController: UIViewController {
     /// 시간을 나타내주는 뷰
     private lazy var bottomAccessoryView: InputAccessoryCustomView = {
         let view = InputAccessoryCustomView()
-            view.delegate = self
-            view.backgroundColor = UIColor.customWhite5
+        view.delegate = self
+        view.backgroundColor = UIColor.customWhite5
         return view
     }()
     
@@ -45,8 +46,8 @@ final class DetailWritingScreenController: UIViewController {
     /// 스크롤뷰
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-            scrollView.delegate = self
-            scrollView.showsVerticalScrollIndicator = false
+        scrollView.delegate = self
+        scrollView.showsVerticalScrollIndicator = false
         scrollView.bounces = false
         return scrollView
     }()
@@ -56,12 +57,12 @@ final class DetailWritingScreenController: UIViewController {
     /// 텍스트뷰
     private lazy var diaryTextView: UITextView = {
         let tv = UITextView.configureTV(fontSize: 14)
-            tv.delegate = self
-            tv.backgroundColor = UIColor.customWhite5
-            tv.textContainerInset = UIEdgeInsets(top: 18, left: 10, bottom: 18, right: 10)
-            tv.isScrollEnabled = false
-            // 인풋 악세사리뷰 넣기 -> 키보드가 올라올 때 같이 올라옴
-            tv.inputAccessoryView = self.accessoryCustomView
+        tv.delegate = self
+        tv.backgroundColor = UIColor.customWhite5
+        tv.textContainerInset = UIEdgeInsets(top: 18, left: 10, bottom: 18, right: 10)
+        tv.isScrollEnabled = false
+        // 인풋 악세사리뷰 넣기 -> 키보드가 올라올 때 같이 올라옴
+        tv.inputAccessoryView = self.accessoryCustomView
         return tv
     }()
     
@@ -81,7 +82,7 @@ final class DetailWritingScreenController: UIViewController {
         spacing: 10,
         alignment: .fill,
         distribution: .fill)
-
+    
     /// 기록 확인 버튼
     private let recodeShowBtn: UIButton = UIButton.configureBtn(
         image: UIImage.recodeShow,
@@ -93,13 +94,13 @@ final class DetailWritingScreenController: UIViewController {
         let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50)
         
         let view = InputAccessoryCustomView(frame: frame)
-            view.currentWritingScreen = .detailWritingScreen
-            view.delegate = self
-            view.backgroundColor = .white
+        view.currentWritingScreen = .detailWritingScreen
+        view.delegate = self
+        view.backgroundColor = .white
         return view
     }()
     
-
+    
     
     
     
@@ -122,18 +123,25 @@ final class DetailWritingScreenController: UIViewController {
     // MARK: - 프로퍼티
     // 텍스트뷰의 높이를 바꿀 때 사용
     private lazy var size = CGSize(width: self.view.frame.width, height: .infinity)
-    /// 키보드가 올라와있는지 확인하는 변수
-    private var keyboardShow: Bool = false
     /// 뷰의 높이 (기록 확인 버튼 위치를 옮길 때 사용)
     private lazy var viewHeight: CGFloat = self.view.frame.height
     /// safeArea 설정
     private lazy var safeArea: CGFloat = 49
+    /// 이미지뷰의 높이 (노티피케이션 액션에서 스크롤뷰의 높이를 조절할 때 사용)
+    private lazy var imageViewHeight: CGFloat = self.imageView.frame.height
+    
+    
+    
+    /// 키보드가 올라와있는지 확인하는 변수
+    private var keyboardShow: Bool = false
+    
+    
     
     
     /*
      - DetailEditMode
-        - writingMode (수정 모드)
-        - safeMode (저장 모드)
+     - writingMode (수정 모드)
+     - safeMode (저장 모드)
      */
     /// 수정모드 / 저장모드를 알 수 있는 enum변수
     var detailEditMode: DetailEditMode? {
@@ -142,8 +150,8 @@ final class DetailWritingScreenController: UIViewController {
     }
     /*
      - DetailViewMode
-        - diary (일기 모드)
-        - recode (기록 모드)
+     - diary (일기 모드)
+     - recode (기록 모드)
      */
     /// 일기 모드 / 기록 모드를 알 수 있는 enum변수
     var detailViewMode: DetailViewMode? {
@@ -167,7 +175,7 @@ final class DetailWritingScreenController: UIViewController {
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.configreUI()
         self.configureAutoLayout()
         self.configureAction()
@@ -184,7 +192,7 @@ final class DetailWritingScreenController: UIViewController {
             selector: #selector(self.keyboardWillShow(_:)),
             name: UIResponder.keyboardWillShowNotification,
             object: nil)
-
+        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(self.keyboardWillHide(_:)),
@@ -197,6 +205,7 @@ final class DetailWritingScreenController: UIViewController {
         // 노티피케이션 삭제
         NotificationCenter.default.removeObserver(self)
     }
+}
     
     
     
@@ -214,11 +223,14 @@ final class DetailWritingScreenController: UIViewController {
     
     
     
+
+
+
+// MARK: - 화면 설정
     
+extension DetailWritingScreenController {
     
-    
-    
-    // MARK: - 화면 설정
+    // MARK: - UI 설정
     private func configreUI() {
         // cornerRadius 설정
         [self.imageView,
@@ -273,7 +285,6 @@ final class DetailWritingScreenController: UIViewController {
         // 텍스트뷰
         self.diaryTextView.snp.makeConstraints { make in
             make.height.greaterThanOrEqualTo(270)
-            make.height.lessThanOrEqualTo(1000)
         }
         // 바텀 악세서리 뷰
         self.bottomAccessoryView.snp.makeConstraints { make in
@@ -328,6 +339,7 @@ final class DetailWritingScreenController: UIViewController {
         ? UIImage.check // 수정 모드라면 -> 체크마크
         : UIImage.option // 저장 모드라면 -> 옵션
     }
+}
     
     
     
@@ -342,11 +354,15 @@ final class DetailWritingScreenController: UIViewController {
     
     
     
+
+
+
     
     
     
+// MARK: - 액션
     
-    
+extension DetailWritingScreenController {
     
     // MARK: - 노티피케이션 액션
     @objc private func keyboardWillShow(_ notification: Notification) {
@@ -383,9 +399,16 @@ final class DetailWritingScreenController: UIViewController {
             // ********** 바텀 악세서리뷰 위치 설정 **********
             // 부드러운 애니메이션을 위한 설정
             self.bottomAccessoryView.alpha = 0
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
-                // 스택뷰의 spacing 거리를 늘려서 스크롤할 수 있는 공간 만들기
-                self.stackView.setCustomSpacing(keyboardSize - 50 - 34, after: self.diaryTextView)
+            // 스택뷰의 spacing 거리를 늘려서 스크롤할 수 있는 공간 만들기
+            self.stackView.setCustomSpacing(keyboardSize - 50 - 34, after: self.diaryTextView)
+            
+            // 스크롤뷰를 텍스트뷰의 맨 위에 맞춤
+            // 이미지뷰가 있다면
+            if !self.imageView.isHidden {
+                // 이미지뷰 높이 + 날짜뷰 높이 + 사이 공간들의 합
+                UIView.animate(withDuration: 0.3) {
+                    self.scrollView.contentOffset.y += self.imageViewHeight + 60
+                }
             }
             
             
@@ -432,7 +455,13 @@ final class DetailWritingScreenController: UIViewController {
     
     // MARK: - 기록 확인 버튼 액션
     @objc private func recodeShowBtnTapped() {
-        self.imageView.isHidden = true
+        self.diaryTextView.resignFirstResponder()
+        
+        
+        let recodeCheckVC = RecodeCheckController()
+            recodeCheckVC.modalPresentationStyle = .overFullScreen
+        // 화면 전환
+        self.presentPanModal(recodeCheckVC)
     }
 }
 

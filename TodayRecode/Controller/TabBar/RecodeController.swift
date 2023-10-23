@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import FSCalendar
 
-final class Recodecontroller: UIViewController {
+final class RecodeController: UIViewController {
     
     // MARK: - 레이아웃
     /// 배경 이미지
@@ -45,25 +45,13 @@ final class Recodecontroller: UIViewController {
     private lazy var contentView: UIView = UIView()
     
     /// 테이블뷰
-    private lazy var tableView: CustomTableView = {
-        let tableView = CustomTableView()
+    private lazy var tableView: RecodeTableView = {
+        let tableView = RecodeTableView()
             tableView.register(RecodeTableViewCell.self,
                                forCellReuseIdentifier: Identifier.recodeTableCell)
             tableView.delegate = self
             tableView.dataSource = self
-            // 배경 색상 설정
-            tableView.backgroundColor = UIColor.clear
-            // 바운스 되지 않게 설정
-            tableView.bounces = false
-            // 스크롤바 없애기
-            tableView.showsVerticalScrollIndicator = false
-            // 테이블뷰 셀간 구분선 없애기
-            tableView.separatorStyle = .none
-            // 테이블뷰가 스크롤되지 않도록 설정(스크롤뷰가 대신 스크롤 됨)
             tableView.isScrollEnabled = false
-            // 테이블뷰 높이 설정
-            tableView.estimatedRowHeight = 200
-            tableView.rowHeight = UITableView.automaticDimension
         return tableView
     }()
     
@@ -141,7 +129,7 @@ final class Recodecontroller: UIViewController {
     
 // MARK: - 화면 설정
 
-extension Recodecontroller {
+extension RecodeController {
     
     // MARK: - UI 구성
     private func configureUI() {
@@ -227,13 +215,13 @@ extension Recodecontroller {
         // 위로 스와이프
         let swipeUp = UISwipeGestureRecognizer(target: self,
                                                action: #selector(self.swipeAction(_:)))
-        swipeUp.direction = .up
+            swipeUp.direction = .up
         self.view.addGestureRecognizer(swipeUp)
         
         // 아래로 스와이프
         let swipeDown = UISwipeGestureRecognizer(target: self,
                                                  action: #selector(self.swipeAction(_:)))
-        swipeDown.direction = .down
+            swipeDown.direction = .down
         self.view.addGestureRecognizer(swipeDown)
         
         // 플러스 버튼 액션 설정
@@ -275,7 +263,7 @@ extension Recodecontroller {
 
 // MARK: - 액션
 
-extension Recodecontroller {
+extension RecodeController {
     
     // MARK: - 네비게이션 버튼 액션
     @objc private func calendarTapped() {
@@ -364,7 +352,7 @@ extension Recodecontroller {
 
 
 // MARK: - 켈린더 델리게이트
-extension Recodecontroller: CalendarDelegate {
+extension RecodeController: CalendarDelegate {
     func selectDate(date: Date) {
         self.configureDate(selectedDate: date)
     }
@@ -393,7 +381,7 @@ extension Recodecontroller: CalendarDelegate {
 
 
 // MARK: - 스크롤뷰
-extension Recodecontroller: UIScrollViewDelegate {
+extension RecodeController: UIScrollViewDelegate {
     /// 스크롤이 끝났을 때
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         // 스크롤이 끝났을 때
@@ -424,7 +412,7 @@ extension Recodecontroller: UIScrollViewDelegate {
 
 
 // MARK: - 테이블뷰 델리게이트
-extension Recodecontroller: UITableViewDelegate {
+extension RecodeController: UITableViewDelegate {
     /// 스와이프 설정
     /// 오른쪽 -> 왼쪽 스와이프하면 버튼이 나타남
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -433,28 +421,30 @@ extension Recodecontroller: UITableViewDelegate {
             print("trash 클릭 됨")
             success(true)
         }
-        trash.image = UIImage(systemName: "trash")
-        trash.backgroundColor = .systemPink
+        // 이미지 및 색상 설정
+            trash.image = UIImage(systemName: "trash")
+            trash.backgroundColor = .systemPink
         //actions배열 인덱스 0이 왼쪽에 붙어서 나옴
         let swipeAction = UISwipeActionsConfiguration(actions:[trash])
             swipeAction.performsFirstActionWithFullSwipe = false
         return swipeAction
     }
     
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.pushToDetailWritingScreen()
     }
 }
 
-extension Recodecontroller: UITableViewDataSource {
+extension RecodeController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 //        return self.tableCellCount
         return 12
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Identifier.recodeTableCell, for: indexPath) as! RecodeTableViewCell
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: Identifier.recodeTableCell,
+            for: indexPath) as! RecodeTableViewCell
         
         return cell
     }
@@ -469,7 +459,7 @@ extension Recodecontroller: UITableViewDataSource {
 
 
 // MARK: - 간편 작성 화면 델리게이트
-extension Recodecontroller: EasyWritingScreenDelegate {
+extension RecodeController: EasyWritingScreenDelegate {
     func expansionBtnTapped() {
         self.pushToDetailWritingScreen()
     }

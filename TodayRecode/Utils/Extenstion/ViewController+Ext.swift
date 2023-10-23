@@ -30,4 +30,19 @@ extension UIViewController {
         )
         return attributedTitle
     }
+    
+    
+    
+    /// 텍스트뷰의 상단으로 스크롤
+    func getYPosition(scrollView : UIScrollView, view: UIView, upSize: CGFloat) -> CGFloat{
+        if let origin = view.superview {
+            // Get the Y position of your child view
+            let childStartPoint = origin.convert(view.frame.origin, to: scrollView)
+            // Scroll to a rectangle starting at the Y of your subview, with a height of the scrollview
+            
+            let childYPosition = childStartPoint.y - upSize
+            return childYPosition
+        }
+        return 0.0
+    }
 }

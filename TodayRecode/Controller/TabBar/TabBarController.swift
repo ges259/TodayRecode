@@ -46,7 +46,7 @@ final class TabBarController: UITabBarController {
         let recode = self.templateNavContoller(
             unselectedImg: UIImage.recode,
             selectedImg: UIImage.recode_fill,
-            rootController: Recodecontroller())
+            rootController: RecodeController())
         // 일기 목록 화면
             // 오늘 날짜에 따라 탭바 이미지 다르게 설정
         let diaryList = self.templateNavContoller(

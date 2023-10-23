@@ -8,13 +8,13 @@
 import UIKit
 
 extension UIScrollView {
-    func scrollToBottom() {
-        let offset = CGPoint(
-            x: 0,
-            y: contentSize.height - bounds.height
-        )
-        setContentOffset(offset, animated: false)
-    }
+//    func scrollToBottom() {
+//        let offset = CGPoint(
+//            x: 0,
+//            y: contentSize.height - bounds.height
+//        )
+//        setContentOffset(offset, animated: false)
+//    }
     
     /// 스크롤뷰 내부의 원하는 레이아웃 위치로 이동
     func scrollToView(view: UIView,

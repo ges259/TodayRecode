@@ -116,14 +116,14 @@ extension RecodeTableViewCell {
         }
         // 기록 레이블
         self.contextTextLbl.snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(30)
+            make.height.greaterThanOrEqualTo(35)
         }
         // 스택뷰
         self.stackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(15)
             make.leading.equalToSuperview().offset(15)
             make.bottom.equalToSuperview().offset(-5)
-            make.trailing.equalTo(self.recodeImage.snp.leading).offset(-15)
+            make.trailing.equalTo(self.recodeImage.snp.leading).offset(-10)
         }
     }
 }

@@ -45,8 +45,9 @@
 		5F7A02802ADAD04700128DC4 /* PanModal in Frameworks */ = {isa = PBXBuildFile; productRef = 5F7A027F2ADAD04700128DC4 /* PanModal */; };
 		5F7A02832ADAD06D00128DC4 /* BSImagePicker in Frameworks */ = {isa = PBXBuildFile; productRef = 5F7A02822ADAD06D00128DC4 /* BSImagePicker */; };
 		5F7A02852ADAD3D700128DC4 /* Color+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */; };
+		5F8A0EA52AE6B1AC00C7AF2C /* RecodeCheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8A0EA42AE6B1AC00C7AF2C /* RecodeCheckController.swift */; };
 		5FAA76402ADBA8220024B810 /* RecodeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA763F2ADBA8220024B810 /* RecodeTableViewCell.swift */; };
-		5FAA76422ADC13340024B810 /* CustomTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA76412ADC13340024B810 /* CustomTableView.swift */; };
+		5FAA76422ADC13340024B810 /* RecodeTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA76412ADC13340024B810 /* RecodeTableView.swift */; };
 		5FAF543D2ADA907100BD849C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAF543C2ADA907100BD849C /* Constants.swift */; };
 		5FCA1F372AE5700D00A9DB5B /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */; };
 		5FD436922AE2DB9B00CA79AD /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */; };
@@ -85,8 +86,9 @@
 		5F785B8F2ADED33A00955C4A /* DateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateView.swift; sourceTree = "<group>"; };
 		5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Ext.swift"; sourceTree = "<group>"; };
 		5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Ext.swift"; sourceTree = "<group>"; };
+		5F8A0EA42AE6B1AC00C7AF2C /* RecodeCheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeCheckController.swift; sourceTree = "<group>"; };
 		5FAA763F2ADBA8220024B810 /* RecodeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeTableViewCell.swift; sourceTree = "<group>"; };
-		5FAA76412ADC13340024B810 /* CustomTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableView.swift; sourceTree = "<group>"; };
+		5FAA76412ADC13340024B810 /* RecodeTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeTableView.swift; sourceTree = "<group>"; };
 		5FAF543C2ADA907100BD849C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
@@ -151,7 +153,6 @@
 				5F785B8B2ADEA84A00955C4A /* Protocol.swift */,
 				5F785B812ADEA7AF00955C4A /* Enum.swift */,
 				5FAF543C2ADA907100BD849C /* Constants.swift */,
-				5FAA76412ADC13340024B810 /* CustomTableView.swift */,
 				5F7A02752ADAC8C200128DC4 /* Extenstion */,
 			);
 			path = Utils;
@@ -180,6 +181,7 @@
 				5FE7C6A02ADEDDFC00BF9785 /* TabBar */,
 				5FE7C6A12ADEDE0700BF9785 /* WritingView */,
 				5FE7C69F2ADEDDDA00BF9785 /* Auth */,
+				5F8A0EA42AE6B1AC00C7AF2C /* RecodeCheckController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -216,6 +218,7 @@
 				5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */,
 				5F6CBA322AE02D8500960F7B /* ImageCollectionViewCell.swift */,
 				5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */,
+				5FAA76412ADC13340024B810 /* RecodeTableView.swift */,
 			);
 			path = ReuseView;
 			sourceTree = "<group>";
@@ -350,6 +353,7 @@
 				5F785B8C2ADEA84A00955C4A /* Protocol.swift in Sources */,
 				5F6EECE12ADA40200046E686 /* SettingController.swift in Sources */,
 				5F07BF0D2AE11B7A00C471B4 /* UIStackView+Ext.swift in Sources */,
+				5F8A0EA52AE6B1AC00C7AF2C /* RecodeCheckController.swift in Sources */,
 				5F785B842ADEA7E000955C4A /* UIView+Ext.swift in Sources */,
 				5F6EECDF2ADA40170046E686 /* DetailWritingScreenController.swift in Sources */,
 				5F6EECE72ADA41380046E686 /* SignUpController.swift in Sources */,
@@ -368,7 +372,7 @@
 				5F785B822ADEA7AF00955C4A /* Enum.swift in Sources */,
 				5F6EECDD2ADA3F490046E686 /* RecodeController.swift in Sources */,
 				5FD436922AE2DB9B00CA79AD /* UIImage+Ext.swift in Sources */,
-				5FAA76422ADC13340024B810 /* CustomTableView.swift in Sources */,
+				5FAA76422ADC13340024B810 /* RecodeTableView.swift in Sources */,
 				5FAF543D2ADA907100BD849C /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

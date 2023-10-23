@@ -19,8 +19,6 @@ final class CalendarView: UIView {
             calendar.dataSource = self
             // 배경 색상 설정
             calendar.backgroundColor = .customWhite5
-            // 처음에는 일주일만 보이도록 설정
-//            calendar.scope = .week
             // (월/화/수~~)한글로 표시
             calendar.locale = Locale(identifier: "ko_KR")
                 // 폰트 크기 설정
@@ -35,13 +33,10 @@ final class CalendarView: UIView {
             calendar.headerHeight = 0
             // 주(월,화,수)와 상단의 간격 넓히기
             calendar.weekdayHeight = 40
-        
-        // 달력의 평일 날짜 색깔
-        calendar.appearance.titleDefaultColor = .black
-        // 달력의 토,일 날짜 색깔
-        calendar.appearance.titleWeekendColor = .red
-//        // 달력의 요일 글자 색깔
-//        calendar.appearance.weekdayTextColor = .orange
+            // 달력의 평일 날짜 색깔s
+            calendar.appearance.titleDefaultColor = .black
+            // 달력의 토,일 날짜 색깔
+            calendar.appearance.titleWeekendColor = .red
         return calendar
     }()
     
@@ -143,7 +138,6 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource {
     
     
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
-        
         let currentMonth = self.todayReturn(
             todayFormat: .month_M,
             date: calendar.currentPage)
