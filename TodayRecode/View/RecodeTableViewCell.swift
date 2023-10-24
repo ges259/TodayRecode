@@ -52,6 +52,7 @@ final class RecodeTableViewCell: UITableViewCell {
     
     
     
+
     
     
     
@@ -70,7 +71,6 @@ final class RecodeTableViewCell: UITableViewCell {
         self.configureUI()
         self.configureLayout()
         
-        self.settingContext()
         self.settingTimeLbl()
     }
     required init?(coder: NSCoder) {
@@ -111,12 +111,12 @@ extension RecodeTableViewCell {
         // 이미지
         self.recodeImage.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-15)
-            make.width.height.equalTo(40)
+            make.width.height.equalTo(35)
             make.centerY.equalToSuperview()
         }
         // 기록 레이블
         self.contextTextLbl.snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(35)
+            make.height.greaterThanOrEqualTo(20)
         }
         // 스택뷰
         self.stackView.snp.makeConstraints { make in
@@ -142,9 +142,8 @@ extension RecodeTableViewCell {
 extension RecodeTableViewCell {
     
     // MARK: - 기록 내용 설정
-    private func settingContext() {
-        let attrString = NSMutableAttributedString(string: "3safdlhdasl;h;lsdkjs;dflajfsd;akj;lsdafsdafasdfsadsdffasfdsafdasdfsda2333safdlhdasl;h;lsdkjs;dflajfsd;akj;lsdafsdafasdfsadsdffasfdsafdasdfsda2333safdlhdasl;h;lsdkjs;dflajfsd;akj;lsdafsdafasdfsadsdffasfdsafdasdfsda")
-//        let attrString = NSMutableAttributedString(string: "3safdlhdasl;h;lsdkjs;dflajfsd;akj;lsdafsdaf")
+    func settingContext(recode: String) {
+        let attrString = NSMutableAttributedString(string: recode)
         
         let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 3

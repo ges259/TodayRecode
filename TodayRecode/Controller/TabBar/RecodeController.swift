@@ -88,7 +88,8 @@ final class RecodeController: UIViewController {
     private var tableCellCount: Int = 0
     
     
-    
+    // MARK: - 프로퍼티
+
     
     
     
@@ -445,6 +446,8 @@ extension RecodeController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: Identifier.recodeTableCell,
             for: indexPath) as! RecodeTableViewCell
+        
+        cell.settingContext(recode: array[indexPath.row])
         
         return cell
     }

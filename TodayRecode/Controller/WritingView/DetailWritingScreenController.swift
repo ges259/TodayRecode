@@ -462,6 +462,7 @@ extension DetailWritingScreenController {
             recodeCheckVC.modalPresentationStyle = .overFullScreen
         // 화면 전환
         self.presentPanModal(recodeCheckVC)
+        recodeCheckVC.view.layoutIfNeeded()
     }
 }
 
