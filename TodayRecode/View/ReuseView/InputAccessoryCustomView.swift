@@ -12,20 +12,20 @@ final class InputAccessoryCustomView: UIView {
     
     // MARK: - 레이아웃
     /// 카메라 버튼
-    private let cameraBtn: UIButton = UIButton.configureBtn(
+    private let cameraBtn: UIButton = UIButton.configureBtnWithImg(
         image: UIImage.camera,
         tintColor: UIColor.btnGrayColor)
     /// 앨범 버튼
-    private let albumBtn: UIButton = UIButton.configureBtn(
+    private let albumBtn: UIButton = UIButton.configureBtnWithImg(
         image: UIImage.album,
         tintColor: UIColor.btnGrayColor)
     /// 보내기 버튼
-    private let sendBtn: UIButton = UIButton.configureBtn(
+    private let sendBtn: UIButton = UIButton.configureBtnWithImg(
         image: UIImage.check,
         tintColor: UIColor.white,
         backgroundColor: UIColor.btnGrayColor)
     /// 키보드 내리기 버튼
-    private let keyboardDownBtn: UIButton = UIButton.configureBtn(
+    private let keyboardDownBtn: UIButton = UIButton.configureBtnWithImg(
         image: UIImage.keyboardDown,
         tintColor: UIColor.btnGrayColor)
     
@@ -112,6 +112,8 @@ final class InputAccessoryCustomView: UIView {
     private func configureRightBtn() {
         guard let currentScreen = self.currentWritingScreen else { return }
         
+        let buttons = [self.albumBtn, self.cameraBtn]
+        
         switch currentScreen {
         case .easyWritingScreen:
             // 보내기 버튼
@@ -125,7 +127,7 @@ final class InputAccessoryCustomView: UIView {
             self.sendBtn.addTarget(self, action: #selector(self.accessoryRightBtnTapped), for: .touchUpInside)
             
             self.sendBtn.isEnabled = false
-            
+            buttons.forEach { btn in btn.isHidden = true }
             break
             
         case .detailWritingScreen:
@@ -140,6 +142,8 @@ final class InputAccessoryCustomView: UIView {
             self.keyboardDownBtn.addTarget(self, action: #selector(self.accessoryRightBtnTapped), for: .touchUpInside)
             
             self.sendBtn.isEnabled = true
+            
+            buttons.forEach { btn in btn.isHidden = false }
         }
     }
     
@@ -149,10 +153,6 @@ final class InputAccessoryCustomView: UIView {
         /// 버튼 액션
         self.cameraBtn.addTarget(self, action: #selector(self.cameraBtnTapped), for: .touchUpInside)
         self.albumBtn.addTarget(self, action: #selector(self.albumBtnTapped), for: .touchUpInside)
-        
-        
-        
-        
     }
     
     

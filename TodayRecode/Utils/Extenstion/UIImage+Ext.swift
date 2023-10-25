@@ -35,4 +35,12 @@ extension UIImage {
     static let option: UIImage? = UIImage(systemName: "ellipsis")
     // 달력 이미지
     static let calendar: UIImage? = UIImage(systemName: "calendar")
+    // x 버튼
+    static let deleteBtn: UIImage? = UIImage(systemName: "xmark.circle.fill")
+    // 쓰레기통
+    static let trash: UIImage? = UIImage(systemName: "trash")
+    // 수정
+    static let modify: UIImage? = UIImage(systemName: "square.and.pencil")
+    
+    static let clock: UIImage? = UIImage(systemName: "clock.fill")
 }

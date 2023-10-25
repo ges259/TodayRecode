@@ -27,7 +27,7 @@ final class EasyWritingScreenController: UIViewController {
         return tv
     }()
     /// 버튼
-    private let expansionBtn: UIButton = UIButton.configureBtn(
+    private let expansionBtn: UIButton = UIButton.configureBtnWithImg(
         image: .expansion,
         tintColor: UIColor.btnGrayColor)
     /// 레이블
@@ -36,9 +36,7 @@ final class EasyWritingScreenController: UIViewController {
         font: UIFont.systemFont(ofSize: 14),
         textColor: UIColor.btnGrayColor)
     
-
     
-        
     
     
     
@@ -116,26 +114,22 @@ final class EasyWritingScreenController: UIViewController {
     
     // MARK: - 오토레이아웃 설정
     private func configureAotoLayout() {
-        [self.recodeTextView,
-         self.accessoryCustomView,
+        self.view.addSubview(self.containerView)
+        
+        [self.accessoryCustomView,
+         self.recodeTextView,
          self.placeholderLbl,
          self.expansionBtn].forEach { view in
             self.containerView.addSubview(view)
         }
-        self.view.addSubview(self.containerView)
         
         
         // 하단 악세서리뷰 (스택뷰 (카메라/앨범/날짜))
         self.accessoryCustomView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
+            make.leading.equalToSuperview().offset(5)
+            make.trailing.equalToSuperview()
             make.bottom.equalToSuperview().offset(-10)
             make.height.equalTo(40)
-        }
-        // 확대 버튼
-        self.expansionBtn.snp.makeConstraints { make in
-            make.top.equalTo(self.recodeTextView)
-            make.trailing.equalToSuperview().offset(-16)
-            make.height.width.equalTo(20)
         }
         // 텍스트뷰
         self.recodeTextView.snp.makeConstraints { make in
@@ -150,9 +144,16 @@ final class EasyWritingScreenController: UIViewController {
             make.top.equalTo(self.recodeTextView).offset(9)
             make.leading.equalTo(self.recodeTextView).offset(5)
         }
-        // 컨테이너 뷰
+        // 확대 버튼
+        self.expansionBtn.snp.makeConstraints { make in
+            make.top.equalTo(self.recodeTextView)
+            make.trailing.equalToSuperview().offset(-16)
+            make.height.width.equalTo(20)
+        }
+        // 컨테이너뷰
         self.containerView.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
+            make.height.greaterThanOrEqualTo(50)
         }
     }
     

@@ -22,16 +22,10 @@ extension UITextView {
         tv.keyboardType = .default
         tv.returnKeyType = .done
         
-        
-        
         tv.sizeToFit()
         
         // 폰트 크기
         tv.font = UIFont.systemFont(ofSize: fontSize)
         return tv
     }
-    
-    
-    
-    
 }

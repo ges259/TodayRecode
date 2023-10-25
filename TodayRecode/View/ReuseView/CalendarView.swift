@@ -37,6 +37,12 @@ final class CalendarView: UIView {
             calendar.appearance.titleDefaultColor = .black
             // 달력의 토,일 날짜 색깔
             calendar.appearance.titleWeekendColor = .red
+        // 월요일 시작
+//        calendar.firstWeekday = 2
+        // 일요일 시작
+        calendar.firstWeekday = 1
+        
+        
         return calendar
     }()
     

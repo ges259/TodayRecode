@@ -16,27 +16,19 @@ final class DetailWritingScreenController: UIViewController {
     private lazy var backgroundImg: UIImageView = UIImageView(
         image: UIImage.blueSky)
     
-    
-    // MARK: - Fix
-    /// 이미지뷰
-    private lazy var imageView: UIImageView = UIImageView(
-        image: UIImage(named: "cat"))
-    
-    //    private lazy var imageView: ImageCollectionView = {
-    //        let collectionView = ImageCollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-    //        return collectionView
-    //    }()
-    //
-    
-    
-    
-    
+    /// 콜렉션뷰
+    private lazy var collectionView: ImageCollectionView = {
+        let collectionView = ImageCollectionView()
+        collectionView.collectionViewEnum = .photoList
+        collectionView.delegate = self
+        return collectionView
+    }()
     
     /// 시간을 나타내주는 뷰
     private lazy var bottomAccessoryView: InputAccessoryCustomView = {
         let view = InputAccessoryCustomView()
-        view.delegate = self
-        view.backgroundColor = UIColor.customWhite5
+            view.delegate = self
+            view.backgroundColor = UIColor.customWhite5
         return view
     }()
     
@@ -75,7 +67,7 @@ final class DetailWritingScreenController: UIViewController {
     /// 스크롤뷰 내부 스택뷰
     private lazy var stackView: UIStackView = UIStackView.configureStackView(
         arrangedSubviews: [self.dateView,
-                           self.imageView,
+                           self.collectionView,
                            self.diaryTextView,
                            self.bottomAccessoryView],
         axis: .vertical,
@@ -84,7 +76,7 @@ final class DetailWritingScreenController: UIViewController {
         distribution: .fill)
     
     /// 기록 확인 버튼
-    private let recodeShowBtn: UIButton = UIButton.configureBtn(
+    private let recodeShowBtn: UIButton = UIButton.configureBtnWithImg(
         image: UIImage.recodeShow,
         tintColor: UIColor.black,
         backgroundColor: UIColor.white)
@@ -103,6 +95,7 @@ final class DetailWritingScreenController: UIViewController {
     
     
     
+    private lazy var pullDownBtn: UIButton = UIButton(type: .system)
     
     
     
@@ -128,26 +121,15 @@ final class DetailWritingScreenController: UIViewController {
     /// safeArea 설정
     private lazy var safeArea: CGFloat = 49
     /// 이미지뷰의 높이 (노티피케이션 액션에서 스크롤뷰의 높이를 조절할 때 사용)
-    private lazy var imageViewHeight: CGFloat = self.imageView.frame.height
+    private lazy var imageViewHeight: CGFloat = self.collectionView.frame.height
     
     
     
     /// 키보드가 올라와있는지 확인하는 변수
     private var keyboardShow: Bool = false
     
+    var currentPage: CGFloat = 0
     
-    
-    
-    /*
-     - DetailEditMode
-     - writingMode (수정 모드)
-     - safeMode (저장 모드)
-     */
-    /// 수정모드 / 저장모드를 알 수 있는 enum변수
-    var detailEditMode: DetailEditMode? {
-        // 네비게이션 이미지 설정
-        didSet { self.configureNavRightBtn() }
-    }
     /*
      - DetailViewMode
      - diary (일기 모드)
@@ -156,10 +138,8 @@ final class DetailWritingScreenController: UIViewController {
     /// 일기 모드 / 기록 모드를 알 수 있는 enum변수
     var detailViewMode: DetailViewMode? {
         didSet {
-            // 타이틀 레이블 설정
-            self.navigationItem.title = self.detailViewMode == .diary
-            ? "오늘 일기"
-            : "오늘 기록"
+            // 네비게이션바 오른쪽 버튼 및 타이틀 설정
+            self.configureNavTitleAndBtn()
         }
     }
     
@@ -232,8 +212,10 @@ extension DetailWritingScreenController {
     
     // MARK: - UI 설정
     private func configreUI() {
+        
+        
         // cornerRadius 설정
-        [self.imageView,
+        [self.collectionView,
          self.diaryTextView,
          self.bottomAccessoryView].forEach { view in
             view.clipsToBounds = true
@@ -279,8 +261,8 @@ extension DetailWritingScreenController {
             make.width.equalTo(self.scrollView.frameLayoutGuide)
         }
         // 이미지뷰
-        self.imageView.snp.makeConstraints { make in
-            make.width.height.equalTo(self.imageView.snp.width)
+        self.collectionView.snp.makeConstraints { make in
+            make.width.height.equalTo(self.collectionView.snp.width)
         }
         // 텍스트뷰
         self.diaryTextView.snp.makeConstraints { make in
@@ -321,23 +303,34 @@ extension DetailWritingScreenController {
     
     
     // MARK: - 오른쪽 네비게이션바 설정
-    private func configureNavRightBtn() {
-        // 오른쪽 네비게이션 버튼 생성
+    private func configureNavTitleAndBtn() {
+        // 네비게이션 오르쪽 버튼 설정
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: self.navRightBtnImg(currentEditMode: self.detailEditMode),
-            style: .done,
+            image: UIImage.option,
+            style: .plain,
             target: self,
-            action: #selector(self.navRightBtnTapped))
-    }
-    
-    
-    
-    // MARK: - 네비게이션바 이미지 설정
-    /// 모드에 따라 오른쪽 네비게이션 버튼 이미지 반환하는 변수
-    private func navRightBtnImg(currentEditMode: DetailEditMode?) -> UIImage? {
-        return currentEditMode == .writingMode
-        ? UIImage.check // 수정 모드라면 -> 체크마크
-        : UIImage.option // 저장 모드라면 -> 옵션
+            action: .none)
+        
+        // 메뉴 액션 설정
+        let addRecodeMenu = UIAction(title: "기록 추가", image: UIImage.plus) { _ in
+            self.addRecodeBtnTapped()
+        }
+        let deleteMenu = UIAction(title: "삭제", image: UIImage.trash) { _ in
+            self.deleteBtnTapped()
+        }
+        
+        // 네비게이션 타이틀 및 메뉴 버튼 설정
+        if self.detailViewMode == .diary {
+            self.navigationItem.rightBarButtonItem?.menu = UIMenu(
+                children: [deleteMenu])
+            self.navigationItem.title = "오늘 일기"
+            
+            
+        } else {
+            self.navigationItem.rightBarButtonItem?.menu = UIMenu(
+                children: [addRecodeMenu, deleteMenu])
+            self.navigationItem.title = "오늘 기록"
+        }
     }
 }
     
@@ -374,7 +367,6 @@ extension DetailWritingScreenController {
             // 기록 확인 버튼 위로 올리기
             // 바텀 악세서리뷰 숨기기
             self.bottomAccessoryViewIsHidden(true, keyboardSize: keyboardSize)
-            self.keyboardShow = true
         }
     }
     @objc private func keyboardWillHide(_ notification: Notification) {
@@ -385,7 +377,6 @@ extension DetailWritingScreenController {
             // 기록 확인 버튼 내리기
             // 바텀 악세서리뷰 보이게 하기
             self.bottomAccessoryViewIsHidden(false, keyboardSize: keyboardSize)
-            self.keyboardShow = false
         }
     }
     /// 하단 악세서리뷰 isHidden 설정
@@ -404,13 +395,13 @@ extension DetailWritingScreenController {
             
             // 스크롤뷰를 텍스트뷰의 맨 위에 맞춤
             // 이미지뷰가 있다면
-            if !self.imageView.isHidden {
+            if !self.collectionView.isHidden {
                 // 이미지뷰 높이 + 날짜뷰 높이 + 사이 공간들의 합
                 UIView.animate(withDuration: 0.3) {
                     self.scrollView.contentOffset.y += self.imageViewHeight + 60
                 }
             }
-            
+            self.keyboardShow = true
             
             
         // 키보드 내리는 상황 -> 바텀 악세서리뷰 보이게 하기
@@ -428,27 +419,24 @@ extension DetailWritingScreenController {
                     self.bottomAccessoryView.alpha = 1
                 }
             }
+            self.keyboardShow = false
+            
         }
     }
     
     
     
-    // MARK: - 네비게이션 아이템 액션
-    /// 오른쪽 네비게이션 버튼을 누르면
-    @objc private func navRightBtnTapped() {
-        // 수정 모드라면 -> 저장 모드로 바꾸기
-        if self.detailEditMode == .writingMode {
-            self.navigationItem.rightBarButtonItem?.image = self.navRightBtnImg(currentEditMode: .saveMode)
-            self.detailEditMode = .saveMode
-            
-        // 저장 모드라면
-            // ->
-                // -> 수정 모드로 바꾸기
-                // -> 삭제
-        } else {
-            self.navigationItem.rightBarButtonItem?.image = self.navRightBtnImg(currentEditMode: .writingMode)
-            self.detailEditMode = .writingMode
-        }
+    // MARK: - 네비게이션 메뉴 액션
+    @objc private func addRecodeBtnTapped() {
+        print(#function)
+    }
+    @objc private func deleteBtnTapped() {
+        self.presentAlertController(
+            alertStyle: .actionSheet,
+            withTitle: "정말 삭제 하시겠습니까?",
+            secondButtonName: "삭제하기") { _ in
+                print(#function)
+            }
     }
     
     
@@ -515,7 +503,7 @@ extension DetailWritingScreenController: AccessoryViewDelegate {
 
 // MARK: - 스크롤뷰 델리게이트
 extension DetailWritingScreenController: UIScrollViewDelegate {
-    /// /// 스크롤이 끝났을 때 호출
+    /// 스크롤이 끝났을 때 호출
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         self.keyboardHide()
     }
@@ -530,6 +518,34 @@ extension DetailWritingScreenController: UIScrollViewDelegate {
         if self.keyboardShow && scrollView.contentOffset.y < 1 {
             self.diaryTextView.resignFirstResponder()
         }
+    }
+    /// 콜렉션뷰에서 스크롤이 끝났을 때
+    func scrollViewWillEndDragging(
+        _ scrollView: UIScrollView, // 스크롤뷰(컬렉션뷰)
+        withVelocity velocity: CGPoint, // 스크롤하다 터치 해제 시 속도
+        targetContentOffset: UnsafeMutablePointer<CGPoint>) // 스크롤 속도가 줄어들어 정지될 때 예상되는 위치
+    {
+        // 현재 x의 offset위치
+        let scrolledOffsetX = targetContentOffset.pointee.x + scrollView.contentInset.left
+        // 스크롤뷰의 크기 + 왼쪽 insets값
+        let cellWidth = self.collectionView.frame.width + 20
+        
+        // 스크롤한 위치값
+        var index = scrolledOffsetX / cellWidth
+        
+        // 한 페이지씩 움직일 수 있도록 설정
+        if self.currentPage > index {
+            self.currentPage -= 1
+        } else if currentPage < index {
+            self.currentPage += 1
+        }
+        // 현재 페이지 저장
+        index = self.currentPage
+        // 스크롤 속도가 줄어들어 정지될 때 예상되는 위치 설정
+        // 즉, 멈출 페이지
+        targetContentOffset.pointee = CGPoint(
+            x: index * cellWidth - scrollView.contentInset.left,
+            y: scrollView.contentInset.top)
     }
 }
 
@@ -579,5 +595,39 @@ extension DetailWritingScreenController: UITextViewDelegate {
                 }
             }
         }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// MARK: - 콜렉션뷰 델리게이트
+extension DetailWritingScreenController: CollectionViewDelegate {
+    func itemDeleteBtnTapped() {
+        print(#function)
+    }
+    func itemTapped() {
+        print(#function)
+    }
+    func collectionViewScrolled() {
+        print(#function)
     }
 }

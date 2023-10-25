@@ -96,7 +96,7 @@ extension RecodeCheckController {
         // ********** 오토레이아웃 설정 **********
         // 날짜뷰
         self.dateView.snp.makeConstraints { make in
-            make.height.equalTo(35)
+            make.height.equalTo(50)
         }
         // 테이블뷰
         self.tableView.snp.makeConstraints { make in
@@ -104,14 +104,13 @@ extension RecodeCheckController {
         }
         // 스택뷰
         self.stackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(7)
+            make.top.equalToSuperview().offset(10)
             make.leading.trailing.equalToSuperview()
             // 10이상
             make.bottom.equalToSuperview().offset(-40)
             
             // se
 //            make.bottom.equalToSuperview()
-            
         }
         // 컨테이너뷰
         self.containerView.snp.makeConstraints { make in

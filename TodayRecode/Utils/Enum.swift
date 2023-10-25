@@ -47,3 +47,57 @@ enum DetailViewMode {
     case diary // 일기
     case recode // 기록
 }
+
+
+
+
+
+
+enum CollectionViewEnum {
+    case diaryList
+    case photoList
+}
+
+
+
+
+
+enum SettingTableEnum: Int {
+    case dateFormat = 0
+    case timeFormat = 1
+    
+    var image: UIImage? {
+        switch self {
+        case .dateFormat: return UIImage.calendar
+        case .timeFormat: return UIImage.clock
+        }
+    }
+    
+    var alertTitle: String {
+        switch self {
+        case .dateFormat: return "일주일 시작일을 선택해주세요"
+        case .timeFormat: return "날짜 형식을 선택해주세요"
+        }
+    }
+    
+    var text: String {
+        switch self {
+        case .dateFormat: return "일주일 시작일"
+        case .timeFormat: return "시간 형식"
+        }
+    }
+    
+    var firstOption: String {
+        switch self {
+        case .dateFormat: return "일요일 시작"
+        case .timeFormat: return "12시간 형식: PM 2:00"
+        }
+    }
+    
+    var secondOption: String {
+        switch self {
+        case .dateFormat: return "월요일 시작"
+        case .timeFormat: return "24시간 형식: 14:00"
+        }
+    }
+}

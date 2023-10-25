@@ -10,7 +10,7 @@ import UIKit
 extension UILabel {
     static func configureLbl(text: String? = nil,
                              font: UIFont,
-                             textColor: UIColor)
+                             textColor: UIColor = UIColor.black)
     -> UILabel {
         
         let lbl = UILabel()

@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIButton {
-    static func configureBtn(image: UIImage?,
+    static func configureBtnWithImg(image: UIImage?,
                              tintColor: UIColor,
                              backgroundColor: UIColor? = UIColor.clear)
     -> UIButton {
@@ -18,6 +18,19 @@ extension UIButton {
         
             btn.backgroundColor = backgroundColor
 
+        return btn
+    }
+    
+    static func configureBtnWithTitle(title: String,
+                                      font: UIFont,
+                                      backgroundColor: UIColor)
+    -> UIButton {
+        let btn = UIButton(type: .system)
+            btn.setTitle(title, for: .normal)
+            btn.titleLabel?.font = font
+            btn.backgroundColor = backgroundColor
+        
+            btn.titleLabel?.textColor = UIColor.black
         return btn
     }
 }

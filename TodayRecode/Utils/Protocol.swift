@@ -29,3 +29,15 @@ protocol CalendarDelegate: AnyObject {
     func heightChanged(height: CGFloat)
     func monthChanged(month: String)
 }
+
+
+
+protocol ImageCollectionViewDelegate: AnyObject {
+    func deleteBtnTapped()
+}
+
+protocol CollectionViewDelegate: AnyObject {
+    func itemDeleteBtnTapped()
+    func itemTapped()
+    func collectionViewScrolled()
+}

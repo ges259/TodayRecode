@@ -45,4 +45,39 @@ extension UIViewController {
         }
         return 0.0
     }
+    
+    
+    // MARK: - presentAlertController
+    func presentAlertController(alertStyle: UIAlertController.Style,
+                                withTitle title: String,
+                                message: String? = nil,
+                                secondButtonName: String,
+                                thirdButtonName: String? = nil,
+                                completion: @escaping (Int) -> Void) {
+        
+        // alertController - configure
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: alertStyle)
+        // first Button - cancel
+        alertController.addAction(
+            UIAlertAction(title: "취소",
+                          style: .cancel,
+                          handler: nil))
+        // second Button - Action
+        alertController.addAction(
+            UIAlertAction(title: secondButtonName,
+                          style: .default,
+                          handler: { _ in completion(0) }))
+        // third Button - Action
+        if let thirdButtonName = thirdButtonName {
+            alertController.addAction(
+                UIAlertAction(title: thirdButtonName,
+                              style: .default,
+                              handler: { _ in completion(1) }))
+        }
+        // present
+        self.present(alertController, animated: true)
+    }
 }

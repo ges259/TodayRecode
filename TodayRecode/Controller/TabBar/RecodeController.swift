@@ -29,7 +29,7 @@ final class RecodeController: UIViewController {
     private lazy var dateView: DateView = DateView()
     
     /// +버튼
-    private lazy var plusBtn: UIButton = UIButton.configureBtn(
+    private lazy var plusBtn: UIButton = UIButton.configureBtnWithImg(
         image: UIImage.plus,
         tintColor: UIColor.black,
         backgroundColor: UIColor.white)
@@ -132,7 +132,7 @@ final class RecodeController: UIViewController {
 
 extension RecodeController {
     
-    // MARK: - UI 구성
+    // MARK: - UI 설정
     private func configureUI() {
         // 네비게이션 타이틀 설정
         self.navigationItem.titleView = self.NavTitle
@@ -227,19 +227,6 @@ extension RecodeController {
         
         // 플러스 버튼 액션 설정
         self.plusBtn.addTarget(self, action: #selector(self.plusBtnTapped), for: .touchUpInside)
-        
-        self.configureNavBtn()
-    }
-    
-    
-    // MARK: - 네비게이션 버튼 설정
-    private func configureNavBtn() {
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage.calendar,
-            style: .done,
-            target: self,
-            action: #selector(self.calendarTapped))
-        self.navigationItem.rightBarButtonItem?.tintColor = .black
     }
 }
     
@@ -265,16 +252,6 @@ extension RecodeController {
 // MARK: - 액션
 
 extension RecodeController {
-    
-    // MARK: - 네비게이션 버튼 액션
-    @objc private func calendarTapped() {
-        UIView.animate(withDuration: 0.5) {
-            self.calendar.isHidden.toggle()
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    
     
     // MARK: - 네비게이션 타이틀 재설정
     private func setNavTitle(month: String) {
@@ -322,7 +299,6 @@ extension RecodeController {
             // 상세 작성뷰에서 탭바 없애기
             vc.hidesBottomBarWhenPushed = true
             vc.detailViewMode = .recode
-            vc.detailEditMode = .writingMode
         self.navigationController?.pushViewController(vc, animated: true)
         // MARK: - Fix
         /*
