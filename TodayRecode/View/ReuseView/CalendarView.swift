@@ -144,9 +144,8 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource {
     
     
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
-        let currentMonth = self.todayReturn(
-            todayFormat: .month_M,
-            date: calendar.currentPage)
-        self.delegate?.monthChanged(month: currentMonth)
+        let yearAndMonth = self.yearAndMonthReturn(date: calendar.currentPage)
+        
+        self.delegate?.monthChanged(year: yearAndMonth[0], month: yearAndMonth[1])
     }
 }

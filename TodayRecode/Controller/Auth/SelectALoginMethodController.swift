@@ -18,19 +18,19 @@ final class SelectALoginMethodController: UIViewController {
     /// 애플 로그인 버튼
     private lazy var appleLogin: UIButton = UIButton.configureBtnWithTitle(
         title: "Apple로 로그인",
-        font: UIFont.systemFont(ofSize: 20),
+        font: UIFont.systemFont(ofSize: 18),
         backgroundColor: UIColor.customWhite5)
     
     /// 구글 로그인 버튼
     private lazy var googleLogin: UIButton = UIButton.configureBtnWithTitle(
         title: "Google로 로그인",
-        font: UIFont.systemFont(ofSize: 20),
+        font: UIFont.systemFont(ofSize: 18),
         backgroundColor: UIColor.customWhite5)
     
     /// 이메일 로그인 버튼
     private lazy var emailLogin: UIButton = UIButton.configureBtnWithTitle(
         title: "이메일로 로그인",
-        font: UIFont.systemFont(ofSize: 20),
+        font: UIFont.systemFont(ofSize: 18),
         backgroundColor: UIColor.customWhite5)
     
     /// 스택뷰
@@ -67,6 +67,9 @@ final class SelectALoginMethodController: UIViewController {
 // MARK: - 화면 설정
 extension SelectALoginMethodController {
     private func configureUIAndAutoLayout() {
+//        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        self.navigationItem.title = "하루일기"
+        
         // ********** addSubview 설정 **********
         self.view.addSubview(self.backgroundImg)
         self.view.addSubview(self.stackView)
@@ -78,7 +81,7 @@ extension SelectALoginMethodController {
         self.stackView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
-            make.bottom.equalToSuperview().offset(100)
+            make.bottom.equalToSuperview().offset(-100)
         }
         // 버튼의 높이 설정 및 코너레디어스 설정
         [self.appleLogin,
@@ -120,5 +123,8 @@ extension SelectALoginMethodController {
     }
     @objc private func emailLoginTapped() {
         print(#function)
+        
+        let vc = LoginController()
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }

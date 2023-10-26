@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 final class SignUpController: UIViewController {
     
@@ -20,7 +21,7 @@ final class SignUpController: UIViewController {
     /// "회원가입" 레이블
     private lazy var signUpLbl: UILabel = UILabel.configureLbl(
         text: "회원가입",
-        font: UIFont.boldSystemFont(ofSize: 20))
+        font: UIFont.boldSystemFont(ofSize: 30))
     
     /// 유저 이름 텍스트필드
     private lazy var userNameTF: UITextField = UITextField.configureAuthTextField(
@@ -42,13 +43,7 @@ final class SignUpController: UIViewController {
     private lazy var signUpBtn: UIButton = UIButton.configureBtnWithTitle(
         title: "회원가입",
         font: UIFont.systemFont(ofSize: 20),
-        backgroundColor: UIColor.customWhite5)
-    
-    /// 로그인 화면으로 이동 버튼
-    private lazy var backToLoginViewBtn: UIButton = UIButton.configureBtnWithTitle(
-        title: "아이디가 이미 있으신가요?",
-        font: UIFont.systemFont(ofSize: 20),
-        backgroundColor: UIColor.customWhite5)
+        backgroundColor: UIColor.customblue3)
     
     /// 스택뷰
     private lazy var stackView: UIStackView = UIStackView.configureStackView(
@@ -56,10 +51,9 @@ final class SignUpController: UIViewController {
                            self.userNameTF,
                            self.emailTF,
                            self.passwordTF,
-                           self.signUpBtn,
-                           self.backToLoginViewBtn],
+                           self.signUpBtn],
         axis: .vertical,
-        spacing: 4,
+        spacing: 7,
         alignment: .fill,
         distribution: .fill)
     
@@ -95,17 +89,54 @@ final class SignUpController: UIViewController {
 // MARK: - 화면 설정
 extension SignUpController {
     private func configureUI() {
+        self.navigationItem.title = "회원가입"
+        self.stackView.setCustomSpacing(12, after: self.signUpLbl)
         
+        [self.containerView,
+         self.emailTF,
+         self.userNameTF,
+         self.passwordTF,
+         self.signUpBtn].forEach { view in
+            view.clipsToBounds = true
+            view.layer.cornerRadius = 10
+        }
     }
     private func configureAutoLayout() {
         // ********** addSubview 설정 **********
+        self.view.addSubview(self.backgroundImg)
+        self.view.addSubview(self.containerView)
+        self.containerView.addSubview(self.stackView)
         
         // ********** 오토레이아웃 설정 **********
-        
+        // 배경뷰
+        self.backgroundImg.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        // 컨테이너뷰
+        self.containerView.snp.makeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(50)
+            make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-10)
+        }
+        // 스택뷰
+        self.stackView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(20)
+            make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-10)
+            make.bottom.equalToSuperview().offset(-10)
+        }
+        [self.emailTF,
+         self.userNameTF,
+         self.passwordTF,
+         self.signUpBtn].forEach { view in
+            view.snp.makeConstraints { make in
+                make.height.equalTo(45)
+            }
+        }
         
     }
     private func configureAutoAction() {
-        
+        self.signUpBtn.addTarget(self, action: #selector(self.signUpBtnTapped), for: .touchUpInside)
     }
 }
 
@@ -120,5 +151,7 @@ extension SignUpController {
 
 // MARK: - 액션
 extension SignUpController {
-    
+    @objc private func signUpBtnTapped() {
+        self.dismiss(animated: true)
+    }
 }

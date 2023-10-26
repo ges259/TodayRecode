@@ -14,8 +14,8 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     /// 이미지뷰
     private lazy var imageView: UIImageView = {
         let img = UIImageView()
-            img.backgroundColor = UIColor.customWhite5
-            img.contentMode = .scaleAspectFill
+        img.backgroundColor = UIColor.customWhite5
+        img.contentMode = .scaleAspectFill
         return img
     }()
     
@@ -33,7 +33,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
             font: UIFont.boldSystemFont(ofSize: 30),
             textColor: UIColor.black)
         
-            lbl.textAlignment = .center
+        lbl.textAlignment = .center
         return lbl
     }()
     
@@ -76,6 +76,8 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
     
     
     
@@ -83,15 +85,23 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     
     
     
-    // MARK: - 화면 설정
+    
+
+// MARK: - 화면 설정
+
+extension ImageCollectionViewCell {
+    
+    // MARK: - UI 설정
     private func configureUI() {
         self.clipsToBounds = true
         self.layer.cornerRadius = 10
         
         // MARK: - Fix
-        self.dateLbl.text = "10"
+        self.dateLbl.text = "10일"
         self.imageView.image = UIImage(named: "cat")
     }
+    
+    
     
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
@@ -102,6 +112,8 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     }
     
     
+    
+    // MARK: - Enum
     private func configureUIByEnum() {
         if self.collectionViewEnum == .diaryList {
             // 레이아웃 설정
@@ -124,16 +136,26 @@ final class ImageCollectionViewCell: UICollectionViewCell {
             }
         }
     }
-    
-    
-    
-    
     // MARK: - 액션 설정
     private func configureAction() {
         self.deleteBtn.addTarget(self, action: #selector(self.deleteBtnTapped), for: .touchUpInside)
     }
+}
     
+ 
+
+
+
+
+
+
+
+
+// MARK: - 액션
+
+extension ImageCollectionViewCell {
     
+    // MARK: - 삭제 버튼 액션
     @objc private func deleteBtnTapped() {
         self.delegate?.deleteBtnTapped()
     }

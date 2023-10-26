@@ -71,7 +71,7 @@ final class DetailWritingScreenController: UIViewController {
                            self.diaryTextView,
                            self.bottomAccessoryView],
         axis: .vertical,
-        spacing: 10,
+        spacing: 7,
         alignment: .fill,
         distribution: .fill)
     
@@ -212,7 +212,7 @@ extension DetailWritingScreenController {
     
     // MARK: - UI 설정
     private func configreUI() {
-        
+        self.collectionView.isHidden = true
         
         // cornerRadius 설정
         [self.collectionView,
@@ -247,7 +247,7 @@ extension DetailWritingScreenController {
         }
         // 날짜 뷰
         self.dateView.snp.makeConstraints { make in
-            make.height.equalTo(40)
+            make.height.equalTo(35)
         }
         // 스크롤뷰
         self.scrollView.snp.makeConstraints { make in
@@ -384,35 +384,34 @@ extension DetailWritingScreenController {
     private func bottomAccessoryViewIsHidden(_ isHidden: Bool, keyboardSize: CGFloat) {
         // 키보드 올리는 상황 -> 바텀 악세서리뷰 없애기
         if isHidden {
-            // [기록 확인 버튼] 키보드에 맞춰 올리기
+            // ********** 기록 확인 버튼 위치 올리기 **********
             self.recodeShowBtn.frame.origin.y = self.viewHeight - keyboardSize - 53 - 10
-            
+
+            // ********** 스크롤뷰 텍스트뷰에 위치에 맞게 설정 **********
+            // 이미지뷰가 있다면
+            if !self.collectionView.isHidden {
+                // 이미지뷰 높이 + 날짜뷰 높이(35) + top(10) + spacing(7)
+                UIView.animate(withDuration: 0.3) {
+                    self.scrollView.contentOffset.y += self.imageViewHeight + 52
+                }
+            }
             // ********** 바텀 악세서리뷰 위치 설정 **********
-            // 부드러운 애니메이션을 위한 설정
             self.bottomAccessoryView.alpha = 0
             // 스택뷰의 spacing 거리를 늘려서 스크롤할 수 있는 공간 만들기
             self.stackView.setCustomSpacing(keyboardSize - 50 - 34, after: self.diaryTextView)
-            
-            // 스크롤뷰를 텍스트뷰의 맨 위에 맞춤
-            // 이미지뷰가 있다면
-            if !self.collectionView.isHidden {
-                // 이미지뷰 높이 + 날짜뷰 높이 + 사이 공간들의 합
-                UIView.animate(withDuration: 0.3) {
-                    self.scrollView.contentOffset.y += self.imageViewHeight + 60
-                }
-            }
             self.keyboardShow = true
             
             
         // 키보드 내리는 상황 -> 바텀 악세서리뷰 보이게 하기
         } else {
-            // [기록 확인 버튼] 키보드에 맞춰 내리기
+            // ********** 기록 확인 버튼 위치 내리기 **********
             // self.viewHeight - 53 - 45 - self.safeArea
             self.recodeShowBtn.frame.origin.y = self.viewHeight - self.safeArea - 53
             
-            // ********** 바텀 악세서리뷰 위치 설정 **********
-            // 스택뷰의 spacing 원상복구
+            // ********** 스택뷰 간격 원위치 **********
             self.stackView.setCustomSpacing(10, after: self.diaryTextView)
+            
+            // ********** 바텀 악세서리뷰 위치 설정 **********
             // 부드러운 애니메이션을 위한 설정
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.4) {
                 UIView.animate(withDuration: 0.3) {
@@ -420,7 +419,6 @@ extension DetailWritingScreenController {
                 }
             }
             self.keyboardShow = false
-            
         }
     }
     
@@ -429,13 +427,15 @@ extension DetailWritingScreenController {
     // MARK: - 네비게이션 메뉴 액션
     @objc private func addRecodeBtnTapped() {
         print(#function)
+        self.collectionView.isHidden.toggle()
     }
     @objc private func deleteBtnTapped() {
-        self.presentAlertController(
-            alertStyle: .actionSheet,
+        self.customAlert(
             withTitle: "정말 삭제 하시겠습니까?",
-            secondButtonName: "삭제하기") { _ in
+            firstBtnName: "삭제하기",
+            firstBtnColor: UIColor.red) { _ in
                 print(#function)
+                self.navigationController?.popViewController(animated: true)
             }
     }
     
@@ -444,7 +444,6 @@ extension DetailWritingScreenController {
     // MARK: - 기록 확인 버튼 액션
     @objc private func recodeShowBtnTapped() {
         self.diaryTextView.resignFirstResponder()
-        
         
         let recodeCheckVC = RecodeCheckController()
             recodeCheckVC.modalPresentationStyle = .overFullScreen
@@ -518,34 +517,6 @@ extension DetailWritingScreenController: UIScrollViewDelegate {
         if self.keyboardShow && scrollView.contentOffset.y < 1 {
             self.diaryTextView.resignFirstResponder()
         }
-    }
-    /// 콜렉션뷰에서 스크롤이 끝났을 때
-    func scrollViewWillEndDragging(
-        _ scrollView: UIScrollView, // 스크롤뷰(컬렉션뷰)
-        withVelocity velocity: CGPoint, // 스크롤하다 터치 해제 시 속도
-        targetContentOffset: UnsafeMutablePointer<CGPoint>) // 스크롤 속도가 줄어들어 정지될 때 예상되는 위치
-    {
-        // 현재 x의 offset위치
-        let scrolledOffsetX = targetContentOffset.pointee.x + scrollView.contentInset.left
-        // 스크롤뷰의 크기 + 왼쪽 insets값
-        let cellWidth = self.collectionView.frame.width + 20
-        
-        // 스크롤한 위치값
-        var index = scrolledOffsetX / cellWidth
-        
-        // 한 페이지씩 움직일 수 있도록 설정
-        if self.currentPage > index {
-            self.currentPage -= 1
-        } else if currentPage < index {
-            self.currentPage += 1
-        }
-        // 현재 페이지 저장
-        index = self.currentPage
-        // 스크롤 속도가 줄어들어 정지될 때 예상되는 위치 설정
-        // 즉, 멈출 페이지
-        targetContentOffset.pointee = CGPoint(
-            x: index * cellWidth - scrollView.contentInset.left,
-            y: scrollView.contentInset.top)
     }
 }
 

@@ -29,6 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             navBar.standardAppearance = navigationBarAppearance
             navBar.scrollEdgeAppearance = navigationBarAppearance
             navBar.compactAppearance = navigationBarAppearance
+            
+            navBar.tintColor = UIColor.black
         
         
         return true

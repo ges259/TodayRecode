@@ -22,6 +22,7 @@ extension UIButton {
     }
     
     static func configureBtnWithTitle(title: String,
+                                      titleColor: UIColor = UIColor.black,
                                       font: UIFont,
                                       backgroundColor: UIColor)
     -> UIButton {
@@ -30,7 +31,7 @@ extension UIButton {
             btn.titleLabel?.font = font
             btn.backgroundColor = backgroundColor
         
-            btn.titleLabel?.textColor = UIColor.black
+            btn.setTitleColor(titleColor, for: .normal)
         return btn
     }
 }

@@ -18,6 +18,9 @@ final class RecodeCheckController: UIViewController {
     /// 날짜 표시해주는 뷰 (+ 레이블)
     private lazy var dateView: DateView = DateView()
     
+    private lazy var separatorView: UIView = UIView.backgroundView(
+        color: UIColor.lightGray)
+    
     /// 테이블뷰
     private lazy var tableView: RecodeTableView = {
         let tableView = RecodeTableView()
@@ -31,9 +34,10 @@ final class RecodeCheckController: UIViewController {
     /// 스택뷰
     private lazy var stackView: UIStackView = UIStackView.configureStackView(
         arrangedSubviews: [self.dateView,
+                           self.separatorView,
                            self.tableView],
         axis: .vertical,
-        spacing: 7,
+        spacing: 3,
         alignment: .fill,
         distribution: .fill)
     
@@ -98,6 +102,9 @@ extension RecodeCheckController {
         self.dateView.snp.makeConstraints { make in
             make.height.equalTo(50)
         }
+        self.separatorView.snp.makeConstraints { make in
+            make.height.equalTo(0.5)
+        }
         // 테이블뷰
         self.tableView.snp.makeConstraints { make in
             make.height.greaterThanOrEqualTo(100)
@@ -133,8 +140,8 @@ extension RecodeCheckController {
 extension RecodeCheckController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 //        return self.tableCellCount
-        return 20
-//        return 3
+//        return 20
+        return 3
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

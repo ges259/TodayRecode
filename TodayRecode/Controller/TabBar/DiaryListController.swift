@@ -15,7 +15,7 @@ final class DiaryListController: UIViewController {
         image: UIImage.blueSky)
     
     /// 네비게이션 타이틀 레이블
-    private lazy var NavTitle: UILabel = {
+    private lazy var navTitle: UILabel = {
         let lbl = UILabel()
             lbl.numberOfLines = 2
             lbl.textAlignment = .center
@@ -40,7 +40,6 @@ final class DiaryListController: UIViewController {
     private lazy var calendar: CalendarView = {
         let calendar = CalendarView()
             calendar.delegate = self
-//        calendar.isHidden = true
         return calendar
     }()
     /// 달력의 높이 제약
@@ -51,7 +50,7 @@ final class DiaryListController: UIViewController {
         arrangedSubviews: [self.calendar,
                            self.dateView],
         axis: .vertical,
-        spacing: 7,
+        spacing: 5,
         alignment: .fill,
         distribution: .fill)
     
@@ -125,9 +124,9 @@ extension DiaryListController {
     // MARK: - UI 설정
     private func configureUI() {
         // 네비게이션 타이틀 설정
-        self.navigationItem.titleView = self.NavTitle
+        self.navigationItem.titleView = self.navTitle
         // MARK: - Fix
-        self.setNavTitle(month: "10월")
+        self.setNavTitle(year: "2023년", month: "10월")
         
         // 코너 둥글게 설정
         self.calendar.clipsToBounds = true
@@ -149,7 +148,7 @@ extension DiaryListController {
         }
         // 날짜 뷰
         self.dateView.snp.makeConstraints { make in
-            make.height.equalTo(40)
+            make.height.equalTo(35)
         }
         // 달력
         self.calendar.translatesAutoresizingMaskIntoConstraints = false
@@ -168,9 +167,13 @@ extension DiaryListController {
         }
         // 콜렉션 뷰
         self.collectionView.snp.makeConstraints { make in
-            make.top.equalTo(self.stackView.snp.bottom).offset(7)
+            make.top.equalTo(self.stackView.snp.bottom).offset(5)
             make.leading.trailing.equalTo(self.stackView)
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-10)
+        }
+        // 네비게이션 타이틀
+        self.navTitle.snp.makeConstraints { make in
+            make.width.lessThanOrEqualTo(100)
         }
     }
 }
@@ -200,8 +203,11 @@ extension DiaryListController {
     
     
     // MARK: - 네비게이션 타이틀 설정 액션
-    private func setNavTitle(month: String) {
-        self.NavTitle.attributedText = self.configureNavTitle("하루 일기", month: month)
+    private func setNavTitle(year: String, month: String) {
+        self.navTitle.attributedText = self.configureNavTitle(
+            "하루 일기",
+            year: year,
+            month: month)
     }
 }
 
@@ -235,8 +241,8 @@ extension DiaryListController: CalendarDelegate {
         
     }
     /// month가 바뀌었을 때 호출
-    func monthChanged(month: String) {
-        self.setNavTitle(month: month)
+    func monthChanged(year: String, month: String) {
+        self.setNavTitle(year: year, month: month)
     }
 }
 
@@ -261,174 +267,13 @@ extension DiaryListController: CollectionViewDelegate {
         print(#function)
     }
     func itemTapped() {
-        print(#function)
+        let vc = DetailWritingScreenController()
+            // 상세 작성뷰에서 탭바 없애기
+            vc.hidesBottomBarWhenPushed = true
+            vc.detailViewMode = .diary
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     func collectionViewScrolled() {
         print(#function)
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// MARK: - 스크롤뷰 델리게이트
-//extension DiaryListController {
-//    /// 스크롤이 시작되었을 때
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        let offset = (scrollView.contentOffset.x) / (self.collectionViewWidth + 15)
-//        print(Int(offset))
-//
-//
-//        // 달력을 바꿈
-//        // offset에 따라 -> Array[] (일기를 쓴 날)
-////        if self.currentItem != Int(offset) {
-////            self.currentItem = Int(offset)
-////            print(Int(offset))
-////        }
-//    }
-//
-//
-//
-//    /// 콜렉션뷰에서 스크롤이 끝났을 때
-//    func scrollViewWillEndDragging(
-//        _ scrollView: UIScrollView, // 스크롤뷰(컬렉션뷰)
-//        withVelocity velocity: CGPoint, // 스크롤하다 터치 해제 시 속도
-//        targetContentOffset: UnsafeMutablePointer<CGPoint>) // 스크롤 속도가 줄어들어 정지될 때 예상되는 위치
-//    {
-//        // 현재 x의 offset위치
-//        let scrolledOffsetX = targetContentOffset.pointee.x + scrollView.contentInset.left
-//        // 스크롤뷰의 크기 + 왼쪽 insets값
-//        let cellWidth = self.collectionViewWidth + 20
-//
-//        // 스크롤한 위치값
-//        var index = scrolledOffsetX / cellWidth
-//
-////        // 어디서 어디로 스크롤하는지 확인
-////        let scrolled = scrollView.contentOffset.x > targetContentOffset.pointee.x
-////        if scrollView.contentOffset.x > targetContentOffset.pointee.x {
-////            // 왼쪽 -> 오른쪽으로 갈 때 자연스럽게
-////            index = floor(index)
-////
-////        } else if scrollView.contentOffset.x < targetContentOffset.pointee.x {
-////            // 오른쪽 -> 왼쪽으로 갈 때 자연스럽게
-////            index = ceil(index)
-////        }
-//
-//        // 한 페이지씩 움직일 수 있도록 설정
-//        if self.currentPage > index {
-//            self.currentPage -= 1
-//        } else if currentPage < index {
-//            self.currentPage += 1
-//        }
-//        // 현재 페이지 저장
-//        index = self.currentPage
-//        // 스크롤 속도가 줄어들어 정지될 때 예상되는 위치 설정
-//        // 즉, 멈출 페이지
-//        targetContentOffset.pointee = CGPoint(
-//            x: index * cellWidth - scrollView.contentInset.left,
-//            y: scrollView.contentInset.top)
-//    }
-//}
-
-
-
-
-
-
-
-
-
-
-// MARK: - 콜렉션뷰 델리게이트
-//extension DiaryListController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate,  UICollectionViewDataSource {
-//    /// 아이템의 개수 설정
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return self.num.count
-//    }
-//    /// 셀 설정
-//    func collectionView(
-//        _ collectionView: UICollectionView,
-//        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//
-//        let cell = collectionView.dequeueReusableCell(
-//            withReuseIdentifier: Identifier.diaryListCollectionViewCell,
-//            for: indexPath) as! DiaryListCollectionViewCell
-//            cell.collectionViewEnum = .diaryList
-//            cell.dateLbl.text = self.num[indexPath.row]
-//        return  cell
-//    }
-//    /// 셀을 클릭했을 때
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        let vc = DetailWritingScreenController()
-//            // 상세 작성뷰에서 탭바 없애기
-//            vc.hidesBottomBarWhenPushed = true
-//            vc.detailViewMode = .diary
-//            vc.detailEditMode = .writingMode
-//        self.navigationController?.pushViewController(vc, animated: true)
-//
-//        // MARK: - Fix
-//        /*
-//         추가해야할 것
-//         - 오늘인지
-//            - 아직 일기를 쓰지 않았는지   -> 수정 모드로 진입
-//            - 이미 일기를 썼는지        -> 저장 모드로 진입
-//         - 오늘이 아닌지                -> 저장 모드로 진입
-//         */
-//    }
-//
-//
-//
-//    /// 아이템의 크기
-//    func collectionView(_ collectionView: UICollectionView,
-//                        layout collectionViewLayout: UICollectionViewLayout,
-//                        sizeForItemAt indexPath: IndexPath) -> CGSize {
-//
-////        let offset = (collectionView.contentOffset.y) / (self.viewWidth + 15)
-//
-//
-//        return CGSize(width: self.collectionViewWidth, height: self.collectionView.frame.height)
-//    }
-//    /// 아이템간 좌우 간격
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-//        return 20
-//    }
-//    /// 아이템간 상하 간격
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-//        return 0
-//    }
-//}

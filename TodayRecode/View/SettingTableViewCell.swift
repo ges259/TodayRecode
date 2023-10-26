@@ -18,12 +18,12 @@ final class SettingTableViewCell: UITableViewCell {
     
     /// 레이블
     private let mainLabel: UILabel = UILabel.configureLbl(
-        font: UIFont.boldSystemFont(ofSize: 14),
+        font: UIFont.systemFont(ofSize: 13),
         textColor: UIColor.black)
     
     /// 레이블
     private lazy var subLabel: UILabel = UILabel.configureLbl(
-        font: UIFont.systemFont(ofSize: 14),
+        font: UIFont.systemFont(ofSize: 13),
         textColor: UIColor.black)
     
     
@@ -67,9 +67,8 @@ extension SettingTableViewCell {
     private func configureUI() {
         self.backgroundColor = UIColor.customWhite5
         self.selectionStyle = .none
-//        self.accessoryType = .disclosureIndicator
         
-        self.subLabel.text = "ON"
+        self.subLabel.text = "토요일 시작"
     }
     
     
@@ -86,15 +85,15 @@ extension SettingTableViewCell {
         // ********** 오토레이아웃 설정 **********
         self.systemImg.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(15)
-            make.width.height.equalTo(23)
+            make.width.height.equalTo(21)
             make.centerY.equalToSuperview()
         }
         self.mainLabel.snp.makeConstraints { make in
-            make.leading.equalTo(self.systemImg.snp.trailing).offset(12)
+            make.leading.equalTo(self.systemImg.snp.trailing).offset(8)
             make.centerY.equalToSuperview()
         }
         self.subLabel.snp.makeConstraints { make in
-            make.trailing.equalTo(self.contentView.snp.trailing).offset(-15)
+            make.trailing.equalTo(self.contentView.snp.trailing).offset(-20)
             make.centerY.equalToSuperview()
         }
     }

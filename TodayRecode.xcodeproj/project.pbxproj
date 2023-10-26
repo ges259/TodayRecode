@@ -200,7 +200,6 @@
 		5F7A02752ADAC8C200128DC4 /* Extenstion */ = {
 			isa = PBXGroup;
 			children = (
-				5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */,
 				5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */,
 				5F785B832ADEA7DF00955C4A /* UIView+Ext.swift */,
 				5F785B852ADEA7F200955C4A /* UITextView+Ext.swift */,
@@ -210,6 +209,7 @@
 				5F07BF0A2AE0F1C800C471B4 /* UIScrollView+Ext.swift */,
 				5F07BF0C2AE11B7A00C471B4 /* UIStackView+Ext.swift */,
 				5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */,
+				5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */,
 			);
 			path = Extenstion;
 			sourceTree = "<group>";

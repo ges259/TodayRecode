@@ -37,12 +37,8 @@ extension UITextField {
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
         )
         // padding Left View
-//        if paddingLeftView! {
-            let paddingView = UIView()
-//            paddingView.anchor(width: 16, height: 30)
-            tf.leftView = paddingView
-            tf.leftViewMode = .always
-//        }
+        tf.addPadding()
+        
         // secureTextEntry
         tf.isSecureTextEntry = isSecureTextEntry
         
@@ -56,6 +52,13 @@ extension UITextField {
         return tf
     }
     
-    
-    
+    func addPadding() {
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.frame.height))
+        
+        self.leftView = paddingView
+        self.leftViewMode = ViewMode.always
+        
+        self.rightView = paddingView
+        self.rightViewMode = ViewMode.always
+    }
 }

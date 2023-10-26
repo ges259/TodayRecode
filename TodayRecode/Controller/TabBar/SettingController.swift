@@ -21,7 +21,7 @@ final class SettingController: UIViewController {
     private lazy var userImgView: UIImageView = UIImageView()
     /// 유저 이름
     private lazy var userNameLbl: UILabel = UILabel.configureLbl(
-        font: UIFont.boldSystemFont(ofSize: 15),
+        font: UIFont.boldSystemFont(ofSize: 17),
         textColor: UIColor.black)
     
     /// 유저 이메일
@@ -51,7 +51,8 @@ final class SettingController: UIViewController {
     
     private lazy var logoutBtn: UIButton = UIButton.configureBtnWithTitle(
         title: "로그아웃",
-        font: UIFont.boldSystemFont(ofSize: 20),
+        titleColor: UIColor.red,
+        font: UIFont.boldSystemFont(ofSize: 15),
         backgroundColor: UIColor.customWhite5)
     
     
@@ -96,6 +97,7 @@ extension SettingController {
     
     // MARK: - UI 설정
     private func configureUI() {
+        self.navigationItem.title = "설정"
         // 테이블뷰 설정
         self.tableView.register(
             SettingTableViewCell.self,
@@ -190,11 +192,13 @@ extension SettingController {
     // MARK: - 로그아웃 버튼 얼럿 액션
     /// 로그아웃 버튼이 눌리면 얼럿창을 띄움
     @objc private func logoutBtnTapped() {
-        self.presentAlertController(
-            alertStyle: .actionSheet,
+        self.customAlert(
             withTitle: "정말 로그아웃 하시겠습니까?",
-            secondButtonName: "로그아웃") { _ in
-                print(#function)
+            firstBtnName: "로그아웃",
+            firstBtnColor: UIColor.red) { _ in
+                let vc = UINavigationController(rootViewController: SelectALoginMethodController())
+                vc.modalPresentationStyle = .fullScreen
+                self.present(vc, animated: true)
             }
     }
     
@@ -202,9 +206,11 @@ extension SettingController {
     // MARK: - 날짜 형식 설정
     func dateFormatTapped(index: Int) {
         if index == 0 {
+            print("date - 0")
             // 0 (+ 1)
             // 1이면 일요일 시작
         } else {
+            print("date - 1")
             // 1 (+ 1)
             // 2면 월요일 시작
         }
@@ -213,8 +219,10 @@ extension SettingController {
     // MARK: - 시간 형식 설정
     func timeFormatTapped(index: Int) {
         if index == 0 {
+            print("time - 0")
             // 12시간 형식: PM 2:00
         } else {
+            print("time - 1")
             // 24시간 형식: 14:00
         }
     }
@@ -260,11 +268,10 @@ extension SettingController: UITableViewDelegate, UITableViewDataSource {
         
         let settingTableEnum = SettingTableEnum(rawValue: indexPath.row)
         // 얼럿창 띄우기
-        self.presentAlertController(
-            alertStyle: .actionSheet,
+        self.customAlert(
             withTitle: settingTableEnum!.alertTitle,
-            secondButtonName: settingTableEnum!.firstOption,
-            thirdButtonName: settingTableEnum!.secondOption) { index in
+            firstBtnName: settingTableEnum!.firstOption,
+            secondBtnName: settingTableEnum!.secondOption) { index in
                 // 선택된 결과
                 settingTableEnum == .dateFormat
                 ? self.dateFormatTapped(index: index)

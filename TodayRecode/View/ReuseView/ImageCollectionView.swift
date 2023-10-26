@@ -144,11 +144,7 @@ extension ImageCollectionView: UICollectionViewDataSource {
             withReuseIdentifier: Identifier.imageListCollectionViewCell,
             for: indexPath) as! ImageCollectionViewCell
         
-//        cell.delegate = self
-        
-        
-            cell.collectionViewEnum = self.collectionViewEnum
-        
+        cell.collectionViewEnum = self.collectionViewEnum
         cell.delegate = self
         return cell
     }
