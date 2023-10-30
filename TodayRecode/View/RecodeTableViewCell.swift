@@ -116,7 +116,11 @@ extension RecodeTableViewCell {
         }
         // 기록 레이블
         self.contextTextLbl.snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(20)
+            make.height.greaterThanOrEqualTo(10)
+        }
+        // 시간 레이블
+        self.timeLabel.snp.makeConstraints { make in
+            make.height.equalTo(20)
         }
         // 스택뷰
         self.stackView.snp.makeConstraints { make in
@@ -159,6 +163,8 @@ extension RecodeTableViewCell {
     
     // MARK: - 기록 시간 설정
     private func settingTimeLbl() {
-        self.timeLabel.text = "00000000"
+        
+        // MARK: - Fix
+        self.timeLabel.text = "PM 7:14"
     }
 }

@@ -21,26 +21,47 @@ final class SignUpController: UIViewController {
     /// "회원가입" 레이블
     private lazy var signUpLbl: UILabel = UILabel.configureLbl(
         text: "회원가입",
-        font: UIFont.boldSystemFont(ofSize: 30))
+        font: UIFont.boldSystemFont(ofSize: 25))
     
     /// 유저 이름 텍스트필드
-    private lazy var userNameTF: UITextField = UITextField.configureAuthTextField(
-        withPlaceholder: "이름을 입력하세요",
-        keyboardType: .default)
+    private lazy var userNameTF: UITextField = {
+        let tf = UITextField.authTextField(
+            withPlaceholder: "이름을 입력하세요",
+            keyboardType: .default)
+        tf.delegate = self
+        return tf
+    }()
     
     /// 이메일 텍스트필드
-    private lazy var emailTF: UITextField = UITextField.configureAuthTextField(
-        withPlaceholder: "이메일을 입력하세요",
-        keyboardType: .emailAddress)
+    private lazy var emailTF: UITextField = {
+        let tf = UITextField.authTextField(
+            withPlaceholder: "이메일을 입력하세요",
+            keyboardType: .emailAddress)
+        tf.delegate = self
+        return tf
+    }()
     
     /// 비밀번호 텍스트필드
-    private lazy var passwordTF: UITextField = UITextField.configureAuthTextField(
-        withPlaceholder: "비밀번호를 입력하세요",
-        keyboardType: .default,
-        isSecureTextEntry: true)
+    private lazy var passwordTF: UITextField = {
+        let tf = UITextField.authTextField(
+            withPlaceholder: "비밀번호를 입력하세요",
+            keyboardType: .default,
+            isSecureTextEntry: true)
+        tf.delegate = self
+        return tf
+    }()
+    /// 비밀번호 텍스트필드
+    private lazy var passwordCheckTF: UITextField = {
+        let tf = UITextField.authTextField(
+            withPlaceholder: "비밀번호를 다시 입력해 주세요",
+            keyboardType: .default,
+            isSecureTextEntry: true)
+        tf.delegate = self
+        return tf
+    }()
     
     /// 회원가입 버튼
-    private lazy var signUpBtn: UIButton = UIButton.configureBtnWithTitle(
+    private lazy var signUpBtn: UIButton = UIButton.buttonWithTitle(
         title: "회원가입",
         font: UIFont.systemFont(ofSize: 20),
         backgroundColor: UIColor.customblue3)
@@ -51,6 +72,7 @@ final class SignUpController: UIViewController {
                            self.userNameTF,
                            self.emailTF,
                            self.passwordTF,
+                           self.passwordCheckTF,
                            self.signUpBtn],
         axis: .vertical,
         spacing: 7,
@@ -73,7 +95,7 @@ final class SignUpController: UIViewController {
         
         self.configureUI()
         self.configureAutoLayout()
-        self.configureAutoAction()
+        self.configureAction()
     }
 }
 
@@ -87,20 +109,28 @@ final class SignUpController: UIViewController {
 
 
 // MARK: - 화면 설정
+
 extension SignUpController {
+    
+    // MARK: - UI 설정
     private func configureUI() {
         self.navigationItem.title = "회원가입"
-        self.stackView.setCustomSpacing(12, after: self.signUpLbl)
+        self.stackView.setCustomSpacing(15, after: self.signUpLbl)
         
         [self.containerView,
          self.emailTF,
          self.userNameTF,
          self.passwordTF,
+         self.passwordCheckTF,
          self.signUpBtn].forEach { view in
             view.clipsToBounds = true
             view.layer.cornerRadius = 10
         }
     }
+    
+    
+    
+    // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         // ********** addSubview 설정 **********
         self.view.addSubview(self.backgroundImg)
@@ -125,17 +155,22 @@ extension SignUpController {
             make.trailing.equalToSuperview().offset(-10)
             make.bottom.equalToSuperview().offset(-10)
         }
+        // 텍스트필드 높이 설정
         [self.emailTF,
          self.userNameTF,
          self.passwordTF,
+         self.passwordCheckTF,
          self.signUpBtn].forEach { view in
             view.snp.makeConstraints { make in
                 make.height.equalTo(45)
             }
         }
-        
     }
-    private func configureAutoAction() {
+    
+    
+    
+    // MARK: - 액션 설정
+    private func configureAction() {
         self.signUpBtn.addTarget(self, action: #selector(self.signUpBtnTapped), for: .touchUpInside)
     }
 }
@@ -150,8 +185,42 @@ extension SignUpController {
 
 
 // MARK: - 액션
+
 extension SignUpController {
+    
+    // MARK: - 회원가입 버튼 액션
     @objc private func signUpBtnTapped() {
         self.dismiss(animated: true)
+        // 비밀번호 텍스트필드와 - 비밀번호 확인 텍스트필드가
+        // 같으면 이동
+        
+        // 다르면 얼럿창 띄우기
+        
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// MARK: - 텍스트필드 델리게이트
+extension SignUpController: UITextFieldDelegate {
+    /// 텍스트필드 엔터키를 누르면 호출 되는 메서드
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == self.userNameTF {
+            self.emailTF.becomeFirstResponder()
+        } else if textField == self.emailTF {
+            self.passwordTF.becomeFirstResponder()
+        } else if textField == self.passwordTF {
+            self.passwordCheckTF.becomeFirstResponder()
+        } else {
+            self.signUpBtnTapped()
+        }
+        return true
     }
 }

@@ -11,46 +11,66 @@ import SnapKit
 final class ImageCollectionView: UIView {
     
     // MARK: - 레이아웃
-    private lazy var collectionView: UICollectionView = {
+    lazy var collectionView: UICollectionView = {
         // 수평스크롤 설정
         let flowLayout = UICollectionViewFlowLayout()
-            flowLayout.scrollDirection = .horizontal
+        flowLayout.scrollDirection = .horizontal
         // 콜렉션뷰 설정
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: flowLayout)
-            
-            collectionView.dataSource = self
-            collectionView.delegate = self
-            // 배경 설정
-            collectionView.backgroundColor = UIColor.clear
-            // 콜렉션뷰 옆으로 넘길 때 속도 설정
-            collectionView.decelerationRate = UIScrollView.DecelerationRate.fast
-            // 인디케이터 없애기
-            collectionView.showsHorizontalScrollIndicator = false
-            // 콜렉션뷰가 바운스되지 않도록 설정
-            collectionView.bounces = false
+        
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        // 배경 설정
+        collectionView.backgroundColor = UIColor.clear
+        // 콜렉션뷰 옆으로 넘길 때 속도 설정
+        collectionView.decelerationRate = UIScrollView.DecelerationRate.fast
+        // 인디케이터 없애기
+        collectionView.showsHorizontalScrollIndicator = false
+        // 콜렉션뷰가 바운스되지 않도록 설정
+        collectionView.bounces = false
         return collectionView
     }()
     
     
-
+    
     
     
     
     // MARK: - 프로퍼티
     private lazy var collectionViewWidth: CGFloat = self.collectionView.frame.width
     
-    //    private lazy var currentItem: Int = 0
-    
-    var currentPage: CGFloat = 0 {
-        didSet { self.delegate?.collectionViewScrolled() }
-    }
-    
-    
     var collectionViewEnum: CollectionViewEnum?
     
     weak var delegate: CollectionViewDelegate?
+    
+    var currentPage: CGFloat = 0 {
+        didSet {
+            if self.collectionViewEnum == .diaryList {
+                // MARK: - Fix
+                // 현재 페이지 = diaryArray의 index값
+                
+                /*
+                 1. 스크롤을 한다.
+                 2. 현재 페이지가 바뀐다.
+                 3. delegate를 통해 현재 페이지(currentPage)값을 넘김
+                 4. 캘린더 바꾸기 (선택된 날짜)
+                    -> 바뀐 현재 페이지값에 맞추기 (diaryArray가 1일 -> 5일이라면 캘린더도 5일로 이동)
+                 5. 날짜뷰(dateView)의 레이블 바꾸기
+                 */
+                self.delegate?.collectionViewScrolled()
+            }
+        }
+    }
+    /// collectionViewEnum이 .photoList일 때
+    var currentImage: [UIImage] = [] {
+        didSet { self.collectionView.reloadData() }
+    }
+    /// collectionViewEnum이 .diaryList일 때
+    var currentDiary: [Date] = [] {
+        didSet { self.collectionView.reloadData() }
+    }
     
     
     
@@ -65,6 +85,7 @@ final class ImageCollectionView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
     
     
     
@@ -72,16 +93,21 @@ final class ImageCollectionView: UIView {
     
     
     
+
+
     
+// MARK: - 화면 설정
+
+extension ImageCollectionView {
     
-    
-    
-    // MARK: - 화면 설정
+    // MARK: - UI 설정
     private func configureUI() {
         self.collectionView.register(
             ImageCollectionViewCell.self,
             forCellWithReuseIdentifier: Identifier.imageListCollectionViewCell)
     }
+    
+    
     
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
@@ -95,9 +121,36 @@ final class ImageCollectionView: UIView {
     }
     
     
+    
     // MARK: - 액션 설정
     private func configureAction() {
         
+    }
+}
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+// MARK: - 액션
+
+extension ImageCollectionView {
+    
+    // MARK: - 아이템 이동
+    func moveToItem(date: Date) {
+        let dateType = Date.todayReturnDateType(dates: [date])
+        
+        if let index = self.currentDiary.firstIndex(of: dateType.first!) {
+            self.collectionView.scrollToItem(
+                at: IndexPath(row: index, section: 0),
+                at: .right,
+                animated: false)
+        }
     }
 }
 
@@ -118,15 +171,18 @@ final class ImageCollectionView: UIView {
 
 
 
-
+// : UICollectionViewDelegate
 // MARK: - 콜렉션뷰 델리게이트
-extension ImageCollectionView: UICollectionViewDelegate {
+extension ImageCollectionView {
     /// 아이템간 좌우 간격
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 20
     }
     /// 아이템을 선택했을 때
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView,
+                        didSelectItemAt indexPath: IndexPath) {
         self.delegate?.itemTapped()
     }
 }
@@ -136,16 +192,26 @@ extension ImageCollectionView: UICollectionViewDataSource {
     /// 콜렉션뷰 아이템 개수 설정
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return self.collectionViewEnum == .photoList
+        ? self.currentImage.count
+        : self.currentDiary.count
+        
     }
     /// 콜렉션뷰 설정
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: Identifier.imageListCollectionViewCell,
             for: indexPath) as! ImageCollectionViewCell
         
         cell.collectionViewEnum = self.collectionViewEnum
         cell.delegate = self
+        
+        if self.collectionViewEnum == .photoList {
+            cell.imageView.image = self.currentImage[indexPath.row]
+        } else {
+            
+        }
         return cell
     }
 }
@@ -234,8 +300,8 @@ extension ImageCollectionView {
 
 // MARK: - 이미지 콜렉션뷰 델리게이트
 extension ImageCollectionView: ImageCollectionViewDelegate {
-    //
+    /// 셀에서 삭제 버튼이 눌렸을 때, 다시 delegate를 통해서 보냄
     func deleteBtnTapped() {
-        self.delegate?.itemDeleteBtnTapped()
+        self.delegate?.itemDeleteBtnTapped(index: Int(self.currentPage))
     }
 }

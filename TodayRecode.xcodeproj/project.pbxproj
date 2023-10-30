@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5F07BF0B2AE0F1C800C471B4 /* UIScrollView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F07BF0A2AE0F1C800C471B4 /* UIScrollView+Ext.swift */; };
 		5F07BF0D2AE11B7A00C471B4 /* UIStackView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F07BF0C2AE11B7A00C471B4 /* UIStackView+Ext.swift */; };
+		5F0803462AEC206800A52C3E /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0803452AEC206800A52C3E /* Date+Ext.swift */; };
 		5F2F5AE52AE9482400F117FC /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F5AE42AE9482400F117FC /* SettingTableViewCell.swift */; };
 		5F2F5AE72AE99A0600F117FC /* UITextField+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F5AE62AE99A0600F117FC /* UITextField+Ext.swift */; };
 		5F39E0382AE175DA00E5623C /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F39E0372AE175DA00E5623C /* ImageCollectionViewCell.swift */; };
@@ -57,6 +58,7 @@
 /* Begin PBXFileReference section */
 		5F07BF0A2AE0F1C800C471B4 /* UIScrollView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Ext.swift"; sourceTree = "<group>"; };
 		5F07BF0C2AE11B7A00C471B4 /* UIStackView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Ext.swift"; sourceTree = "<group>"; };
+		5F0803452AEC206800A52C3E /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
 		5F2F5AE42AE9482400F117FC /* SettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
 		5F2F5AE62AE99A0600F117FC /* UITextField+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Ext.swift"; sourceTree = "<group>"; };
 		5F39E0372AE175DA00E5623C /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				5F785B8B2ADEA84A00955C4A /* Protocol.swift */,
 				5F785B812ADEA7AF00955C4A /* Enum.swift */,
 				5FAF543C2ADA907100BD849C /* Constants.swift */,
+				5F8295BF2AEEC71700D43A27 /* CustomView */,
 				5F7A02752ADAC8C200128DC4 /* Extenstion */,
 			);
 			path = Utils;
@@ -210,8 +213,17 @@
 				5F07BF0C2AE11B7A00C471B4 /* UIStackView+Ext.swift */,
 				5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */,
 				5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */,
+				5F0803452AEC206800A52C3E /* Date+Ext.swift */,
 			);
 			path = Extenstion;
+			sourceTree = "<group>";
+		};
+		5F8295BF2AEEC71700D43A27 /* CustomView */ = {
+			isa = PBXGroup;
+			children = (
+				5FAA76412ADC13340024B810 /* RecodeTableView.swift */,
+			);
+			path = CustomView;
 			sourceTree = "<group>";
 		};
 		5FE7C69E2ADEDDBE00BF9785 /* ReuseView */ = {
@@ -221,7 +233,6 @@
 				5F785B8F2ADED33A00955C4A /* DateView.swift */,
 				5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */,
 				5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */,
-				5FAA76412ADC13340024B810 /* RecodeTableView.swift */,
 			);
 			path = ReuseView;
 			sourceTree = "<group>";
@@ -363,6 +374,7 @@
 				5F6EECDF2ADA40170046E686 /* DetailWritingScreenController.swift in Sources */,
 				5F6EECE72ADA41380046E686 /* SignUpController.swift in Sources */,
 				5F785B862ADEA7F200955C4A /* UITextView+Ext.swift in Sources */,
+				5F0803462AEC206800A52C3E /* Date+Ext.swift in Sources */,
 				5F6EECE32ADA40E20046E686 /* DiaryListController.swift in Sources */,
 				5F785B8A2ADEA81100955C4A /* UILabel+Ext.swift in Sources */,
 				5F4B66802ADA3452004FE62E /* TabBarController.swift in Sources */,

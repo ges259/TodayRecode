@@ -21,28 +21,38 @@ final class LoginController: UIViewController {
     /// "로그인" 레이블
     private lazy var loginLbl: UILabel = UILabel.configureLbl(
         text: "로그인",
-        font: UIFont.boldSystemFont(ofSize: 30))
+        font: UIFont.boldSystemFont(ofSize: 25))
     
     /// 이메일 텍스트필드
-    private lazy var emailTF: UITextField = UITextField.configureAuthTextField(
-        withPlaceholder: "이메일을 입력하세요",
-        keyboardType: .emailAddress)
+    private lazy var emailTF: UITextField = {
+        let tf = UITextField.authTextField(
+            withPlaceholder: "이메일을 입력하세요",
+            keyboardType: .emailAddress)
+        tf.delegate = self
+        
+        return tf
+    }()
     
     /// 비밀번호 텍스트필드
-    private lazy var passwordTF: UITextField = UITextField.configureAuthTextField(
-        withPlaceholder: "비밀번호를 입력하세요",
-        keyboardType: .default,
-        isSecureTextEntry: true)
+    private lazy var passwordTF: UITextField = {
+        let tf = UITextField.authTextField(
+            withPlaceholder: "비밀번호를 입력하세요",
+            keyboardType: .default,
+            isSecureTextEntry: true)
+        tf.delegate = self
+        tf.returnKeyType = .done
+        return tf
+    }()
     
     /// 로그인 버튼
-    private lazy var logInBtn: UIButton = UIButton.configureBtnWithTitle(
+    private lazy var logInBtn: UIButton = UIButton.buttonWithTitle(
         title: "로그인",
         font: UIFont.systemFont(ofSize: 20),
         backgroundColor: UIColor.customblue3)
     
     /// 회원가입 화면으로 이동 버튼
     private lazy var goToSignUpViewBtn: UIButton = {
-        let btn = UIButton.configureBtnWithTitle(
+        let btn = UIButton.buttonWithTitle(
             title: "아이디가 없으신가요?",
             font: UIFont.systemFont(ofSize: 12),
             backgroundColor: UIColor.clear)
@@ -72,7 +82,12 @@ final class LoginController: UIViewController {
         
         self.configureUI()
         self.configureAutoLayout()
-        self.configureAutoAction()
+        self.configureAction()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
 }
 
@@ -86,8 +101,14 @@ final class LoginController: UIViewController {
 
 
 // MARK: - 화면 설정
+
 extension LoginController {
+    
+    // MARK: - UI 설정
     private func configureUI() {
+        self.navigationItem.title = "로그인"
+        self.stackView.setCustomSpacing(15, after: self.loginLbl)
+        
         [self.containerView,
          self.emailTF,
          self.passwordTF,
@@ -95,9 +116,9 @@ extension LoginController {
             view.clipsToBounds = true
             view.layer.cornerRadius = 10
         }
-        self.navigationItem.title = "로그인"
-        self.stackView.setCustomSpacing(12, after: self.loginLbl)
     }
+    
+    // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         // ********** addSubview 설정 **********
         self.view.addSubview(self.backgroundImg)
@@ -121,7 +142,6 @@ extension LoginController {
             make.top.equalToSuperview().offset(20)
             make.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
-            
         }
         //
         self.goToSignUpViewBtn.snp.makeConstraints { make in
@@ -130,7 +150,7 @@ extension LoginController {
             make.trailing.equalTo(self.stackView).offset(-10)
             make.bottom.equalToSuperview().offset(-10)
         }
-        
+        // 텍스트필드 높이 설정
         [self.emailTF,
          self.passwordTF,
          self.logInBtn].forEach { view in
@@ -139,7 +159,11 @@ extension LoginController {
             }
         }
     }
-    private func configureAutoAction() {
+    
+    
+    // MARK: - 액션 설정
+    private func configureAction() {
+        self.logInBtn.addTarget(self, action: #selector(self.logInBtnTapped), for: .touchUpInside)
         self.goToSignUpViewBtn.addTarget(self, action: #selector(self.goToSignUpView), for: .touchUpInside)
     }
 }
@@ -154,9 +178,39 @@ extension LoginController {
 
 
 // MARK: - 액션
+
 extension LoginController {
+    
+    // MARK: - 로그인 버튼 액션
+    @objc private func logInBtnTapped() {
+        print(#function)
+    }
+    
+    // MARK: - 회원가입 화면 이동 액션
     @objc private func goToSignUpView() {
         let vc = SignUpController()
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// MARK: - 텍스트필드 델리게이트
+extension LoginController: UITextFieldDelegate {
+    /// 텍스트필드 엔터키를 누르면 호출 되는 메서드
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == self.emailTF {
+            self.passwordTF.becomeFirstResponder()
+        } else {
+            self.logInBtnTapped()
+        }
+        return true
     }
 }

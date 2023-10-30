@@ -21,13 +21,13 @@ final class SettingController: UIViewController {
     private lazy var userImgView: UIImageView = UIImageView()
     /// 유저 이름
     private lazy var userNameLbl: UILabel = UILabel.configureLbl(
-        font: UIFont.boldSystemFont(ofSize: 17),
-        textColor: UIColor.black)
+        font: UIFont.boldSystemFont(ofSize: 17))
     
     /// 유저 이메일
     private lazy var userEmailLbl: UILabel = UILabel.configureLbl(
         font: UIFont.boldSystemFont(ofSize: 12),
         textColor: UIColor.lightGray)
+    
     /// (유저 이름, 유저 이메일) 스택뷰
     private lazy var stackView: UIStackView = UIStackView.configureStackView(
         arrangedSubviews: [self.userNameLbl,
@@ -36,9 +36,6 @@ final class SettingController: UIViewController {
         spacing: 5,
         alignment: .fill,
         distribution: .fill)
-    
-    
-    
     
     /// 테이블뷰
     private lazy var tableView: RecodeTableView = {
@@ -49,7 +46,7 @@ final class SettingController: UIViewController {
     }()
     
     
-    private lazy var logoutBtn: UIButton = UIButton.configureBtnWithTitle(
+    private lazy var logoutBtn: UIButton = UIButton.buttonWithTitle(
         title: "로그아웃",
         titleColor: UIColor.red,
         font: UIFont.boldSystemFont(ofSize: 15),

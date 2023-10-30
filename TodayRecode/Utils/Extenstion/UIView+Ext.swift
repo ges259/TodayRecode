@@ -13,22 +13,4 @@ extension UIView {
             view.backgroundColor = color
         return view
     }
-    
-    func todayReturn(todayFormat: TodayFormatEnum, date: Date = Date()) -> String {
-        let formatter = DateFormatter()
-            formatter.dateFormat = todayFormat.today
-        return formatter.string(from: date)
-    }
-    
-    func yearAndMonthReturn(date: Date) -> [String] {
-        
-        let formatter = DateFormatter()
-        formatter.dateFormat = TodayFormatEnum.year_yyyy.today
-        let year = formatter.string(from: date)
-        
-        formatter.dateFormat = TodayFormatEnum.month_M.today
-        let month = formatter.string(from: date)
-        
-        return [year, month]
-    }
 }

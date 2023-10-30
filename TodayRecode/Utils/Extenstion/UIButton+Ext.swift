@@ -8,7 +8,8 @@
 import UIKit
 
 extension UIButton {
-    static func configureBtnWithImg(image: UIImage?,
+    /// 이미지가 들어간 버튼 설정
+    static func buttonWithImage(image: UIImage?,
                              tintColor: UIColor,
                              backgroundColor: UIColor? = UIColor.clear)
     -> UIButton {
@@ -21,7 +22,8 @@ extension UIButton {
         return btn
     }
     
-    static func configureBtnWithTitle(title: String,
+    /// 글자가 들어간 버튼 설정
+    static func buttonWithTitle(title: String,
                                       titleColor: UIColor = UIColor.black,
                                       font: UIFont,
                                       backgroundColor: UIColor)

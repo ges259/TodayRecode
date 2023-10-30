@@ -12,17 +12,13 @@ final class DateView: UIView {
     
     // MARK: - 레이아웃
     private lazy var dateLabel: UILabel = UILabel.configureLbl(
-        font: UIFont.systemFont(ofSize: 13),
-        textColor: UIColor.black)
+        font: UIFont.systemFont(ofSize: 13))
     
     
-    lazy var date: Int = 1 {
-        didSet {
-            
-            // MARK: - Fix
-            self.dateLabel.text = "10월 \(self.date + 1)일"
-        }
-    }
+    
+    
+    
+    
     
     
     
@@ -38,11 +34,22 @@ final class DateView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
     
+ 
+
+
+
+
+
+
+
+
+// MARK: - 화면 설정
     
+extension DateView {
     
-    
-    // MARK: - 화면 설정
+    // MARK: - UI 설정
     private func configureUI() {
         self.backgroundColor = UIColor.customWhite5
         
@@ -65,7 +72,7 @@ final class DateView: UIView {
     
     // MARK: - 날짜 설정
     func configureDate(selectedDate: Date = Date()) {
-        self.dateLabel.text = self.todayReturn(todayFormat: .monthAndDay_Mdd,
-                                               date: selectedDate)
+        self.dateLabel.text = Date.todayReturnString(todayFormat: .M_dd,
+                                                     date: selectedDate)
     }
 }

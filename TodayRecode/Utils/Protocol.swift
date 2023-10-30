@@ -37,7 +37,7 @@ protocol ImageCollectionViewDelegate: AnyObject {
 }
 
 protocol CollectionViewDelegate: AnyObject {
-    func itemDeleteBtnTapped()
+    func itemDeleteBtnTapped(index: Int)
     func itemTapped()
     func collectionViewScrolled()
 }

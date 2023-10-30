@@ -8,13 +8,10 @@
 import UIKit
 
 extension UITextField {
-    
-    static func configureAuthTextField(withPlaceholder placeholder: String,
-                   
-                   keyboardType: UIKeyboardType,
-                   isSecureTextEntry: Bool = false)
-    // 당연히
-//                   paddingLeftView: Bool? = false,
+    /// 로그인/회원가입 화면에서 사용하는 텍스트필드
+    static func authTextField(withPlaceholder placeholder: String,
+                              keyboardType: UIKeyboardType,
+                              isSecureTextEntry: Bool = false)
     -> UITextField {
         
         let tf = UITextField()
@@ -51,7 +48,7 @@ extension UITextField {
         
         return tf
     }
-    
+    /// 텍스트필드 왼쪽/오른쪽에 공간을 만드는 메서드
     func addPadding() {
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.frame.height))
         

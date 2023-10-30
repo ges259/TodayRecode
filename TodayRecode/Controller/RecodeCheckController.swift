@@ -86,7 +86,7 @@ extension RecodeCheckController {
         
         self.containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         self.containerView.clipsToBounds = true
-        self.containerView.layer.cornerRadius = 10
+        self.containerView.layer.cornerRadius = 15
     }
     
     
@@ -106,9 +106,9 @@ extension RecodeCheckController {
             make.height.equalTo(0.5)
         }
         // 테이블뷰
-        self.tableView.snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(100)
-        }
+//        self.tableView.snp.makeConstraints { make in
+//            make.height.greaterThanOrEqualTo(100)
+//        }
         // 스택뷰
         self.stackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
@@ -191,7 +191,6 @@ extension RecodeCheckController: PanModalPresentable {
     var longFormHeight: PanModalHeight {
         // 10이상
         return .contentHeight(self.containerView.frame.height - 33)
-        
         //se
 //        return .contentHeight(self.containerView.frame.height)
     }

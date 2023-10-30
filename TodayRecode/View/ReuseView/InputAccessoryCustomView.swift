@@ -12,20 +12,20 @@ final class InputAccessoryCustomView: UIView {
     
     // MARK: - 레이아웃
     /// 카메라 버튼
-    private let cameraBtn: UIButton = UIButton.configureBtnWithImg(
+    private let cameraBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.camera,
         tintColor: UIColor.btnGrayColor)
     /// 앨범 버튼
-    private let albumBtn: UIButton = UIButton.configureBtnWithImg(
+    private let albumBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.album,
         tintColor: UIColor.btnGrayColor)
     /// 보내기 버튼
-    private let sendBtn: UIButton = UIButton.configureBtnWithImg(
+    private let sendBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.check,
         tintColor: UIColor.white,
         backgroundColor: UIColor.btnGrayColor)
     /// 키보드 내리기 버튼
-    private let keyboardDownBtn: UIButton = UIButton.configureBtnWithImg(
+    private let keyboardDownBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.keyboardDown,
         tintColor: UIColor.btnGrayColor)
     
@@ -34,7 +34,7 @@ final class InputAccessoryCustomView: UIView {
         font: UIFont.systemFont(ofSize: 13),
         textColor: UIColor.btnGrayColor)
     
-    // 스택뷰
+    /// 스택뷰
     private lazy var horizontalStackView: UIStackView = UIStackView.configureStackView(
         arrangedSubviews: [self.cameraBtn,
                            self.albumBtn,
@@ -56,11 +56,10 @@ final class InputAccessoryCustomView: UIView {
     // MARK: - 프로퍼티
     weak var delegate: AccessoryViewDelegate?
     
-    
+    ///
     var currentWritingScreen: AccessoryViewMode? {
         didSet { self.configureRightBtn() }
     }
-    
     
     
     
@@ -71,18 +70,33 @@ final class InputAccessoryCustomView: UIView {
         self.configureUI()
         self.configureAutoLayout()
         self.configureAction()
-        
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+
+
+
+
+
+
+
+
+
+// MARK: - 화면 설정
+
+extension InputAccessoryCustomView {
+    
+    // MARK: - UI 설정
     private func configureUI() {
-        self.dateLbl.text = self.todayReturn(todayFormat: .detaildayAndTime_Mdahm)
-        
+        self.dateLbl.text = Date.todayReturnString(todayFormat: .Md_a_hm)
         
         self.sendBtn.layer.cornerRadius = 10
         self.sendBtn.clipsToBounds = true
     }
+    
     
     
     // MARK: - 오토레이아웃 설정
@@ -100,7 +114,7 @@ final class InputAccessoryCustomView: UIView {
         self.dateLbl.snp.makeConstraints { make in
             make.height.equalTo(30)
         }
-
+        
         // 스택뷰 (카메라/앨범/날짜 / 보내기)
         self.horizontalStackView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(10)
@@ -108,13 +122,14 @@ final class InputAccessoryCustomView: UIView {
         }
     }
     
-    // MARK: - 보내기 버튼
+    
+    
+    // MARK: - Enum에 따른 보내기 버튼 설정
     private func configureRightBtn() {
-        guard let currentScreen = self.currentWritingScreen else { return }
-        
         let buttons = [self.albumBtn, self.cameraBtn]
         
-        switch currentScreen {
+        switch self.currentWritingScreen! {
+        // 간편 작성 화면
         case .easyWritingScreen:
             // 보내기 버튼
             self.addSubview(self.sendBtn)
@@ -130,6 +145,8 @@ final class InputAccessoryCustomView: UIView {
             buttons.forEach { btn in btn.isHidden = true }
             break
             
+            
+        // 싱세 작성 화면
         case .detailWritingScreen:
             // 보내기 버튼
             self.addSubview(self.keyboardDownBtn)
@@ -148,19 +165,27 @@ final class InputAccessoryCustomView: UIView {
     }
     
     
+    
     // MARK: - 액션 설정
     private func configureAction() {
         /// 버튼 액션
         self.cameraBtn.addTarget(self, action: #selector(self.cameraBtnTapped), for: .touchUpInside)
         self.albumBtn.addTarget(self, action: #selector(self.albumBtnTapped), for: .touchUpInside)
     }
+}
     
     
     
     
+
+
+
+
+
+
+// MARK: - 화면 설정
     
-    
-    
+extension InputAccessoryCustomView {
     
     // MARK: - 버튼 액션 메서드
     @objc private func accessoryRightBtnTapped() {
@@ -175,8 +200,6 @@ final class InputAccessoryCustomView: UIView {
     
     
     
-    
-    
     // MARK: - 보내기 버튼 활성화 / 바활성화
     func sendBtnIsEnable(isEnable: Bool) {
         if isEnable {
@@ -187,14 +210,4 @@ final class InputAccessoryCustomView: UIView {
             self.sendBtn.backgroundColor = .systemGray4
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }

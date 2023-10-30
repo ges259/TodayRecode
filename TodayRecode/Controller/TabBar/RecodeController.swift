@@ -17,19 +17,13 @@ final class RecodeController: UIViewController {
         image: UIImage.blueSky)
     
     /// 네비게이션 타이틀 레이블
-    private lazy var navTitle: UILabel = {
-        let lbl = UILabel()
-            lbl.numberOfLines = 2
-            lbl.textAlignment = .center
-            lbl.textColor = .black
-        return lbl
-    }()
+    private lazy var navTitle: UILabel = UILabel.navTitleLbl()
     
     /// 날짜 표시해주는 뷰 (+ 레이블)
     private lazy var dateView: DateView = DateView()
     
     /// +버튼
-    private lazy var plusBtn: UIButton = UIButton.configureBtnWithImg(
+    private lazy var plusBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.plus,
         tintColor: UIColor.black,
         backgroundColor: UIColor.white)
@@ -39,6 +33,7 @@ final class RecodeController: UIViewController {
         let scrollView = UIScrollView()
             scrollView.delegate = self
             scrollView.bounces = false
+            scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
     /// 컨텐트뷰 ( - 스크롤뷰)
@@ -134,12 +129,14 @@ extension RecodeController {
     
     // MARK: - UI 설정
     private func configureUI() {
-        // 네비게이션 타이틀 설정
+        // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
-        // MARK: - Fix
-        self.setNavTitle(year: "2023년", month: "10월")
         
-        // cornerRadius
+        // 네비게이션 타이틀(String) 설정
+        let today = Date.yearAndMonthReturn()
+        self.setNavTitle(year: today[0], month: today[1])
+        
+        // 코너 둥글게 설정
         [self.calendar,
          self.tableView].forEach({ view in
             view.clipsToBounds = true
@@ -148,7 +145,7 @@ extension RecodeController {
         self.scrollView.clipsToBounds = true
         
         self.plusBtn.clipsToBounds = true
-        self.plusBtn.layer.cornerRadius = 50 / 2
+        self.plusBtn.layer.cornerRadius = 58 / 2
     }
     
     
@@ -201,13 +198,13 @@ extension RecodeController {
             make.top.equalToSuperview()
             make.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
-            make.bottom.lessThanOrEqualTo(self.contentView.snp.bottom).offset(-10)
+            make.bottom.equalTo(self.contentView.snp.bottom).offset(-10)
         }
         // 플러스 버튼
         self.plusBtn.snp.makeConstraints { make in
-            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-10)
-            make.trailing.equalToSuperview().offset(-15)
-            make.width.height.equalTo(53)
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-17)
+            make.trailing.equalToSuperview().offset(-17)
+            make.width.height.equalTo(58)
         }
         // 네비게이션 타이틀
         self.navTitle.snp.makeConstraints { make in
@@ -383,8 +380,8 @@ extension RecodeController: UIScrollViewDelegate {
         if self.calendar.currentCalendarScope() == .month {
             self.calendar.calendar.setScope(.week, animated: true)
             // 잠깐동안 스크롤되지 않게 하기 위해 설정
-//            self.scrollView.isScrollEnabled = false
-//            self.scrollView.isScrollEnabled = true
+            self.scrollView.isScrollEnabled = false
+            self.scrollView.isScrollEnabled = true
         }
     }
 }

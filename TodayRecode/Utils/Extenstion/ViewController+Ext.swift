@@ -6,22 +6,9 @@
 //
 
 import UIKit
+import Photos
 
 extension UIViewController {
-    // MARK: - 오늘 날짜 반환
-    func todayReturn(todayFormat: TodayFormatEnum,
-                     date: Date = Date())
-    -> String {
-        let formatter = DateFormatter()
-            formatter.dateFormat = todayFormat.today
-        return formatter.string(from: date)
-    }
-    
-    
-    
-    
-    
-    
     
     // MARK: - 네비게이션 타이틀 설정
     func configureNavTitle(_ currentController: String,
@@ -29,7 +16,7 @@ extension UIViewController {
                            month: String)
     -> NSMutableAttributedString {
         // 올해 년도 가져오기
-        let currentYear = self.todayReturn(todayFormat: .year_yyyy)
+        let currentYear = Date.todayReturnString(todayFormat: .yyyy)
         // 달력의 현재 년도와 올해 년도가
             // 같으면 -> 몇 월인지만 표시
             // 다르면 -> 몇 년도 몇 월인지 까지 표시
@@ -104,7 +91,7 @@ extension UIViewController {
     }
     
     // MARK: - 커스텀 얼럿 액션 설정
-    func customAlertAction(style: UIAlertAction.Style,
+    private func customAlertAction(style: UIAlertAction.Style,
                            title: String,
                            color: UIColor,
                            completion: (() -> Void)? = nil) -> UIAlertAction{
@@ -114,4 +101,39 @@ extension UIViewController {
         second.setValue(color, forKey: "titleTextColor")
         return second
     }
+    
+    
+    
+    
+    
+    
+    // MARK: - PHAsset -> UIImage
+    /// PHAsset Type 이었던 사진을 UIImage Type 으로 변환하는 함수
+    func convertAssetToImage(selectedAssets: [PHAsset]) -> [UIImage] {
+        var selectedImages: [UIImage] = []
+        
+        for i in 0 ..< selectedAssets.count {
+            let imageManager = PHImageManager.default()
+            let option = PHImageRequestOptions()
+            option.isSynchronous = true
+            var thumbnail = UIImage()
+            imageManager.requestImage(
+                for: selectedAssets[i],
+                targetSize: CGSize(
+                    width: selectedAssets[i].pixelWidth,
+                    height: selectedAssets[i].pixelHeight),
+                contentMode: .aspectFill,
+                options: option) {
+                (result, info) in
+                thumbnail = result!
+            }
+            
+            let data = thumbnail.jpegData(compressionQuality: 1)
+            let newImage = UIImage(data: data!)
+            selectedImages.append(newImage! as UIImage)
+        }
+        
+        return selectedImages
+    }
+    
 }

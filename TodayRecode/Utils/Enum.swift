@@ -8,21 +8,23 @@ import UIKit
 
 /// 시간의 형식을 리턴하는 열거형
 enum TodayFormatEnum {
-    case day_d
-    case detaildayAndTime_Mdahm
-    case monthAndDay_Mdd
-    case month_M
-    case yearAndMonth
-    case year_yyyy
+    case d
+    case Md_a_hm
+    case M_dd
+    case M
+    case yyyy_M
+    case yyyy
+    case yyyy_MM_dd
     
     var today: String {
         switch self {
-        case .day_d: return "d"
-        case .detaildayAndTime_Mdahm: return "M/d a h:m"
-        case .monthAndDay_Mdd: return "M월 dd일"
-        case .month_M: return "M월"
-        case .yearAndMonth: return "yyyy년 M월"
-        case .year_yyyy: return "yyyy년"
+        case .d: return "d"
+        case .Md_a_hm: return "M/d a h:m"
+        case .M_dd: return "M월 dd일"
+        case .M: return "M월"
+        case .yyyy_M: return "yyyy년 M월"
+        case .yyyy: return "yyyy년"
+        case .yyyy_MM_dd: return "yyyy-MM-dd"
         }
     }
 }

@@ -27,7 +27,7 @@ final class EasyWritingScreenController: UIViewController {
         return tv
     }()
     /// 버튼
-    private let expansionBtn: UIButton = UIButton.configureBtnWithImg(
+    private let expansionBtn: UIButton = UIButton.buttonWithImage(
         image: .expansion,
         tintColor: UIColor.btnGrayColor)
     /// 레이블

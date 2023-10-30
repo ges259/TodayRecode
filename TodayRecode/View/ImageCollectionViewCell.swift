@@ -12,7 +12,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     // MARK: - 레이아웃
     // ********** 공통 **********
     /// 이미지뷰
-    private lazy var imageView: UIImageView = {
+    lazy var imageView: UIImageView = {
         let img = UIImageView()
         img.backgroundColor = UIColor.customWhite5
         img.contentMode = .scaleAspectFill
@@ -40,7 +40,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     
     // ********** PhotoList **********
     /// 삭제 버튼
-    private lazy var deleteBtn: UIButton = UIButton.configureBtnWithImg(
+    private lazy var deleteBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.deleteBtn,
         tintColor: UIColor.white)
     
@@ -113,8 +113,10 @@ extension ImageCollectionViewCell {
     
     
     
-    // MARK: - Enum
+    // MARK: - Enum에 따른 오토레이아웃
     private func configureUIByEnum() {
+        // 일기 목록 화면
+        // Diary_List_Controller
         if self.collectionViewEnum == .diaryList {
             // 레이아웃 설정
             [self.whiteCustomView,
@@ -126,8 +128,8 @@ extension ImageCollectionViewCell {
                     make.edges.equalToSuperview()
                 }
             }
-            
-            
+        // 상세 작성 화면
+        // Detail_Writing_Screen_Controller
         } else {
             self.addSubview(self.deleteBtn)
             self.deleteBtn.snp.makeConstraints { make in

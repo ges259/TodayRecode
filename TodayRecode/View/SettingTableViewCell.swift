@@ -18,13 +18,11 @@ final class SettingTableViewCell: UITableViewCell {
     
     /// 레이블
     private let mainLabel: UILabel = UILabel.configureLbl(
-        font: UIFont.systemFont(ofSize: 13),
-        textColor: UIColor.black)
+        font: UIFont.systemFont(ofSize: 13))
     
     /// 레이블
     private lazy var subLabel: UILabel = UILabel.configureLbl(
-        font: UIFont.systemFont(ofSize: 13),
-        textColor: UIColor.black)
+        font: UIFont.systemFont(ofSize: 13))
     
     
     
@@ -33,6 +31,8 @@ final class SettingTableViewCell: UITableViewCell {
         didSet {
             self.systemImg.image = self.settingTableEnum?.image
             self.mainLabel.text = self.settingTableEnum?.text
+            // MARK: - Fix
+            self.subLabel.text = "일요일 시작"
         }
     }
 
@@ -67,8 +67,6 @@ extension SettingTableViewCell {
     private func configureUI() {
         self.backgroundColor = UIColor.customWhite5
         self.selectionStyle = .none
-        
-        self.subLabel.text = "토요일 시작"
     }
     
     

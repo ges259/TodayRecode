@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 import PanModal
+import BSImagePicker
+import Photos
 
 final class DetailWritingScreenController: UIViewController {
     
@@ -76,7 +78,7 @@ final class DetailWritingScreenController: UIViewController {
         distribution: .fill)
     
     /// 기록 확인 버튼
-    private let recodeShowBtn: UIButton = UIButton.configureBtnWithImg(
+    private let recodeShowBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.recodeShow,
         tintColor: UIColor.black,
         backgroundColor: UIColor.white)
@@ -93,15 +95,36 @@ final class DetailWritingScreenController: UIViewController {
     }()
     
     
+    private lazy var imagePicker: ImagePickerController = {
+        let imagePicker = ImagePickerController()
+        
+        imagePicker.modalPresentationStyle = .fullScreen
+        // 최대 5개 선택 가능
+        imagePicker.settings.selection.max = 5
+
+        imagePicker.settings.theme.selectionStyle = .numbered
+        imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
+
+        imagePicker.settings.theme.selectionFillColor = .white
+        imagePicker.settings.theme.selectionStrokeColor = .black
+
+        imagePicker.settings.preview.enabled = true
+
+
+        // 버튼 설정
+        imagePicker.title = "이미지 선택"
+        imagePicker.doneButtonTitle = "선택완료"
+
+        imagePicker.doneButton.tintColor = UIColor.black
+        imagePicker.cancelButton.tintColor = UIColor.black
+
+        return imagePicker
+    }()
+
+
     
     
-    private lazy var pullDownBtn: UIButton = UIButton(type: .system)
-    
-    
-    
-    
-    
-    
+
     
     
     
@@ -140,6 +163,22 @@ final class DetailWritingScreenController: UIViewController {
         didSet {
             // 네비게이션바 오른쪽 버튼 및 타이틀 설정
             self.configureNavTitleAndBtn()
+        }
+    }
+    
+    private lazy var selectedAssets: [PHAsset] = [] {
+        didSet {
+            print(self.selectedAssets)
+        }
+    }
+    
+    private lazy var selectedImages: [UIImage] = [] {
+        didSet {
+            self.collectionView.currentImage = self.selectedImages
+            
+            self.collectionView.isHidden = self.selectedImages.count == 0
+            ? true
+            : false
         }
     }
     
@@ -427,7 +466,6 @@ extension DetailWritingScreenController {
     // MARK: - 네비게이션 메뉴 액션
     @objc private func addRecodeBtnTapped() {
         print(#function)
-        self.collectionView.isHidden.toggle()
     }
     @objc private func deleteBtnTapped() {
         self.customAlert(
@@ -450,6 +488,68 @@ extension DetailWritingScreenController {
         // 화면 전환
         self.presentPanModal(recodeCheckVC)
         recodeCheckVC.view.layoutIfNeeded()
+    }
+    
+    
+    func PhotoAuth() -> Bool {
+        // 포토 라이브러리 접근 권한
+        let authorizationStatus = PHPhotoLibrary.authorizationStatus()
+
+        var isAuth = false
+
+        switch authorizationStatus {
+        case .authorized: return true // 사용자가 앱에 사진 라이브러리에 대한 액세스 권한을 명시 적으로 부여했습니다.
+        case .denied: break // 사용자가 사진 라이브러리에 대한 앱 액세스를 명시 적으로 거부했습니다.
+        case .limited: break // ?
+        case .notDetermined: // 사진 라이브러리 액세스에는 명시적인 사용자 권한이 필요하지만 사용자가 아직 이러한 권한을 부여하거나 거부하지 않았습니다
+            PHPhotoLibrary.requestAuthorization { (state) in
+                if state == .authorized {
+                    isAuth = true
+                }
+            }
+            return isAuth
+        case .restricted: break // 앱이 사진 라이브러리에 액세스 할 수있는 권한이 없으며 사용자는 이러한 권한을 부여 할 수 없습니다.
+        default: break
+        }
+    
+        return false;
+    }
+
+    
+    // MARK: - 이미지 액션
+    private func imagePickerAction() {
+        // 이미지가 5개면 더이상 추가 못 함
+        self.presentImagePicker(self.imagePicker, select: {
+            (asset) in
+                // 사진 하나 선택할 때마다 실행되는 내용 쓰기
+            print("select")
+        }, deselect: {
+            (asset) in
+                // 선택했던 사진들 중 하나를 선택 해제할 때마다 실행되는 내용 쓰기
+            print("deSelect")
+        }, cancel: {
+            (assets) in
+                // Cancel 버튼 누르면 실행되는 내용
+            print("cancel")
+        }, finish: {
+            (assets) in
+                // Done 버튼 누르면 실행되는 내용
+            print("done")
+                self.selectedAssets.removeAll()
+
+                for i in assets {
+                    self.selectedAssets.append(i)
+                }
+
+            // PHAsset을 UIImage로 변환 후 저장
+            let images = self.convertAssetToImage(selectedAssets: self.selectedAssets)
+            
+            // 이미지 저장
+            // -> 콜렉션뷰에 전달
+            // -> 콜렉션뷰 리로드
+            // 0개라면 콜렉션뷰 숨기기
+            self.selectedImages.append(contentsOf: images)
+        })
     }
 }
 
@@ -477,11 +577,14 @@ extension DetailWritingScreenController: AccessoryViewDelegate {
     /// 카메라 버튼이 눌리면 호출 됨
     func cameraBtnTapped() {
         print("Detail --- \(#function)")
+        
     }
     
     /// 앨범 버튼이 눌리면 호출 됨
     func albumBtnTapped() {
         print("Detail --- \(#function)")
+//        self.collectionView.isHidden.toggle()
+        self.imagePickerAction()
     }
     
     /// (키보드 닫기) 버튼이 눌리면 호출 됨
@@ -592,8 +695,8 @@ extension DetailWritingScreenController: UITextViewDelegate {
 
 // MARK: - 콜렉션뷰 델리게이트
 extension DetailWritingScreenController: CollectionViewDelegate {
-    func itemDeleteBtnTapped() {
-        print(#function)
+    func itemDeleteBtnTapped(index: Int) {
+        self.selectedImages.remove(at: index)
     }
     func itemTapped() {
         print(#function)

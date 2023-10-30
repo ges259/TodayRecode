@@ -15,34 +15,31 @@ final class CalendarView: UIView {
     /// 달력
     lazy var calendar: FSCalendar = {
         let calendar = FSCalendar()
-            calendar.delegate = self
-            calendar.dataSource = self
-            // 배경 색상 설정
-            calendar.backgroundColor = .customWhite5
-            // (월/화/수~~)한글로 표시
-            calendar.locale = Locale(identifier: "ko_KR")
-                // 폰트 크기 설정
-            calendar.appearance.weekdayFont = UIFont.systemFont(ofSize: 12)
-                // 색상
-            calendar.appearance.weekdayTextColor = .black.withAlphaComponent(0.7)
-            // 이벤트 - 선택되지 않은 날짜 색깔
-            calendar.appearance.eventDefaultColor = UIColor.green
-            // 이벤트 - 선택된 날짜 색깔
-            calendar.appearance.eventSelectionColor = .clear
-            // 헤더(10월) 없애기
-            calendar.headerHeight = 0
-            // 주(월,화,수)와 상단의 간격 넓히기
-            calendar.weekdayHeight = 40
-            // 달력의 평일 날짜 색깔s
-            calendar.appearance.titleDefaultColor = .black
-            // 달력의 토,일 날짜 색깔
-            calendar.appearance.titleWeekendColor = .red
+        calendar.delegate = self
+        calendar.dataSource = self
+        // 배경 색상 설정
+        calendar.backgroundColor = .customWhite5
         // 월요일 시작
-//        calendar.firstWeekday = 2
+        //        calendar.firstWeekday = 2
         // 일요일 시작
         calendar.firstWeekday = 1
         
-        
+        // ----- 주(월/화/수/~~) -----
+        // 한글로 표시
+        calendar.locale = Locale(identifier: "ko_KR")
+        // 폰트 크기 설정
+        calendar.appearance.weekdayFont = UIFont.systemFont(ofSize: 12)
+        // 색상
+        calendar.appearance.weekdayTextColor = .black.withAlphaComponent(0.7)
+        // 주(월,화,수)와 상단의 간격 넓히기
+        calendar.weekdayHeight = 40
+        // ----- 이벤트 -----
+        // 이벤트 - 선택되지 않은 날짜 색깔
+        calendar.appearance.eventDefaultColor = UIColor.yellow
+        // 이벤트 - 선택된 날짜 색깔
+        calendar.appearance.eventSelectionColor = UIColor.yellow
+        // 헤더(10월) 없애기
+        calendar.headerHeight = 0
         return calendar
     }()
     
@@ -56,9 +53,14 @@ final class CalendarView: UIView {
     
     
     // MARK: - 프로퍼티
-    var delegate: CalendarDelegate?
+    weak var delegate: CalendarDelegate?
     
-    
+    var diaryArray: [Date] = [] {
+        didSet {
+            print("diaryArray_changed")
+            self.calendar.reloadData()
+        }
+    }
     
     
     
@@ -71,17 +73,21 @@ final class CalendarView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.configureUI()
         self.configureAutoLayout()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
     
     
-    private func configureUI() {
-        
-    }
+ 
+
+// MARK: - 화면 설정
+
+extension CalendarView {
+    
+    // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         // ********** addSubview 설정 **********
         self.addSubview(self.calendar)
@@ -89,17 +95,36 @@ final class CalendarView: UIView {
         self.calendar.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        
+        // MARK: - Fix
+        /// DateFormatter를 yyyy-MM-dd형식으로 설정
+        /// Date 를 String으로 바꾸기
+        /// String으로 바꾼 날짜 데이터를 Date로 바꾸기(?)
+        self.configureDate(dateArray: [Date()])
+        /*
+         --- 편한 방법 ---
+         DB에 저장할 때 Date()가 아니라 yyyy-MM-dd로 저장하기
+         -> 이유: 한 번의 과정을 줄이기 위함
+         
+         --- 의문점 ---
+         과연 1번 처럼 하면 Query를 사용할 수 있을까?
+         -> 안 될 거 같다.
+         */
     }
+}
+
+
+
+
+
+
+
+
+// MARK: - 액션
+
+extension CalendarView {
     
-    
-    
-    
-    
-    
-    
-    
-    
-    // MARK: - 액션
+    // MARK: - 스와이프 - 달력 크기 바꾸기
     func swipeAction(up: Bool) {
         // up
         up == true
@@ -109,9 +134,16 @@ final class CalendarView: UIView {
     
     
     
-    
+    // MARK: - 현재 달력의 상태 리턴
     func currentCalendarScope() -> FSCalendarScope {
         return self.calendar.scope
+    }
+    
+    
+    
+    // MARK: - 이벤트 날짜 배열 받기
+    func configureDate(dateArray: [Date]) {
+        self.diaryArray = Date.todayReturnDateType(dates: dateArray)
     }
 }
 
@@ -132,20 +164,48 @@ final class CalendarView: UIView {
 
 // MARK: - 켈린더 델리게이트
 extension CalendarView: FSCalendarDelegate, FSCalendarDataSource {
-    func calendar(_ calendar: FSCalendar, boundingRectWillChange bounds: CGRect, animated: Bool) {
+    /// 키보드의 크기가 바뀌면 호출 됨
+    func calendar(_ calendar: FSCalendar,
+                  boundingRectWillChange bounds: CGRect,
+                  animated: Bool) {
         // 캘린더 높이 재설정
         self.delegate?.heightChanged(height: bounds.height)
     }
+    
     /// 날짜를 선택했을 때
-    func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
+    func calendar(_ calendar: FSCalendar,
+                  didSelect date: Date,
+                  at monthPosition: FSCalendarMonthPosition) {
+        /*
+         1. 달력에서 날짜를 선택
+         2. delegate를 통해 DiaryListController로 날짜(date) 전달
+         
+         --- DateView
+         3. DiaryListController에서 dateView의 configureDate()로 전달
+            -> dateView의 날짜 레이블 바꾸기
+         
+         --- ImageCollectionView
+         4. self.currentDiary.firstIndex(of: Date)로 몇 번째 인덱스인지 찾기
+            -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
+         */
+        
+        
         // dateLabel에 선택된 날짜 띄우기
         self.delegate?.selectDate(date: date)
     }
     
-    
+    /// 달력의 페이지(월)가 바뀌면 호출 됨
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
-        let yearAndMonth = self.yearAndMonthReturn(date: calendar.currentPage)
+        let yearAndMonth = Date.yearAndMonthReturn(date: calendar.currentPage)
         
         self.delegate?.monthChanged(year: yearAndMonth[0], month: yearAndMonth[1])
+    }
+    
+    /// 이벤트가 있는 날짜에 점으로 표시
+    func calendar(_ calendar: FSCalendar,
+                  numberOfEventsFor date: Date) -> Int {
+        return self.diaryArray.contains(date)
+        ? 1
+        : 0
     }
 }

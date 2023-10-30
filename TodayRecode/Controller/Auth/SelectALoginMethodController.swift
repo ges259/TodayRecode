@@ -16,21 +16,21 @@ final class SelectALoginMethodController: UIViewController {
         image: UIImage.blueSky)
     
     /// 애플 로그인 버튼
-    private lazy var appleLogin: UIButton = UIButton.configureBtnWithTitle(
+    private lazy var appleLogin: UIButton = UIButton.buttonWithTitle(
         title: "Apple로 로그인",
-        font: UIFont.systemFont(ofSize: 18),
+        font: UIFont.systemFont(ofSize: 16),
         backgroundColor: UIColor.customWhite5)
     
     /// 구글 로그인 버튼
-    private lazy var googleLogin: UIButton = UIButton.configureBtnWithTitle(
+    private lazy var googleLogin: UIButton = UIButton.buttonWithTitle(
         title: "Google로 로그인",
-        font: UIFont.systemFont(ofSize: 18),
+        font: UIFont.systemFont(ofSize: 16),
         backgroundColor: UIColor.customWhite5)
     
     /// 이메일 로그인 버튼
-    private lazy var emailLogin: UIButton = UIButton.configureBtnWithTitle(
+    private lazy var emailLogin: UIButton = UIButton.buttonWithTitle(
         title: "이메일로 로그인",
-        font: UIFont.systemFont(ofSize: 18),
+        font: UIFont.systemFont(ofSize: 16),
         backgroundColor: UIColor.customWhite5)
     
     /// 스택뷰
@@ -53,6 +53,11 @@ final class SelectALoginMethodController: UIViewController {
         self.configureUIAndAutoLayout()
         self.configureAutoAction()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+    }
 }
 
 
@@ -65,9 +70,10 @@ final class SelectALoginMethodController: UIViewController {
 
 
 // MARK: - 화면 설정
+
 extension SelectALoginMethodController {
+    
     private func configureUIAndAutoLayout() {
-//        self.navigationController?.setNavigationBarHidden(true, animated: false)
         self.navigationItem.title = "하루일기"
         
         // ********** addSubview 설정 **********
