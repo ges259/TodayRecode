@@ -14,6 +14,7 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        self.checkUser()
         self.configureUI()
         self.configureTabBar()
     }
@@ -40,7 +41,7 @@ final class TabBarController: UITabBarController {
     /// 탭바 설정
     private func configureTabBar() {
         // 오늘 날짜 가져오기
-        let today = Date.todayReturnString(todayFormat: .d)
+        let today = Date.dateReturnString(todayFormat: .d)
         
         // 기록 화면
         let recode = self.templateNavContoller(
@@ -75,12 +76,8 @@ final class TabBarController: UITabBarController {
                                       selectedImg: UIImage?,
                                       rootController: UIViewController) -> UINavigationController {
         let nav = UINavigationController(rootViewController: rootController)
-//            nav.tabBarItem.image = UIImage(systemName: unselectedImg)
-//            nav.tabBarItem.selectedImage = UIImage(systemName: selectedImg)
         nav.tabBarItem.image = unselectedImg
         nav.tabBarItem.selectedImage = selectedImg
-        
-//            nav.navigationBar.tintColor = UIColor.black
         return nav
     }
     
@@ -92,10 +89,18 @@ final class TabBarController: UITabBarController {
     
     // MARK: - API
     private func checkUser() {
-        
+        User_API.shared.fetchUser { user in
+            if let user = user {
+                // 유저가 있다면
+                dump(user)
+                
+            } else {
+                // 유저가 없을 경우 로그인 선택 화면으로 이동
+                let vc = UINavigationController(rootViewController: SelectALoginMethodController())
+                    vc.modalPresentationStyle = .fullScreen
+                self.present(vc, animated: true)
+            }
+            
+        }
     }
-    
-    
-    
-    
 }

@@ -86,8 +86,16 @@ final class LoginController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        // 네비게이션바 보이게하기
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        // 뷰가 사라지면 텍스트필드의 텍스트를 모드 없앰
+        [self.emailTF,
+         self.passwordTF].forEach { tf in
+            tf.text = nil
+        }
     }
 }
 
@@ -165,6 +173,11 @@ extension LoginController {
     private func configureAction() {
         self.logInBtn.addTarget(self, action: #selector(self.logInBtnTapped), for: .touchUpInside)
         self.goToSignUpViewBtn.addTarget(self, action: #selector(self.goToSignUpView), for: .touchUpInside)
+        
+        [self.emailTF,
+         self.passwordTF].forEach { tf in
+            tf.addTarget(self, action: #selector(self.formValidation), for: .editingChanged)
+        }
     }
 }
 
@@ -183,13 +196,52 @@ extension LoginController {
     
     // MARK: - 로그인 버튼 액션
     @objc private func logInBtnTapped() {
-        print(#function)
+        self.logInBtn.isEnabled = false
+        
+        guard let email = self.emailTF.text,
+              let password = self.passwordTF.text
+        else { return }
+        
+        Auth_API.shared.login(
+            email: email,
+            password: password) { login in
+                // 로그인에 성공했다면
+                if login {
+                    self.dismiss(animated: true)
+                    
+                // 로그인에 실패했다면
+                } else {
+                    // 커스텀 얼럿창 띄우기
+                    self.customAlert(
+                        alertStyle: .alert,
+                        withTitle: "로그인에 실패하였습니다.",
+                        message: "아이디와 비밀번호를 정확히 입력해 주세요.") { _ in
+                            return
+                        }
+                }
+        }
     }
     
     // MARK: - 회원가입 화면 이동 액션
     @objc private func goToSignUpView() {
         let vc = SignUpController()
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    
+    // MARK: - 텍스트필드 액션
+    @objc private func formValidation() {
+        guard self.emailTF.hasText,
+              self.passwordTF.hasText
+        else {
+            // 텍스트필드에 빈칸이 있을 때
+            self.logInBtn.isEnabled = false
+            self.logInBtn.backgroundColor = .customblue3
+            return
+        }
+        // 텍스트필드가 모두 채워지면
+        self.logInBtn.isEnabled = true
+        self.logInBtn.backgroundColor = .customblue6
     }
 }
 

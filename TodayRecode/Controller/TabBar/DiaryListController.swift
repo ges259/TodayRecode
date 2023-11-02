@@ -92,12 +92,13 @@ final class DiaryListController: UIViewController {
         var arrayDate: [Date] = []
         
         dateArray.forEach { date in
+            
             let dateComponents = DateComponents(year: 2023, month: 10, day: date, hour: 21)
+            
             let dateType = Calendar.current.date(from: dateComponents)
             
             arrayDate.append(dateType!)
         }
-        
         self.diaryArray = arrayDate
     }
     
@@ -109,6 +110,9 @@ final class DiaryListController: UIViewController {
         
         // MARK: - Fix
         self.makeDate(dateArray: [1, 2, 6, 13, 14, 18, 19, 25, 28])
+        
+//        self.diaryArray = [Date()]
+        
         
         self.configureUI()
         self.configureAutoLayout()
@@ -148,13 +152,9 @@ extension DiaryListController {
         self.navigationItem.titleView = self.navTitle
         
         // 네비게이션 타이틀(String) 설정
-        let today = Date.yearAndMonthReturn()
-        self.setNavTitle(year: today[0], month: today[1])
+        self.setNavTitle() // -> 오늘로 설정
         
         // 코너 둥글게 설정
-        self.calendar.clipsToBounds = true
-        self.calendar.layer.cornerRadius = 10
-        
         self.plusBtn.clipsToBounds = true
         self.plusBtn.layer.cornerRadius = 58 / 2
     }
@@ -227,19 +227,24 @@ extension DiaryListController {
 extension DiaryListController {
     
     // MARK: - 네비게이션 타이틀 설정 액션
-    private func setNavTitle(year: String, month: String) {
+    private func setNavTitle(date: Date = Date()) {
         self.navTitle.attributedText = self.configureNavTitle(
             "하루 일기",
-            year: year,
-            month: month)
+            date: date)
     }
     
     
     // MARK: - 날짜 다른 뷰로 전달
     private func deliverTheDate(dateArray: [Date]) {
-        let date = Date.todayReturnDateType(dates: dateArray)
         
-        self.calendar.diaryArray =  date
+        // 이것도 calenderView의 이벤트 표시로 이동
+        let date = Date.todayReturnDateType(dates: dateArray)
+        // 캘린더뷰에는 날짜만 가면 됨
+            // dateArray그대로 보내고 이벤트 표시할 때 바꾸는 것으로
+        self.calendar.diaryArray = date
+        
+        // MARK: - Fix
+        // 콜렉션뷰는 날짜 및 이미지url, month가 가야함
         self.collectionView.currentDiary = date
     }
     
@@ -299,8 +304,8 @@ extension DiaryListController: CalendarDelegate {
         
     }
     /// month가 바뀌었을 때 호출
-    func monthChanged(year: String, month: String) {
-        self.setNavTitle(year: year, month: month)
+    func monthChanged(date: Date) {
+        self.setNavTitle(date: date)
     }
 }
 

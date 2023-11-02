@@ -149,7 +149,7 @@ extension ImageCollectionView {
             self.collectionView.scrollToItem(
                 at: IndexPath(row: index, section: 0),
                 at: .right,
-                animated: false)
+                animated: true)
         }
     }
 }

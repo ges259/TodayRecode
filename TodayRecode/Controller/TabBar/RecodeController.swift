@@ -83,8 +83,7 @@ final class RecodeController: UIViewController {
     private var tableCellCount: Int = 0
     
     
-    
-
+    private var recodeArray: [Recode] = [Recode]()
     
     
     
@@ -101,6 +100,8 @@ final class RecodeController: UIViewController {
         self.configureAction()
         // dateLabel에 날짜 띄우기
         self.configureDate()
+        
+        self.fetchRecode()
     }
 }
     
@@ -133,16 +134,11 @@ extension RecodeController {
         self.navigationItem.titleView = self.navTitle
         
         // 네비게이션 타이틀(String) 설정
-        let today = Date.yearAndMonthReturn()
-        self.setNavTitle(year: today[0], month: today[1])
+        self.setNavTitle(date: Date())
         
         // 코너 둥글게 설정
-        [self.calendar,
-         self.tableView].forEach({ view in
-            view.clipsToBounds = true
-            view.layer.cornerRadius = 10
-        })
-        self.scrollView.clipsToBounds = true
+        self.tableView.clipsToBounds = true
+        self.tableView.layer.cornerRadius = 10
         
         self.plusBtn.clipsToBounds = true
         self.plusBtn.layer.cornerRadius = 58 / 2
@@ -233,7 +229,33 @@ extension RecodeController {
         self.plusBtn.addTarget(self, action: #selector(self.plusBtnTapped), for: .touchUpInside)
     }
 }
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// MARK: - API
+extension RecodeController {
+    private func fetchRecode() {
+        Recode_API.shared.fetchRecode { recodeArray in
+            self.recodeArray = recodeArray
+            self.tableView.reloadData()
+//            dump(recodeArray)
+        }
+    }
+}
+
 
 
 
@@ -258,11 +280,10 @@ extension RecodeController {
 extension RecodeController {
     
     // MARK: - 네비게이션 타이틀 재설정
-    private func setNavTitle(year: String, month: String) {
+    private func setNavTitle(date: Date = Date()) {
         self.navTitle.attributedText = self.configureNavTitle(
             "하루 기록",
-            year: year,
-            month: month)
+            date: date)
     }
     
     
@@ -280,8 +301,6 @@ extension RecodeController {
     /// up: 달력을 한 주만 보이도록 설정
     /// down: 달력을 한 달 전체가 보이도록 설정
     @objc private func swipeAction(_ swipe: UISwipeGestureRecognizer) {
-        
-        // MARK: - Fix
         swipe.direction == .up
         ? self.calendar.swipeAction(up: true)
         : self.calendar.swipeAction(up: false)
@@ -301,17 +320,21 @@ extension RecodeController {
     
     
     // MARK: - 상세 작성 화면으로 이동
-    private func pushToDetailWritingScreen() {
+    private func pushToDetailWritingScreen(indexRecode: Recode? = nil) {
         let vc = DetailWritingScreenController()
             // 상세 작성뷰에서 탭바 없애기
             vc.hidesBottomBarWhenPushed = true
             vc.detailViewMode = .recode
+            //데이터 넘겨주기
+            vc.currentRecode = indexRecode
+            vc.todayRecodes = self.recodeArray
+        // 화면 이동
         self.navigationController?.pushViewController(vc, animated: true)
         // MARK: - Fix
         /*
          추가해야할 것
          - 셀을 눌러서 넘어갈 때 -> 셀의 데이터 가져가기
-         - 확대 버튼을 눌러서 넘어갈 때 -> easyWritingScreen에 있는 텍스트 및 이미지 가져가기
+         - 확대 버튼을 눌러서 넘어갈 때 -> easyWritingScreen에 있는 텍스트 가져가기
          */
     }
 }
@@ -350,8 +373,8 @@ extension RecodeController: CalendarDelegate {
         }
     }
     
-    func monthChanged(year: String, month: String) {
-        self.setNavTitle(year: year, month: month)
+    func monthChanged(date: Date) {
+        self.setNavTitle(date: date)
     }
 }
 
@@ -415,14 +438,13 @@ extension RecodeController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.pushToDetailWritingScreen()
+        self.pushToDetailWritingScreen(indexRecode: self.recodeArray[indexPath.row])
     }
 }
 
 extension RecodeController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return self.tableCellCount
-        return 12
+        return self.recodeArray.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -430,8 +452,7 @@ extension RecodeController: UITableViewDataSource {
             withIdentifier: Identifier.recodeTableCell,
             for: indexPath) as! RecodeTableViewCell
         
-        cell.settingContext(recode: array[indexPath.row])
-        
+        cell.recodeArray = self.recodeArray[indexPath.row]
         return cell
     }
 }
@@ -444,9 +465,21 @@ extension RecodeController: UITableViewDataSource {
 
 
 
+
 // MARK: - 간편 작성 화면 델리게이트
 extension RecodeController: EasyWritingScreenDelegate {
+    // 확대 버튼을 누르면 호출 됨
     func expansionBtnTapped() {
         self.pushToDetailWritingScreen()
+    }
+    
+    // 데이터를 추가하면 호출 됨
+    func addRecode(recode: Recode) {
+        // 배열에 넣기
+        self.recodeArray.insert(recode, at: 0)
+        // 테이블뷰 특정 셀 리로드
+        self.tableView.insertRows(
+            at: [IndexPath(row: 0, section: 0)],
+            with: .none)
     }
 }

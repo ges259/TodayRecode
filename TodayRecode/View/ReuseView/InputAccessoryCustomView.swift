@@ -91,7 +91,7 @@ extension InputAccessoryCustomView {
     
     // MARK: - UI 설정
     private func configureUI() {
-        self.dateLbl.text = Date.todayReturnString(todayFormat: .Md_a_hm)
+        self.dateLbl.text = Date.dateReturnString(todayFormat: .a_hmm)
         
         self.sendBtn.layer.cornerRadius = 10
         self.sendBtn.clipsToBounds = true
@@ -198,6 +198,13 @@ extension InputAccessoryCustomView {
         self.delegate?.albumBtnTapped()
     }
     
+    
+    
+    func configureDate(date: Date = Date()) {
+        self.dateLbl.text = Date.dateReturnString(
+            todayFormat: .a_hmm,
+            date: date)
+    }
     
     
     // MARK: - 보내기 버튼 활성화 / 바활성화

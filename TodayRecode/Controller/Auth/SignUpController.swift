@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import FirebaseAuth
 
 final class SignUpController: UIViewController {
     
@@ -97,6 +98,16 @@ final class SignUpController: UIViewController {
         self.configureAutoLayout()
         self.configureAction()
     }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        // 뷰가 사라지면 텍스트필드의 텍스트를 모드 없앰
+        [self.userNameTF,
+         self.emailTF,
+         self.passwordTF,
+         self.passwordCheckTF].forEach { tf in
+            tf.text = nil
+        }
+    }
 }
 
 
@@ -172,6 +183,14 @@ extension SignUpController {
     // MARK: - 액션 설정
     private func configureAction() {
         self.signUpBtn.addTarget(self, action: #selector(self.signUpBtnTapped), for: .touchUpInside)
+        
+        
+        [self.userNameTF,
+         self.emailTF,
+         self.passwordTF,
+         self.passwordCheckTF].forEach { tf in
+            tf.addTarget(self, action: #selector(self.formValidation), for: .editingChanged)
+        }
     }
 }
 
@@ -190,12 +209,55 @@ extension SignUpController {
     
     // MARK: - 회원가입 버튼 액션
     @objc private func signUpBtnTapped() {
-        self.dismiss(animated: true)
-        // 비밀번호 텍스트필드와 - 비밀번호 확인 텍스트필드가
-        // 같으면 이동
+        self.signUpBtn.isEnabled = false
         
-        // 다르면 얼럿창 띄우기
+        // 비밀번호 텍스트필드와 - 비밀번호 확인 텍스트필드가 다르면 얼럿창 띄우기
+        if self.passwordTF.text != self.passwordCheckTF.text {
+            // 커스텀 얼럿창 띄우기
+            self.customAlert(
+                alertStyle: .alert,
+                withTitle: "비밀번호가 일치하지 않습니다.",
+                message: "다시 입력해 주세요.") { _ in
+                    print("비밀번호 불일치")
+                    return
+                }
+        }
         
+        // 닉네임/아이디/비밀번호 옵셔널 바인딩
+        guard let userName = self.userNameTF.text,
+              let email = self.emailTF.text,
+              let password = self.passwordTF.text
+        else { return }
+        
+        // 회원가입
+        Auth_API.shared.signUp(
+            userName: userName,
+            email: email,
+            password: password) {
+                self.signUpBtn.isEnabled = true
+                // 뒤로가기
+                self.dismiss(animated: true)
+            }
+    }
+    
+    
+    
+    // MARK: - 텍스트필드 액션
+    @objc private func formValidation() {
+        // 모든 텍스트필드에 텍스트가 있는지 확인
+        guard self.userNameTF.hasText,
+              self.emailTF.hasText,
+              self.passwordTF.hasText,
+              self.passwordCheckTF.hasText
+        else {
+            // 텍스트필드에 빈칸이 있을 때
+            self.signUpBtn.isEnabled = false
+            self.signUpBtn.backgroundColor = .customblue3
+            return
+        }
+        // 텍스트필드가 빈칸이 없을 때
+        self.signUpBtn.isEnabled = true
+        self.signUpBtn.backgroundColor = .customblue6
     }
 }
 

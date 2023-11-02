@@ -46,9 +46,15 @@ final class RecodeCheckController: UIViewController {
     
     // MARK: - 프로퍼티
     /// 셀의 개수
-    private var tableCellCount: Int = 0
+//    private var tableCellCount: Int = 0
     
-    
+    var todayRecodes: [Recode]? {
+        didSet {
+            if let todayRecodes = self.todayRecodes?.first {
+                self.dateView.configureDate(selectedDate: todayRecodes.date)
+            }
+        }
+    }
     
     
     
@@ -139,16 +145,17 @@ extension RecodeCheckController {
 // MARK: - 테이블뷰 데이터소스
 extension RecodeCheckController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return self.tableCellCount
-//        return 20
-        return 3
+        return self.todayRecodes?.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: Identifier.recodeTableCell,
             for: indexPath) as! RecodeTableViewCell
-            cell.settingContext(recode: array[indexPath.row])
+        
+        
+        cell.recodeArray = self.todayRecodes?[indexPath.row]
+        
         return cell
     }
 }

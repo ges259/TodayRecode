@@ -193,9 +193,19 @@ extension SettingController {
             withTitle: "정말 로그아웃 하시겠습니까?",
             firstBtnName: "로그아웃",
             firstBtnColor: UIColor.red) { _ in
-                let vc = UINavigationController(rootViewController: SelectALoginMethodController())
-                vc.modalPresentationStyle = .fullScreen
-                self.present(vc, animated: true)
+                // 로그아웃
+                Auth_API.shared.logout { bool in
+                    // 로그아웃에 성공했다면
+                    if bool {
+                        let vc = UINavigationController(rootViewController: SelectALoginMethodController())
+                            vc.modalPresentationStyle = .fullScreen
+                        self.present(vc, animated: true)
+                        
+                    // 로그아웃에 실패했다면
+                    } else {
+                        
+                    }
+                }
             }
     }
     

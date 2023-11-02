@@ -12,17 +12,19 @@ extension UIViewController {
     
     // MARK: - 네비게이션 타이틀 설정
     func configureNavTitle(_ currentController: String,
-                           year: String,
-                           month: String)
+                           date: Date = Date())
     -> NSMutableAttributedString {
+        
+        let selectedDate = Date.yearAndMonthReturn(date: date)
+        
         // 올해 년도 가져오기
-        let currentYear = Date.todayReturnString(todayFormat: .yyyy)
+        let currentYear = Date.dateReturnString(todayFormat: .yyyy)
         // 달력의 현재 년도와 올해 년도가
             // 같으면 -> 몇 월인지만 표시
             // 다르면 -> 몇 년도 몇 월인지 까지 표시
-        let first = currentYear == "\(year)"
-        ? month
-        : "\(year) \(month)"
+        let first = currentYear == selectedDate[0]
+        ? selectedDate[1]
+        : "\(selectedDate[0]) \(selectedDate[1])"
         
         // Mutable_Attributed_String 설정
         let attributedTitle = NSMutableAttributedString(
@@ -33,16 +35,18 @@ extension UIViewController {
             string: "\(first)",
             attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 15)])
         )
-        
         return attributedTitle
     }
     
     
+    
     // MARK: - 커스텀 얼럿창
-    func customAlert(withTitle title: String,
+    func customAlert(alertStyle: UIAlertController.Style = .actionSheet,
+                     withTitle title: String,
                      message: String? = nil,
+                     cancelBtnColor: UIColor = UIColor.cancelGray,
                      
-                     firstBtnName: String,
+                     firstBtnName: String? = nil,
                      firstBtnColor: UIColor = UIColor.black,
                      
                      secondBtnName: String? = nil,
@@ -53,7 +57,7 @@ extension UIViewController {
         let alertController = UIAlertController(
             title: "",
             message: message,
-            preferredStyle: .actionSheet)
+            preferredStyle: alertStyle)
         
         // ********** 취소 버튼 **********
         let cancelAction = self.customAlertAction(
@@ -63,11 +67,13 @@ extension UIViewController {
         alertController.addAction(cancelAction)
         
         // ********** 첫번째 버튼 **********
-        let first = self.customAlertAction(
-            style: .default,
-            title: firstBtnName,
-            color: firstBtnColor) { completion(0) }
-        alertController.addAction(first)
+        if let firstBtnName = firstBtnName {
+            let first = self.customAlertAction(
+                style: .default,
+                title: firstBtnName,
+                color: firstBtnColor) { completion(0) }
+            alertController.addAction(first)
+        }
         
         // ********** (두번째 버튼)? **********
         if let secondBtnName = secondBtnName {
@@ -78,17 +84,31 @@ extension UIViewController {
             alertController.addAction(second)
         }
         
-        // ********** 설명 창 **********
-        let attributedString = NSAttributedString(
+        // ********** 타이틀 **********
+        let titleString = self.alertTitleAndFont(title: title,
+                                                 font: .systemFont(ofSize: 13))
+        alertController.setValue(titleString, forKey: "attributedTitle")
+        
+        // ********** 메시지 **********
+        if let message = message {
+            let messageString = self.alertTitleAndFont(title: message,
+                                                       font: .systemFont(ofSize: 10))
+            alertController.setValue(messageString, forKey: "attributedMessage")
+        }
+        
+        // ********** 화면이동 **********
+        present(alertController, animated: true) //보여줘
+    }
+    
+    // MARK: - 얼럿 타이틀 및 폰트 설정
+    private func alertTitleAndFont(title: String, font: UIFont) -> NSAttributedString {
+        return NSAttributedString(
             string: title,
             attributes: [ //타이틀 폰트사이즈랑 글씨
                 NSAttributedString.Key.font : UIFont.systemFont(ofSize: 13),
                 NSAttributedString.Key.foregroundColor : UIColor.cancelGray2222222])
-        alertController.setValue(attributedString, forKey: "attributedTitle")
-        
-        // ********** present **********
-        present(alertController, animated: true) //보여줘
     }
+    
     
     // MARK: - 커스텀 얼럿 액션 설정
     private func customAlertAction(style: UIAlertAction.Style,
@@ -101,6 +121,11 @@ extension UIViewController {
         second.setValue(color, forKey: "titleTextColor")
         return second
     }
+    
+    
+    
+    
+    
     
     
     

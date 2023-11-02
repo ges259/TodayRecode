@@ -13,13 +13,16 @@ protocol AccessoryViewDelegate: AnyObject {
     func cameraBtnTapped()
     func albumBtnTapped()
     func accessoryRightBtnTapped()
-    
 }
+
+
+
 
 
 
 protocol EasyWritingScreenDelegate: AnyObject {
     func expansionBtnTapped()
+    func addRecode(recode: Recode)
 }
 
 
@@ -27,7 +30,7 @@ protocol EasyWritingScreenDelegate: AnyObject {
 protocol CalendarDelegate: AnyObject {
     func selectDate(date: Date)
     func heightChanged(height: CGFloat)
-    func monthChanged(year: String, month: String)
+    func monthChanged(date: Date)
 }
 
 

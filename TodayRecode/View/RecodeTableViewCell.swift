@@ -52,6 +52,21 @@ final class RecodeTableViewCell: UITableViewCell {
     
     
     
+    // MARK: - 프로퍼티
+    var recodeArray: Recode? {
+        didSet {
+            guard let recodeArray = recodeArray else { return }
+            
+            self.settingContext(recode: recodeArray.context)
+            self.timeLabel.text = recodeArray.recodeTime
+        }
+    }
+    
+    
+    
+    
+    
+    
 
     
     
@@ -148,10 +163,10 @@ extension RecodeTableViewCell {
     // MARK: - 기록 내용 설정
     func settingContext(recode: String) {
         let attrString = NSMutableAttributedString(string: recode)
-        
+
         let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 3
-        
+
             attrString.addAttribute(
                 NSAttributedString.Key.paragraphStyle,
                 value: paragraphStyle,

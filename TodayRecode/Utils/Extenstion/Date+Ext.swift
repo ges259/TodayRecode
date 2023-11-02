@@ -7,16 +7,23 @@
 
 import Foundation
 
+// MARK: - 날짜
+
+
+
 extension Date {
+    
+    
     /// 원하는 날짜를 문자열로 리턴하는 메서드
     /// - Parameters:
     ///   - todayFormat: TodayFormatEnum
     ///   - date: 날짜가 없을 경우 오늘 날짜 리턴
     /// - Returns: String 타입
-    static func todayReturnString(todayFormat: TodayFormatEnum,
+    static func dateReturnString(todayFormat: TodayFormatEnum,
                      date: Date = Date()) -> String {
         let formatter = DateFormatter()
             formatter.dateFormat = todayFormat.today
+        formatter.locale = Locale(identifier: "ko_KR")
         return formatter.string(from: date)
     }
     
@@ -28,11 +35,11 @@ extension Date {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "yyyy-MM-dd"
-
+        
         var dateArray = [Date]()
         
         dates.forEach { date in
-            dateArray.append(formatter.date(from: self.todayReturnString(
+            dateArray.append(formatter.date(from: self.dateReturnString(
                 todayFormat: .yyyy_MM_dd,
                 date: date))!)
         }
@@ -43,14 +50,17 @@ extension Date {
     /// 원하는 날짜가 몇 년도 몇 월인지를 리턴하는 메서드
     /// - Parameter date: 원하는 날짜
     /// - Returns: [String] --- 문자열 배열로 리턴]
-    static func yearAndMonthReturn(date: Date = Date()) -> [String] {
+    static func yearAndMonthReturn(
+        date: Date = Date(),
+        firstFormat: TodayFormatEnum = .yyyy,
+        secondFormat: TodayFormatEnum = .M) -> [String] {
         
         let formatter = DateFormatter()
         // 몇 년도인지
-            formatter.dateFormat = TodayFormatEnum.yyyy.today
+            formatter.dateFormat = firstFormat.today
         let year = formatter.string(from: date)
         // 몇 월인지
-            formatter.dateFormat = TodayFormatEnum.M.today
+            formatter.dateFormat = secondFormat.today
         let month = formatter.string(from: date)
         // 문자열 배열 리턴
         return [year, month]

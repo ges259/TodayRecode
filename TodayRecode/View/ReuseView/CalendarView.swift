@@ -40,6 +40,21 @@ final class CalendarView: UIView {
         calendar.appearance.eventSelectionColor = UIColor.yellow
         // 헤더(10월) 없애기
         calendar.headerHeight = 0
+        
+        calendar.adjustsBoundingRectWhenChangingMonths = true
+        
+        // 찾았다
+        calendar.appearance.borderRadius = 0
+        
+        // 오늘 날짜 생상
+        calendar.appearance.todayColor = UIColor.customblue3
+        //
+        
+        
+        
+        calendar.layer.masksToBounds = true
+        calendar.clipsToBounds = true
+        calendar.layer.cornerRadius = 10
         return calendar
     }()
     
@@ -57,7 +72,6 @@ final class CalendarView: UIView {
     
     var diaryArray: [Date] = [] {
         didSet {
-            print("diaryArray_changed")
             self.calendar.reloadData()
         }
     }
@@ -95,21 +109,6 @@ extension CalendarView {
         self.calendar.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
-        // MARK: - Fix
-        /// DateFormatter를 yyyy-MM-dd형식으로 설정
-        /// Date 를 String으로 바꾸기
-        /// String으로 바꾼 날짜 데이터를 Date로 바꾸기(?)
-        self.configureDate(dateArray: [Date()])
-        /*
-         --- 편한 방법 ---
-         DB에 저장할 때 Date()가 아니라 yyyy-MM-dd로 저장하기
-         -> 이유: 한 번의 과정을 줄이기 위함
-         
-         --- 의문점 ---
-         과연 1번 처럼 하면 Query를 사용할 수 있을까?
-         -> 안 될 거 같다.
-         */
     }
 }
 
@@ -138,13 +137,6 @@ extension CalendarView {
     func currentCalendarScope() -> FSCalendarScope {
         return self.calendar.scope
     }
-    
-    
-    
-    // MARK: - 이벤트 날짜 배열 받기
-    func configureDate(dateArray: [Date]) {
-        self.diaryArray = Date.todayReturnDateType(dates: dateArray)
-    }
 }
 
 
@@ -163,7 +155,7 @@ extension CalendarView {
 
 
 // MARK: - 켈린더 델리게이트
-extension CalendarView: FSCalendarDelegate, FSCalendarDataSource {
+extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDelegateAppearance {
     /// 키보드의 크기가 바뀌면 호출 됨
     func calendar(_ calendar: FSCalendar,
                   boundingRectWillChange bounds: CGRect,
@@ -196,9 +188,7 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource {
     
     /// 달력의 페이지(월)가 바뀌면 호출 됨
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
-        let yearAndMonth = Date.yearAndMonthReturn(date: calendar.currentPage)
-        
-        self.delegate?.monthChanged(year: yearAndMonth[0], month: yearAndMonth[1])
+        self.delegate?.monthChanged(date: calendar.currentPage)
     }
     
     /// 이벤트가 있는 날짜에 점으로 표시

@@ -10,22 +10,17 @@ import FirebaseFirestore
 
 
 
-struct APIService {
-    
-    static let shared: APIService = APIService()
+struct Diary_API {
+    static let shared: Diary_API = Diary_API()
     init() {}
-    
-
-    
-    
     
     func createData() {
         
-        APIConstants.diaryDB
+        API_String.diaryDB
             .document("vPr2zA8kLuoaKupLzkoB")
             .setData([
-                APIConstants.image_url: "iamgeURL_22",
-                APIConstants.context: "context_22"
+                API_String.image_url: "iamgeURL_22",
+                API_String.context: "context_22"
             ])
     }
     
@@ -33,7 +28,7 @@ struct APIService {
     
     
     func readData() {
-        APIConstants.diaryDB
+        API_String.diaryDB
             .document("vPr2zA8kLuoaKupLzkoB")
             .collection("231014")
             .getDocuments { snapshot, error in
@@ -47,8 +42,20 @@ struct APIService {
     }
     
     
+    // MARK: - 한 달 치 일기 가져오기
+    // 파라미터: 날짜(년, 월)
+    // 날짜 순으로 설정
     
-      
+    
+    
+    
+    
+    // MARK: - 오늘 일기 저장
+    
+    
+    
+
+    
     
     
     

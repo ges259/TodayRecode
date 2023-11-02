@@ -114,7 +114,7 @@ final class EasyWritingScreenController: UIViewController {
     
     // MARK: - 오토레이아웃 설정
     private func configureAotoLayout() {
-        self.view.addSubview(self.containerView)
+        
         
         [self.accessoryCustomView,
          self.recodeTextView,
@@ -123,6 +123,7 @@ final class EasyWritingScreenController: UIViewController {
             self.containerView.addSubview(view)
         }
         
+        self.view.addSubview(self.containerView)
         
         // 하단 악세서리뷰 (스택뷰 (카메라/앨범/날짜))
         self.accessoryCustomView.snp.makeConstraints { make in
@@ -163,7 +164,7 @@ final class EasyWritingScreenController: UIViewController {
     /// 제스쳐, 버튼 액션, 노티피케이션 설정
     private func configureAction() {
         /// 제스쳐
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(self.viewTapped))
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissView))
             gesture.numberOfTapsRequired = 1
         self.view.addGestureRecognizer(gesture)
         
@@ -173,6 +174,9 @@ final class EasyWritingScreenController: UIViewController {
         self.containerView.addGestureRecognizer(gesture2)
         
         self.expansionBtn.addTarget(self, action: #selector(self.expansionBtnTapped), for: .touchUpInside)
+        
+        
+        
     }
     
     
@@ -219,6 +223,7 @@ final class EasyWritingScreenController: UIViewController {
     
     
     
+    
     // MARK: - 확장 버튼 액션
     /// 확장 버튼을 누르면 호출 됨
     @objc private func expansionBtnTapped() {
@@ -237,18 +242,26 @@ final class EasyWritingScreenController: UIViewController {
     /// 컨테이너뷰를 클릭했을 때 viewTapped가 불려 뒤로 가는 현상으로 인해 해당 메서드를 만들었음
     @objc private func nothingHappened() {
     }
-    /// 화면을 누르면 뒤로 가기
-    @objc private func viewTapped() {
-        self.dismissView()
-    }
-    /// 보내기 버튼을 누르면 뒤로 가기
-    @objc private func sendTapped() {
-        self.dismissView()
-    }
+    /// 화면을 누르면 + 보내기 버튼 누르면 뒤로 가기
     /// 키보드 닫기 + 뒤로가기 재사용
-    private func dismissView() {
-        self.recodeTextView.resignFirstResponder()
-        self.dismiss(animated: false)
+    @objc private func dismissView() {
+        // 텍스트뷰에 텍스트가 있다면
+            // DB에 저장
+        if self.recodeTextView.hasText {
+            // 나중에 주석 풀기
+            Recode_API
+                .shared
+                .createRecode(context: self.recodeTextView.text) { recode in
+                self.delegate?.addRecode(recode: recode)
+                self.recodeTextView.resignFirstResponder()
+                self.dismiss(animated: false)
+            }
+            
+        // 텍스트가 없다면
+            // 그냥 뒤로가기
+        } else {
+            self.dismiss(animated: false)
+        }
     }
 }
 
@@ -275,7 +288,6 @@ extension EasyWritingScreenController: UITextViewDelegate {
             self.accessoryCustomView.sendBtnIsEnable(isEnable: true)
         }
         
-        
         // 현재 테이블의 높이 가져오기
         let textViewHeight = self.recodeTextView.sizeThatFits(self.size).height
         
@@ -289,8 +301,6 @@ extension EasyWritingScreenController: UITextViewDelegate {
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
-            
-            // MARK: - Fix
             self.dismissView()
         }
         return true
@@ -312,7 +322,7 @@ extension EasyWritingScreenController: AccessoryViewDelegate {
     }
     
     func accessoryRightBtnTapped() {
-        // MARK: - Fix
+        print("Easy --- \(#function)")
         self.dismissView()
     }
 }

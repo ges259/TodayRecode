@@ -29,6 +29,8 @@ final class DateView: UIView {
         
         self.configureUI()
         self.configureAutoLayout()
+        
+        // MARK: - Fix
         self.configureDate()
     }
     required init?(coder: NSCoder) {
@@ -72,7 +74,7 @@ extension DateView {
     
     // MARK: - 날짜 설정
     func configureDate(selectedDate: Date = Date()) {
-        self.dateLabel.text = Date.todayReturnString(todayFormat: .M_dd,
+        self.dateLabel.text = Date.dateReturnString(todayFormat: .M_d,
                                                      date: selectedDate)
     }
 }
