@@ -23,7 +23,7 @@
 		5F4B66882ADA3455004FE62E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F4B66862ADA3455004FE62E /* LaunchScreen.storyboard */; };
 		5F572CF92ADCDF660030EC7B /* EasyWritingScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F572CF82ADCDF660030EC7B /* EasyWritingScreenController.swift */; };
 		5F6CBA312AE02A1E00960F7B /* ImageCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */; };
-		5F6EECDD2ADA3F490046E686 /* RecodeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECDC2ADA3F490046E686 /* RecodeController.swift */; };
+		5F6EECDD2ADA3F490046E686 /* RecordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECDC2ADA3F490046E686 /* RecordController.swift */; };
 		5F6EECDF2ADA40170046E686 /* DetailWritingScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECDE2ADA40170046E686 /* DetailWritingScreenController.swift */; };
 		5F6EECE12ADA40200046E686 /* SettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECE02ADA40200046E686 /* SettingController.swift */; };
 		5F6EECE32ADA40E20046E686 /* DiaryListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECE22ADA40E20046E686 /* DiaryListController.swift */; };
@@ -80,7 +80,7 @@
 		5F4B66892ADA3455004FE62E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F572CF82ADCDF660030EC7B /* EasyWritingScreenController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EasyWritingScreenController.swift; sourceTree = "<group>"; };
 		5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionView.swift; sourceTree = "<group>"; };
-		5F6EECDC2ADA3F490046E686 /* RecodeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeController.swift; sourceTree = "<group>"; };
+		5F6EECDC2ADA3F490046E686 /* RecordController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordController.swift; sourceTree = "<group>"; };
 		5F6EECDE2ADA40170046E686 /* DetailWritingScreenController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailWritingScreenController.swift; sourceTree = "<group>"; };
 		5F6EECE02ADA40200046E686 /* SettingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingController.swift; sourceTree = "<group>"; };
 		5F6EECE22ADA40E20046E686 /* DiaryListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryListController.swift; sourceTree = "<group>"; };
@@ -269,7 +269,7 @@
 			isa = PBXGroup;
 			children = (
 				5F4B667F2ADA3452004FE62E /* TabBarController.swift */,
-				5F6EECDC2ADA3F490046E686 /* RecodeController.swift */,
+				5F6EECDC2ADA3F490046E686 /* RecordController.swift */,
 				5F6EECE22ADA40E20046E686 /* DiaryListController.swift */,
 				5F6EECE02ADA40200046E686 /* SettingController.swift */,
 			);
@@ -409,7 +409,7 @@
 				5F9A7D982AF02E9500F9B10A /* Auth_API.swift in Sources */,
 				5F785B8E2ADEA8AB00955C4A /* InputAccessoryCustomView.swift in Sources */,
 				5F785B822ADEA7AF00955C4A /* Enum.swift in Sources */,
-				5F6EECDD2ADA3F490046E686 /* RecodeController.swift in Sources */,
+				5F6EECDD2ADA3F490046E686 /* RecordController.swift in Sources */,
 				5FD436922AE2DB9B00CA79AD /* UIImage+Ext.swift in Sources */,
 				5FAA76422ADC13340024B810 /* RecodeTableView.swift in Sources */,
 				5F9A7D942AF0052800F9B10A /* Recode_API.swift in Sources */,

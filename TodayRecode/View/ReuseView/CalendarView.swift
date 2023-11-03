@@ -72,6 +72,7 @@ final class CalendarView: UIView {
     
     var diaryArray: [Date] = [] {
         didSet {
+            print(#function)
             self.calendar.reloadData()
         }
     }
@@ -183,7 +184,7 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDele
         
         
         // dateLabel에 선택된 날짜 띄우기
-        self.delegate?.selectDate(date: date)
+         self.delegate?.selectDate(date: Date.UTC_Plus9(date: date)!)
     }
     
     /// 달력의 페이지(월)가 바뀌면 호출 됨
@@ -194,7 +195,16 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDele
     /// 이벤트가 있는 날짜에 점으로 표시
     func calendar(_ calendar: FSCalendar,
                   numberOfEventsFor date: Date) -> Int {
-        return self.diaryArray.contains(date)
+        print("**************************************************************")
+        print("**************************************************************")
+        print("**************************************************************")
+        dump(diaryArray)
+        print("**************************************************************")
+        print(Date.UTC_Plus9(date: date)!)
+        print("**************************************************************")
+        print("**************************************************************")
+        print("**************************************************************")
+        return self.diaryArray.contains(Date.UTC_Plus9(date: date)!)
         ? 1
         : 0
     }

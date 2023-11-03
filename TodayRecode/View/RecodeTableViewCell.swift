@@ -53,13 +53,8 @@ final class RecodeTableViewCell: UITableViewCell {
     
     
     // MARK: - 프로퍼티
-    var recodeArray: Recode? {
-        didSet {
-            guard let recodeArray = recodeArray else { return }
-            
-            self.settingContext(recode: recodeArray.context)
-            self.timeLabel.text = recodeArray.recodeTime
-        }
+    var cellRecord: Recode? {
+        didSet { self.settingContext(record: self.cellRecord) }
     }
     
     
@@ -86,7 +81,7 @@ final class RecodeTableViewCell: UITableViewCell {
         self.configureUI()
         self.configureLayout()
         
-        self.settingTimeLbl()
+//        self.settingTimeLbl()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -161,8 +156,11 @@ extension RecodeTableViewCell {
 extension RecodeTableViewCell {
     
     // MARK: - 기록 내용 설정
-    func settingContext(recode: String) {
-        let attrString = NSMutableAttributedString(string: recode)
+    func settingContext(record: Recode?) {
+        // 옵셔널 바인딩
+        guard let record = record else { return }
+        // 본문 내용 설정
+        let attrString = NSMutableAttributedString(string: record.context)
 
         let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 3
@@ -172,14 +170,9 @@ extension RecodeTableViewCell {
                 value: paragraphStyle,
                 range: NSMakeRange(0, attrString.length))
         self.contextTextLbl.attributedText = attrString
-    }
-    
-    
-    
-    // MARK: - 기록 시간 설정
-    private func settingTimeLbl() {
         
-        // MARK: - Fix
-        self.timeLabel.text = "PM 7:14"
+        
+        // 시간 레이블 설정
+        self.timeLabel.text = record.recodeTime
     }
 }

@@ -41,13 +41,13 @@ final class TabBarController: UITabBarController {
     /// 탭바 설정
     private func configureTabBar() {
         // 오늘 날짜 가져오기
-        let today = Date.dateReturnString(todayFormat: .d)
+        let today = Date.dateReturn_Custom(todayFormat: .d)
         
         // 기록 화면
         let recode = self.templateNavContoller(
             unselectedImg: UIImage.recode,
             selectedImg: UIImage.recode_fill,
-            rootController: RecodeController())
+            rootController: RecordController())
         // 일기 목록 화면
             // 오늘 날짜에 따라 탭바 이미지 다르게 설정
         let diaryList = self.templateNavContoller(

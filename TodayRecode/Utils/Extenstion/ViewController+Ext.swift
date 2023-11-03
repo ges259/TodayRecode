@@ -15,10 +15,10 @@ extension UIViewController {
                            date: Date = Date())
     -> NSMutableAttributedString {
         
-        let selectedDate = Date.yearAndMonthReturn(date: date)
+        let selectedDate = Date.dateArray_yyyy_M_d(date: date)
         
         // 올해 년도 가져오기
-        let currentYear = Date.dateReturnString(todayFormat: .yyyy)
+        let currentYear = Date.dateReturn_Custom(todayFormat: .yyyy)
         // 달력의 현재 년도와 올해 년도가
             // 같으면 -> 몇 월인지만 표시
             // 다르면 -> 몇 년도 몇 월인지 까지 표시

@@ -11,7 +11,10 @@ enum TodayFormatEnum {
     case d
     case M_d
     case M
+    
     case yyyy_M
+    case h
+    case yyyy_MM_dd_HH_dd_ss
     
     case yyyy
     case yyyy_MM_dd
@@ -24,15 +27,17 @@ enum TodayFormatEnum {
     
     var today: String {
         switch self {
-        // 날짜
+            // 날짜
         case .d: return "d"
         case .M_d: return "M월 d일"
         case .M: return "M월"
         case .yyyy: return "yyyy년"
         case .yyyy_M: return "yyyy년 M월"
         case .yyyy_MM_dd: return "yyyy-MM-dd"
+        case .h: return "h"
+        case .yyyy_MM_dd_HH_dd_ss: return "yyyy-MM-dd 00:00:00 +0000"
             
-        // 시간
+            // 시간
         case .a_hmm: return "a h:mm"
         case .Hmm: return "H:mm"
             

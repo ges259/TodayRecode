@@ -74,7 +74,7 @@ extension DateView {
     
     // MARK: - 날짜 설정
     func configureDate(selectedDate: Date = Date()) {
-        self.dateLabel.text = Date.dateReturnString(todayFormat: .M_d,
+        self.dateLabel.text = Date.dateReturn_Custom(todayFormat: .M_d,
                                                      date: selectedDate)
     }
 }

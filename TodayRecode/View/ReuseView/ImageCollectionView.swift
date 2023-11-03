@@ -143,6 +143,8 @@ extension ImageCollectionView {
     
     // MARK: - 아이템 이동
     func moveToItem(date: Date) {
+        
+        
         let dateType = Date.todayReturnDateType(dates: [date])
         
         if let index = self.currentDiary.firstIndex(of: dateType.first!) {

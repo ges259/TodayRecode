@@ -26,115 +26,76 @@ struct Recode_API {
     
     
     
+    
+
+    
     // MARK: - 오늘 기록 가져오기
-    func fetchRecode(date: Date = Date(),
+    func fetchRecode(date: Date,
                      completion: @escaping ([Recode]) -> Void) {
         // uid가져오기
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        // 날짜 가져오기
-//        let date = Date.dateReturnString(todayFormat: .api_yyyy_M)
+        // 오늘 날짜 구하기 (+ 시간 / 분 / 초 0으로 만들기)
+        // 내일 날짜 구하기
+        guard let uid = Auth.auth().currentUser?.uid,
+              let today = Date.UTC_Plus9(date: date, isAPI: true),
+              let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)
+        else { return }
         
-        
-        
-        
-        
-        var calendar = Calendar.current
-        
-        calendar.locale = Locale(identifier: "ko")
-        // 기준 시간을 한국으로 변경
-        calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
-        
-        let components = calendar.dateComponents([.year, .month, .day], from: Date())
-        let start = calendar.date(from: components)!
-        let end = calendar.date(byAdding: .day, value: 1, to: start)!
-        
-           
-        
-        
-        
-        print(uid)
-        print(components)
-        print(start)
-        print(end)
-        // 기록 가져오기
-//        API_String
-//            .recodeDB
-//            .whereField(API_String.user, isEqualTo: uid)
-//            .whereField(API_String.created_at, isGreaterThan: start)
-//            .whereField(API_String.created_at, isLessThan: end)
-////            .order(by: API_String.created_at)
-//            .getDocuments { snapshot, error in
-////                dump(snapshot)
-//
-//                print(snapshot?.count)
-//            }
-        
-        
-//            .getDocument { snapshot, error in
-//                // 에러가 있다면
-//                if let error = error {
-//                    print("\(#function) --- \(error)")
-//                    print("실패")
-//                    return
-//                }
-//                // 에러가 없다면
-//                // 데이터 옵셔널 바인딩
-//                guard let data = snapshot?.data() else { return }
-//
-//                // 배열 만들고,
-//                var recodeArray: [Recode] = []
-//
-//                // 딕셔너리의 value를 array로 바꾸기
-//                data.forEach { (key: String, value: Any) in
-//                    // value는 배열
-//                    guard let array = value as? Array<Any> else { return }
-//
-//                    // array를 다시 딕셔너리로 바꾸기
-//                    array.forEach { arr in
-//                        guard let arr = arr as? Dictionary<String, Any> else { return }
-//
-//                        // Recode 모델 만들기
-//                        let recode = Recode(dictionary: arr)
-//                        // 배열에 추가
-//                        recodeArray.append(recode)
-//                    }
-//                }
-//                // 기록 정렬
-//                recodeArray.sort { recode1, recode2 in
-//                    recode1.recodeTime > recode2.recodeTime
-//                }
-//                // 컴플리션
-//                completion(recodeArray)
-//            }
-//
-        
-        
+        // 데이터 가져오기
+        API_String
+            .recodeDB
+            .whereField(API_String.user, isEqualTo: uid) // uid
+            .whereField(API_String.created_at, isGreaterThanOrEqualTo: today) // ?일0시
+            .whereField(API_String.created_at, isLessThan: tomorrow) // ?일24시
+            .order(by: API_String.created_at, descending: true) // 내림차순
+            .getDocuments { snapshot, error in
+                // 일치하는 문서 바인딩
+                guard let datas = snapshot?.documents else { return }
+                // 리턴할 Recode 배열 만들기
+                var recordArray: [Recode] = []
+                // 가져온 문서[배열] .forEach을 통해 하나씩 Recode 모델로 만듦
+                datas.forEach { snapshot in
+                    // 데이터 가져오기
+                    let dictionary = snapshot.data()
+                    // Recode 모델 만들기
+                    let record = Recode(dictionary: dictionary)
+                    // 배열에 추가
+                    recordArray.append(record)
+                }
+                // 컴플리션
+                completion(recordArray)
+            }
     }
-            
+    
+    
+    
+    
+    
+    
+    
     
     
     
     // MARK: - 오늘 기록 쓰기
     func createRecode(first: Bool = false,
                       context: String,
-//                      image: [UIImage],
+                      image: [UIImage]? = nil,
                       completion: @escaping (Recode) -> Void) {
         // uid가져오기
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        // 현재 시간 + 9 (UTC의 영향)
+        guard let uid = Auth.auth().currentUser?.uid,
+              let current = Date.UTC_Plus9(date: Date())
+        else { return }
         
-        // 날짜 가져오기
-        let date = Date.dateReturnString(todayFormat: .api_yyyy_M)
-        
-        // 딕셔너리 만들기
-        let values: [String: Any] = [
+        // DB에 저장할 딕셔너리 만들기
+        var value: [String: Any] = [
             API_String.context: context,
-            API_String.created_at: Date()]
+            API_String.created_at: current,
+            API_String.user: uid]
         
-        // 기록 쓰기
+        // DB에 저장
         API_String
             .recodeDB
-            .document(uid)
-            .updateData([date: FieldValue.arrayUnion([values])]) { error in
+            .addDocument(data: value) { error in
                 // 에러가 있다면
                 if let error = error {
                     print("\(#function) --- \(error)")
@@ -143,7 +104,11 @@ struct Recode_API {
                 }
                 // 성공
                 print("성공")
-                completion(Recode(dictionary: values))
+                // Recode 모델에는 created_at이 TimeStamp로 받기 때문에
+                    // -> TimeStamp로 타입캐스팅
+                value[API_String.created_at] = Timestamp(date: current)
+                // 컴플리션
+                completion(Recode(dictionary: value))
             }
     }
 }

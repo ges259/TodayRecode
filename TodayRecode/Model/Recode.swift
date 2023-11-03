@@ -21,11 +21,11 @@ struct Recode {
         self.context = dictionary[API_String.context] as? String ?? ""
         self.imageUrl = dictionary[API_String.image_url] as? String ?? ""
         
-        // dictionary[API_String.created_at]
-        // Optional(<FIRTimestamp: seconds=1698822248 nanoseconds=223397000>)
+        // 타임스탬프로 받음
         let timeStamp = dictionary[API_String.created_at] as? Timestamp
-        let timeInterval = TimeInterval(integerLiteral: timeStamp?.seconds ?? 0)
         
+        
+        let timeInterval = TimeInterval(integerLiteral: timeStamp?.seconds ?? 0)
         self.date = Date(timeIntervalSince1970: timeInterval)
     }
     
@@ -36,14 +36,17 @@ struct Recode {
         let timeFormat: TodayFormatEnum = timeFormat_Static == 0
         ? .a_hmm // PM 2:00
         : .Hmm // 14: 00
-        return Date.dateReturnString(todayFormat: timeFormat, date: self.date)
+        return Date.dateReturn_Custom(
+            todayFormat: timeFormat,
+            UTC_Plus9: false,
+            date: self.date)
     }
     /// ex) 10일
     var recodeDay: String {
-        return Date.dateReturnString(todayFormat: .d, date: self.date)
+        return Date.dateReturn_Custom(todayFormat: .d, date: self.date)
     }
     /// ex) 9월 10일
     var recodeMonthAndDay: String {
-        return Date.dateReturnString(todayFormat: .M_d, date: self.date)
+        return Date.dateReturn_Custom(todayFormat: .M_d, date: self.date)
     }
 }

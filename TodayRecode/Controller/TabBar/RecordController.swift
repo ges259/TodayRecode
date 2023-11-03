@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import FSCalendar
 
-final class RecodeController: UIViewController {
+final class RecordController: UIViewController {
     
     // MARK: - 레이아웃
     /// 배경 이미지
@@ -79,14 +79,19 @@ final class RecodeController: UIViewController {
     
     
     // MARK: - 프로퍼티
-    /// 셀의 개수
-    private var tableCellCount: Int = 0
+    /// 오늘인지 아닌지 판단하는 변수
+    private var isToday: Bool = true
+//    {
+//        didSet { print(self.isToday) }
+//    }
+    /// 오늘 기록
+    private var todayRecords: [Recode] = [Recode]()
+    /// 다른 날의 기록
+    private var anotherDayRecords: [Recode] = [Recode]()
+    /// 오늘 날짜 배열 [년, 월, 일]
+    private lazy var todayArray: Date? = Date.UTC_Plus9(date: Date())
     
-    
-    private var recodeArray: [Recode] = [Recode]()
-    
-    
-    
+    private var anotherDayArray: Date?
     
     
     
@@ -101,7 +106,7 @@ final class RecodeController: UIViewController {
         // dateLabel에 날짜 띄우기
         self.configureDate()
         
-        self.fetchRecode()
+//        self.fetchRecords()
     }
 }
     
@@ -126,7 +131,7 @@ final class RecodeController: UIViewController {
     
 // MARK: - 화면 설정
 
-extension RecodeController {
+extension RecordController {
     
     // MARK: - UI 설정
     private func configureUI() {
@@ -246,12 +251,19 @@ extension RecodeController {
 
 
 // MARK: - API
-extension RecodeController {
-    private func fetchRecode() {
-        Recode_API.shared.fetchRecode { recodeArray in
-            self.recodeArray = recodeArray
+extension RecordController {
+    private func fetchRecords(date: Date = Date()) {
+        // 해당 날짜의 데이터 가져오기
+        Recode_API.shared.fetchRecode(date: date) { recodeArray in
+            // 오늘이라면
+            if self.isToday {
+                self.todayRecords = recodeArray
+                // 오늘이 아니라면
+            } else {
+                self.anotherDayRecords = recodeArray
+            }
+            // 테이블뷰 리로드
             self.tableView.reloadData()
-//            dump(recodeArray)
         }
     }
 }
@@ -277,9 +289,10 @@ extension RecodeController {
 
 // MARK: - 액션
 
-extension RecodeController {
+extension RecordController {
     
     // MARK: - 네비게이션 타이틀 재설정
+    /// 선택된 날짜에 따라 네비게이션 타이틀을 설정하는 메서드
     private func setNavTitle(date: Date = Date()) {
         self.navTitle.attributedText = self.configureNavTitle(
             "하루 기록",
@@ -309,8 +322,13 @@ extension RecodeController {
     
     
     // MARK: - 플러스 버튼
-    /// 간편 작성 화면으로 이동
+    /// 플러스 버튼을 누르면 간편 작성 화면으로 이동
     @objc private func plusBtnTapped() {
+        if !self.isToday {
+            self.isToday = true
+            self.tableView.reloadData()
+        }
+        
         let vc = EasyWritingScreenController()
             vc.modalPresentationStyle = .overFullScreen
             vc.delegate = self
@@ -320,20 +338,26 @@ extension RecodeController {
     
     
     // MARK: - 상세 작성 화면으로 이동
+    /// 상세 작성 화면으로 이동
     private func pushToDetailWritingScreen(indexRecode: Recode? = nil) {
         let vc = DetailWritingScreenController()
             // 상세 작성뷰에서 탭바 없애기
             vc.hidesBottomBarWhenPushed = true
+            // 기록 화면에서 넘어갔다는 표시
             vc.detailViewMode = .recode
-            //데이터 넘겨주기
+            // 데이터 넘겨주기
             vc.currentRecode = indexRecode
-            vc.todayRecodes = self.recodeArray
+            // 기록 확인 화면에서 사용할 해당 날짜 배열
+            vc.todayRecords = self.isToday
+            ? self.todayRecords
+            : self.anotherDayRecords
+        
         // 화면 이동
         self.navigationController?.pushViewController(vc, animated: true)
         // MARK: - Fix
         /*
          추가해야할 것
-         - 셀을 눌러서 넘어갈 때 -> 셀의 데이터 가져가기
+         - 셀을 눌러서 넘어갈 때 -> 셀의 데이터 가져가기 (o)
          - 확대 버튼을 눌러서 넘어갈 때 -> easyWritingScreen에 있는 텍스트 가져가기
          */
     }
@@ -359,11 +383,36 @@ extension RecodeController {
 
 
 // MARK: - 켈린더 델리게이트
-extension RecodeController: CalendarDelegate {
+extension RecordController: CalendarDelegate {
+    /// 날짜를 선택하면 호출
     func selectDate(date: Date) {
+        // 데이트뷰의 선택한 날짜로 레이블을 변경
         self.configureDate(selectedDate: date)
+        // 선택된 날짜의 [년, 월, 일]
+        let selectedDate = Date.UTC_Plus9(date: date)
+        
+        // 선택된 날짜가 오늘이라면
+        if self.todayArray == selectedDate {
+            self.isToday = true
+            self.tableView.reloadData()
+
+        // 선택된 날짜가 오늘이 아니라면
+            // 1. 가장 최근에 선택되었던 날이라면
+        } else if self.anotherDayArray == selectedDate {
+            self.isToday = false
+            self.tableView.reloadData()
+            
+            // 2. 가장 최근에 선택된 날이 아니라면
+        } else {
+            self.isToday = false
+            // 선택한 날짜의 데이터 가져오기
+            self.fetchRecords(date: date)
+            // 가장 최근에 선택되었다는 표시 남기기
+            self.anotherDayArray = selectedDate
+        }
     }
     
+    // 달력의 높이가 바뀌면 호출
     func heightChanged(height: CGFloat) {
         // 높이 바꾸기
         self.calendarHeight?.constant = height
@@ -373,6 +422,7 @@ extension RecodeController: CalendarDelegate {
         }
     }
     
+    /// 달력을 스크롤하여 다른 달이 되었을 때 호출
     func monthChanged(date: Date) {
         self.setNavTitle(date: date)
     }
@@ -388,7 +438,7 @@ extension RecodeController: CalendarDelegate {
 
 
 // MARK: - 스크롤뷰
-extension RecodeController: UIScrollViewDelegate {
+extension RecordController: UIScrollViewDelegate {
     /// 스크롤이 끝났을 때
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         // 스크롤이 끝났을 때
@@ -419,10 +469,11 @@ extension RecodeController: UIScrollViewDelegate {
 
 
 // MARK: - 테이블뷰 델리게이트
-extension RecodeController: UITableViewDelegate {
+extension RecordController: UITableViewDelegate {
     /// 스와이프 설정
     /// 오른쪽 -> 왼쪽 스와이프하면 버튼이 나타남
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // 왼쪽에 만들기
         let trash = UIContextualAction(style: .normal, title: "삭제") { (_, _, success: @escaping (Bool) -> Void) in
             print("trash 클릭 됨")
@@ -437,22 +488,41 @@ extension RecodeController: UITableViewDelegate {
         return swipeAction
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.pushToDetailWritingScreen(indexRecode: self.recodeArray[indexPath.row])
+    /// 셀을 눌렀을 때
+    func tableView(_ tableView: UITableView,
+                   didSelectRowAt indexPath: IndexPath) {
+        
+        // 오늘인지 아닌지 판단
+        let array: [Recode] = self.isToday
+        ? self.todayRecords      // 오늘일 때
+        : self.anotherDayRecords // 오늘이 아닐 때
+        
+        // 상세 작성 화면으로 이동
+        self.pushToDetailWritingScreen(indexRecode: array[indexPath.row])
     }
 }
 
-extension RecodeController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.recodeArray.count
+extension RecordController: UITableViewDataSource {
+    /// 셀의 개수
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
+        // 오늘인지 아닌지 판단
+        return self.isToday
+        ? self.todayRecords.count       // 오늘일 때
+        : self.anotherDayRecords.count  // 오늘이 아닐 때
     }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    /// 셀 구현
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: Identifier.recodeTableCell,
             for: indexPath) as! RecodeTableViewCell
         
-        cell.recodeArray = self.recodeArray[indexPath.row]
+        // 오늘인지 아닌지 판단
+        cell.cellRecord = self.isToday
+        ? self.todayRecords[indexPath.row]      // 오늘일 때
+        : self.anotherDayRecords[indexPath.row] // 오늘이 아닐 때
+        // 리턴
         return cell
     }
 }
@@ -467,16 +537,17 @@ extension RecodeController: UITableViewDataSource {
 
 
 // MARK: - 간편 작성 화면 델리게이트
-extension RecodeController: EasyWritingScreenDelegate {
-    // 확대 버튼을 누르면 호출 됨
+extension RecordController: EasyWritingScreenDelegate {
+    /// 확대 버튼을 누르면 호출되는 메서드
     func expansionBtnTapped() {
+        // 상세 작성 화면으로 이동
         self.pushToDetailWritingScreen()
     }
     
-    // 데이터를 추가하면 호출 됨
+    /// 데이터를 추가하면 호출되는 메서드
     func addRecode(recode: Recode) {
-        // 배열에 넣기
-        self.recodeArray.insert(recode, at: 0)
+        // 오늘 배열에 넣기
+        self.todayRecords.insert(recode, at: 0)
         // 테이블뷰 특정 셀 리로드
         self.tableView.insertRows(
             at: [IndexPath(row: 0, section: 0)],

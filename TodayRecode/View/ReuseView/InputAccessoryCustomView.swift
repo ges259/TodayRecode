@@ -91,7 +91,7 @@ extension InputAccessoryCustomView {
     
     // MARK: - UI 설정
     private func configureUI() {
-        self.dateLbl.text = Date.dateReturnString(todayFormat: .a_hmm)
+        self.dateLbl.text = Date.dateReturn_Custom(todayFormat: .a_hmm)
         
         self.sendBtn.layer.cornerRadius = 10
         self.sendBtn.clipsToBounds = true
@@ -201,7 +201,7 @@ extension InputAccessoryCustomView {
     
     
     func configureDate(date: Date = Date()) {
-        self.dateLbl.text = Date.dateReturnString(
+        self.dateLbl.text = Date.dateReturn_Custom(
             todayFormat: .a_hmm,
             date: date)
     }

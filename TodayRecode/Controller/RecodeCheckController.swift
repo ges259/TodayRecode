@@ -112,9 +112,9 @@ extension RecodeCheckController {
             make.height.equalTo(0.5)
         }
         // 테이블뷰
-//        self.tableView.snp.makeConstraints { make in
-//            make.height.greaterThanOrEqualTo(100)
-//        }
+        self.tableView.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(100)
+        }
         // 스택뷰
         self.stackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
@@ -154,7 +154,7 @@ extension RecodeCheckController: UITableViewDataSource, UITableViewDelegate {
             for: indexPath) as! RecodeTableViewCell
         
         
-        cell.recodeArray = self.todayRecodes?[indexPath.row]
+        cell.cellRecord = self.todayRecodes?[indexPath.row]
         
         return cell
     }

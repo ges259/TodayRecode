@@ -173,10 +173,8 @@ final class DetailWritingScreenController: UIViewController {
     }
     
     
-    var todayRecodes: [Recode] = []
-//    {
-//        didSet { print(self.todayRecodes)}
-//    }
+    var todayRecords: [Recode] = []
+    
     var currentRecode: Recode? {
         didSet { self.configureData() }
     }
@@ -531,7 +529,7 @@ extension DetailWritingScreenController {
         
         let recodeCheckVC = RecodeCheckController()
             recodeCheckVC.modalPresentationStyle = .overFullScreen
-            recodeCheckVC.todayRecodes = self.todayRecodes
+            recodeCheckVC.todayRecodes = self.todayRecords
         // 화면 전환
         self.presentPanModal(recodeCheckVC)
         recodeCheckVC.view.layoutIfNeeded()

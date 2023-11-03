@@ -87,17 +87,19 @@ final class DiaryListController: UIViewController {
     
     // MARK: - Fix
     // DateType을 만들어주는 메서드
-    // -> 삭제 예정
     func makeDate(dateArray: [Int]) {
+        print(#function)
         var arrayDate: [Date] = []
         
         dateArray.forEach { date in
             
-            let dateComponents = DateComponents(year: 2023, month: 10, day: date, hour: 21)
+            let dateComponents = DateComponents(year: 2023, month: 11, day: date, hour: 21)
             
             let dateType = Calendar.current.date(from: dateComponents)
             
             arrayDate.append(dateType!)
+            
+            
         }
         self.diaryArray = arrayDate
     }
@@ -236,7 +238,7 @@ extension DiaryListController {
     
     // MARK: - 날짜 다른 뷰로 전달
     private func deliverTheDate(dateArray: [Date]) {
-        
+        dump(dateArray)
         // 이것도 calenderView의 이벤트 표시로 이동
         let date = Date.todayReturnDateType(dates: dateArray)
         // 캘린더뷰에는 날짜만 가면 됨
@@ -297,7 +299,6 @@ extension DiaryListController: CalendarDelegate {
         // 4. self.currentDiary.firstIndex(of: Date)로 몇 번째 인덱스인지 찾기
             // -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
         self.collectionView.moveToItem(date: date)
-        
     }
     /// 달력의 형태(week <-> month)가 바뀌면  높이가 업데이트된다.
     func heightChanged(height: CGFloat) {
