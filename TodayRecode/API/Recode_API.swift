@@ -36,7 +36,7 @@ struct Recode_API {
         // 오늘 날짜 구하기 (+ 시간 / 분 / 초 0으로 만들기)
         // 내일 날짜 구하기
         guard let uid = Auth.auth().currentUser?.uid,
-              let today = Date.UTC_Plus9(date: date, isAPI: true),
+              let today = date.reset_h_m_s(),
               let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)
         else { return }
         
@@ -76,15 +76,13 @@ struct Recode_API {
     
     
     // MARK: - 오늘 기록 쓰기
-    func createRecode(first: Bool = false,
-                      context: String,
+    func createRecode(context: String,
                       image: [UIImage]? = nil,
                       completion: @escaping (Recode) -> Void) {
         // uid가져오기
-        // 현재 시간 + 9 (UTC의 영향)
-        guard let uid = Auth.auth().currentUser?.uid,
-              let current = Date.UTC_Plus9(date: Date())
-        else { return }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        let current = Date()
         
         // DB에 저장할 딕셔너리 만들기
         var value: [String: Any] = [
@@ -107,6 +105,7 @@ struct Recode_API {
                 // Recode 모델에는 created_at이 TimeStamp로 받기 때문에
                     // -> TimeStamp로 타입캐스팅
                 value[API_String.created_at] = Timestamp(date: current)
+                
                 // 컴플리션
                 completion(Recode(dictionary: value))
             }

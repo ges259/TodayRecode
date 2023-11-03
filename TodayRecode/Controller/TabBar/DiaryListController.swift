@@ -113,9 +113,6 @@ final class DiaryListController: UIViewController {
         // MARK: - Fix
         self.makeDate(dateArray: [1, 2, 6, 13, 14, 18, 19, 25, 28])
         
-//        self.diaryArray = [Date()]
-        
-        
         self.configureUI()
         self.configureAutoLayout()
         self.configureAction()

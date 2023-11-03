@@ -115,30 +115,44 @@ extension Date {
     // MARK: - 9시간 더하기 (UTC+9)
     /// 9시간 더하기
     /// isAPI라면 -> 시간 / 분 / 초 0으로 만들기
-    static func UTC_Plus9(date: Date = Date(), isAPI: Bool = false) -> Date? {
+    static func UTC_Plus9(date: Date = Date()) -> Date? {
         // 현재 시간
         let calendar = Calendar.current
         // 표현할? 정보들 선택하기
         var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
         // isAPI가 true라면
             // 분, 초를 0으로 만듦
+//        if isAPI == true {
+////            print("true")
+//            components.hour = 0
+//            components.minute = 0
+//            components.second = 0
+//
+//        // false라면
+//        } else {
         // 현재 시간 + 9 (UTC의 영향)
-        if isAPI == true {
-//            print("true")
-            components.hour = 0
-            components.minute = 0
-            components.second = 0
-
-        // false라면
-        } else {
-//            print("false")
             components.hour! += 9
-        }
+//        }
         // Date로 변환하여 반환
         return calendar.date(from: components)
     }
     
     
-//    static func d
     
+    
+    func reset_h_m_s() -> Date? {
+        // 현재 시간
+        let calendar = Calendar.current
+        // 표현할? 정보들 선택하기
+        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: self)
+        // isAPI가 true라면
+            // 시간, 분, 초를 0으로 만듦
+        // 현재 시간 + 9 (UTC의 영향)
+        components.hour = 0
+        components.minute = 0
+        components.second = 0
+        
+        // Date로 변환하여 반환
+        return calendar.date(from: components)
+    }
 }

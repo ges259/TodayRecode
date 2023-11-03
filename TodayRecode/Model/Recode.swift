@@ -23,9 +23,9 @@ struct Recode {
         
         // 타임스탬프로 받음
         let timeStamp = dictionary[API_String.created_at] as? Timestamp
-        
-        
+        // 타임스탬프를 timeInterval로 바꾸기
         let timeInterval = TimeInterval(integerLiteral: timeStamp?.seconds ?? 0)
+        // date로 저장
         self.date = Date(timeIntervalSince1970: timeInterval)
     }
     

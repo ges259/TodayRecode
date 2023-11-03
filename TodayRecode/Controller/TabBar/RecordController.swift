@@ -81,9 +81,6 @@ final class RecordController: UIViewController {
     // MARK: - 프로퍼티
     /// 오늘인지 아닌지 판단하는 변수
     private var isToday: Bool = true
-//    {
-//        didSet { print(self.isToday) }
-//    }
     /// 오늘 기록
     private var todayRecords: [Recode] = [Recode]()
     /// 다른 날의 기록
@@ -106,7 +103,7 @@ final class RecordController: UIViewController {
         // dateLabel에 날짜 띄우기
         self.configureDate()
         
-//        self.fetchRecords()
+        self.fetchRecords()
     }
 }
     
@@ -339,18 +336,29 @@ extension RecordController {
     
     // MARK: - 상세 작성 화면으로 이동
     /// 상세 작성 화면으로 이동
-    private func pushToDetailWritingScreen(indexRecode: Recode? = nil) {
+    private func pushToDetailWritingScreen(indexRecord: Recode? = nil,
+                                           easyViewString: String? = nil) {
         let vc = DetailWritingScreenController()
-            // 상세 작성뷰에서 탭바 없애기
-            vc.hidesBottomBarWhenPushed = true
-            // 기록 화면에서 넘어갔다는 표시
-            vc.detailViewMode = .recode
-            // 데이터 넘겨주기
-            vc.currentRecode = indexRecode
-            // 기록 확인 화면에서 사용할 해당 날짜 배열
-            vc.todayRecords = self.isToday
-            ? self.todayRecords
-            : self.anotherDayRecords
+        // 상세 작성뷰에서 탭바 없애기
+        vc.hidesBottomBarWhenPushed = true
+        
+        // 기록 화면에서 넘어갔다는 표시
+        vc.detailViewMode = .recode
+        
+        // 기록 확인 화면에서 사용할 해당 날짜 배열
+        vc.todayRecords = self.isToday
+        ? self.todayRecords // 오늘일 때
+        : self.anotherDayRecords // 오늘이 아닐 때
+        
+        // ***** 셀을 통해 넘어간 경우 *****
+        if let indexRecode = indexRecord {
+            // 데이터 넘겨주기 (파라미터로 받은 데이터)
+            vc.currentRecord = indexRecode
+        // ***** 확장 버튼을 통해 넘어간 경우 *****
+        } else {
+            // 문자열만 가져간다.
+            vc.diaryTextView.text = easyViewString
+        }
         
         // 화면 이동
         self.navigationController?.pushViewController(vc, animated: true)
@@ -498,7 +506,7 @@ extension RecordController: UITableViewDelegate {
         : self.anotherDayRecords // 오늘이 아닐 때
         
         // 상세 작성 화면으로 이동
-        self.pushToDetailWritingScreen(indexRecode: array[indexPath.row])
+        self.pushToDetailWritingScreen(indexRecord: array[indexPath.row])
     }
 }
 

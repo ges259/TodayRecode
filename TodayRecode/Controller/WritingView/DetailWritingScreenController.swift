@@ -49,7 +49,7 @@ final class DetailWritingScreenController: UIViewController {
     private lazy var contentView: UIView = UIView()
     
     /// 텍스트뷰
-    private lazy var diaryTextView: UITextView = {
+    lazy var diaryTextView: UITextView = {
         let tv = UITextView.configureTV(fontSize: 14)
         tv.delegate = self
         tv.backgroundColor = UIColor.customWhite5
@@ -94,7 +94,7 @@ final class DetailWritingScreenController: UIViewController {
         return view
     }()
     
-    
+    /// 앨범 버튼 누르면 이미지피커가 나옴
     private lazy var imagePicker: ImagePickerController = {
         let imagePicker = ImagePickerController()
         
@@ -150,13 +150,9 @@ final class DetailWritingScreenController: UIViewController {
     
     
     
-    
-    
-    
     /// 키보드가 올라와있는지 확인하는 변수
     private var keyboardShow: Bool = false
     
-    var currentPage: CGFloat = 0
     
     
     
@@ -172,10 +168,10 @@ final class DetailWritingScreenController: UIViewController {
         didSet { self.configureNavTitleAndBtn() }
     }
     
-    
+    /// 기록 확인 화면에서 오늘 기록을 볼 수 있게 하는 Record배열
     var todayRecords: [Recode] = []
-    
-    var currentRecode: Recode? {
+    /// 셀을 클릭하여 상세작성 화면에 들어온 경우
+    var currentRecord: Recode? {
         didSet { self.configureData() }
     }
     
@@ -186,7 +182,11 @@ final class DetailWritingScreenController: UIViewController {
     
     
     
-    // 이미지 관련
+    
+    /// 콜렉션뷰 현재 페이지
+    var currentPage: CGFloat = 0
+    
+    // 이미지 관련 배열
     private lazy var selectedAssets: [PHAsset] = [] {
         didSet {
             print(self.selectedAssets)
@@ -226,6 +226,7 @@ final class DetailWritingScreenController: UIViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        // 키보드 올리기
         self.diaryTextView.becomeFirstResponder()
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -245,6 +246,10 @@ final class DetailWritingScreenController: UIViewController {
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        // 데이터 저장
+        self.createData()
+        
+        // 키보드 내리기
         self.diaryTextView.resignFirstResponder()
         // 노티피케이션 삭제
         NotificationCenter.default.removeObserver(self)
@@ -373,8 +378,10 @@ extension DetailWritingScreenController {
             image: UIImage.option,
             style: .plain,
             target: self,
-            action: .none)
+            action: #selector(self.createData))
         
+        
+        // 오른쪽 네비게이션 설정
         // 메뉴 액션 설정
         let addRecodeMenu = UIAction(title: "기록 추가", image: UIImage.plus) { _ in
             self.addRecodeBtnTapped()
@@ -398,20 +405,28 @@ extension DetailWritingScreenController {
     }
     
     
+    // MARK: - 날짜 및 텍스트 설정
+    /// 셀을 클릭하여 상세작성화면에 들어온 경우 데이터 설정
     private func configureData() {
-        if let currentRecode = self.currentRecode {
+        
+        if let currentRecode = self.currentRecord {
             // 내용
             self.diaryTextView.text = currentRecode.context
             self.placeholderLbl.isHidden = true
             
             // 시간
+            // 날짜뷰에 기록(Record)의 시간 표시
             self.dateView.configureDate(selectedDate: currentRecode.date)
+            // 악세서리뷰에 기록(Record)의 시간 표시
             self.accessoryCustomView.configureDate(date: currentRecode.date)
             
-            // 콜렉션뷰
+            // 이미지 (콜렉션뷰)
+            
             
         } else {
+            // 날짜뷰에 현재 시간 표시
             self.dateView.configureDate()
+            // 악세서리뷰에 현재 시간 표시
             self.accessoryCustomView.configureDate()
         }
     }
@@ -569,6 +584,31 @@ extension DetailWritingScreenController {
             // 0개라면 콜렉션뷰 숨기기
             self.selectedImages.append(contentsOf: images)
         })
+    }
+    
+    
+    
+    // MARK: - 데이터 저장
+    @objc private func createData() {
+//        guard isToday
+        let ref = Diary_API.shared
+        
+        
+        
+        if self.detailViewMode == .diary {
+            // 오늘인지 아닌지 판단해야 함
+            print("diary")
+            // 데이터 저장
+//            Diary_API.shared.createDiary(context: "dd") { data in
+//                dump(data)
+//                // static 변수를 통해서 일기를 썼다는 것을 표시
+//            }
+        } else {
+            print("record")
+            // delegate를 통해 기록 추가
+            
+            
+        }
     }
 }
 
