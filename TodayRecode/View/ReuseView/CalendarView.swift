@@ -77,7 +77,9 @@ final class CalendarView: UIView {
         }
     }
     
-    
+    var returnSelectedDate: Date? {
+        return Date.UTC_Plus9(date: self.calendar.selectedDate!)
+    }
     
     
     
@@ -195,15 +197,6 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDele
     /// 이벤트가 있는 날짜에 점으로 표시
     func calendar(_ calendar: FSCalendar,
                   numberOfEventsFor date: Date) -> Int {
-//        print("**************************************************************")
-//        print("**************************************************************")
-//        print("**************************************************************")
-//        dump(diaryArray)
-//        print("**************************************************************")
-//        print(Date.UTC_Plus9(date: date)!)
-//        print("**************************************************************")
-//        print("**************************************************************")
-//        print("**************************************************************")
         return self.diaryArray.contains(Date.UTC_Plus9(date: date)!)
         ? 1
         : 0

@@ -26,18 +26,12 @@ struct Diary_API {
     
     
     
-    
-    
-    
-    
-    
-    
     // MARK: - 오늘 일기 저장
     
     
     // MARK: - 오늘 기록 가져오기
-    func fetchRecode(date: Date,
-                     completion: @escaping ([Recode]) -> Void) {
+    func fetchDiary(date: Date,
+                     completion: @escaping ([Record]) -> Void) {
         // uid가져오기
         // 오늘 날짜 구하기 (+ 시간 / 분 / 초 0으로 만들기)
         // 내일 날짜 구하기
@@ -48,7 +42,7 @@ struct Diary_API {
         
         // 데이터 가져오기
         API_String
-            .recodeDB
+            .diaryDB
             .whereField(API_String.user, isEqualTo: uid) // uid
             .whereField(API_String.created_at, isGreaterThanOrEqualTo: today) // ?일0시
             .whereField(API_String.created_at, isLessThan: tomorrow) // ?일24시
@@ -57,13 +51,13 @@ struct Diary_API {
                 // 일치하는 문서 바인딩
                 guard let datas = snapshot?.documents else { return }
                 // 리턴할 Recode 배열 만들기
-                var recordArray: [Recode] = []
+                var recordArray: [Record] = []
                 // 가져온 문서[배열] .forEach을 통해 하나씩 Recode 모델로 만듦
                 datas.forEach { snapshot in
                     // 데이터 가져오기
                     let dictionary = snapshot.data()
                     // Recode 모델 만들기
-                    let record = Recode(dictionary: dictionary)
+                    let record = Record(dictionary: dictionary)
                     // 배열에 추가
                     recordArray.append(record)
                 }
@@ -84,7 +78,7 @@ struct Diary_API {
     // MARK: - 오늘 기록 쓰기
     func createDiary(context: String,
                      image: [UIImage]? = nil,
-                     completion: @escaping (Recode) -> Void) {
+                     completion: @escaping (Record) -> Void) {
         // uid가져오기
         // 시간 / 분 / 초 0으로 만들기
         guard let uid = Auth.auth().currentUser?.uid,
@@ -113,7 +107,7 @@ struct Diary_API {
                     // -> TimeStamp로 타입캐스팅
                 value[API_String.created_at] = Timestamp(date: current)
                 // 컴플리션
-                completion(Recode(dictionary: value))
+                completion(Record(dictionary: value))
             }
     }
     

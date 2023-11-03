@@ -9,7 +9,7 @@ import FirebaseDatabase
 import FirebaseFirestore
 
 
-struct Recode {
+struct Record {
     let context: String
     var date: Date
     let imageUrl: String

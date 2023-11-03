@@ -53,7 +53,7 @@ final class RecodeTableViewCell: UITableViewCell {
     
     
     // MARK: - 프로퍼티
-    var cellRecord: Recode? {
+    var cellRecord: Record? {
         didSet { self.settingContext(record: self.cellRecord) }
     }
     
@@ -156,7 +156,7 @@ extension RecodeTableViewCell {
 extension RecodeTableViewCell {
     
     // MARK: - 기록 내용 설정
-    func settingContext(record: Recode?) {
+    func settingContext(record: Record?) {
         // 옵셔널 바인딩
         guard let record = record else { return }
         // 본문 내용 설정

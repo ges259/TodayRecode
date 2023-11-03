@@ -44,4 +44,6 @@ extension UIImage {
     static let clock: UIImage? = UIImage(systemName: "clock.fill")
     /// 달력 이미지
     static let calendar: UIImage? = UIImage(systemName: "calendar")
+    /// 뒤로가기 이미지
+    static let back: UIImage? = UIImage(systemName: "chevron.backward")
 }

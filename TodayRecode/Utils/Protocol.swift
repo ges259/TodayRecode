@@ -21,10 +21,15 @@ protocol AccessoryViewDelegate: AnyObject {
 
 
 protocol EasyWritingScreenDelegate: AnyObject {
-    func expansionBtnTapped()
-    func addRecode(recode: Recode)
+    func expansionBtnTapped(context: String?)
+    func createRecord(record: Record)
 }
 
+protocol DetailWritingScreenDelegate: AnyObject {
+    func createRocord(record: Record)
+    func updateRecord(context: String, image: String?)
+    func deleteRecord()
+}
 
 
 protocol CalendarDelegate: AnyObject {

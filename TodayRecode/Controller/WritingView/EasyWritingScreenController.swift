@@ -11,34 +11,67 @@ import SnapKit
 final class EasyWritingScreenController: UIViewController {
     
     // MARK: - 레이아웃
-    /// 뷰
+    /// 컨테이너 뷰
     private lazy var containerView: UIView = UIView.backgroundView(color: UIColor.white)
     
-    private lazy var accessoryCustomView: InputAccessoryCustomView = {
-        let view = InputAccessoryCustomView()
-            view.delegate = self
-            view.currentWritingScreen = .easyWritingScreen
-        return view
-    }()
-    /// 텍스트뷰
-    private lazy var recodeTextView: UITextView = {
-        let tv = UITextView.configureTV(fontSize: 14)
-            tv.delegate = self
-        return tv
-    }()
-    /// 버튼
-    private let expansionBtn: UIButton = UIButton.buttonWithImage(
-        image: .expansion,
-        tintColor: UIColor.btnGrayColor)
-    /// 레이블
+    /// 플레이스홀더 레이블
     private let placeholderLbl: UILabel = UILabel.configureLbl(
         text: "어떤 일을 기록하시겠습니까?",
         font: UIFont.systemFont(ofSize: 14),
         textColor: UIColor.btnGrayColor)
     
     
+    // 상단 스택뷰
+    /// 텍스트뷰
+    private lazy var recodeTextView: UITextView = {
+        let tv = UITextView.configureTV(fontSize: 14)
+            tv.delegate = self
+        return tv
+    }()
+    /// 확장 버튼
+    private let expansionBtn: UIButton = UIButton.buttonWithImage(
+        image: .expansion,
+        tintColor: UIColor.btnGrayColor)
+    /// 스택뷰
+    private lazy var topStackView: UIStackView = UIStackView.configureStackView(
+        arrangedSubviews: [self.recodeTextView,
+                           self.expansionBtn],
+        axis: .horizontal,
+        spacing: 12,
+        alignment: .top,
+        distribution: .fill)
     
+    // 하단 스택뷰
+    /// 날짜 레이블
+    private lazy var dateLbl: UILabel = UILabel.configureLbl(
+        font: UIFont.systemFont(ofSize: 13),
+        textColor: UIColor.btnGrayColor)
     
+    /// 저장 버튼
+    private let sendBtn: UIButton = UIButton.buttonWithImage(
+        image: UIImage.check,
+        tintColor: UIColor.white,
+        backgroundColor: UIColor.btnGrayColor)
+    /// 스택뷰
+    private lazy var bottomStackView: UIStackView = UIStackView.configureStackView(
+        arrangedSubviews: [self.dateLbl,
+                           self.sendBtn],
+        axis: .horizontal,
+        spacing: 12,
+        alignment: .center,
+        distribution: .fill)
+    
+//
+//    /// 전체 버티컬 스택뷰
+//    private lazy var verticalStackView: UIStackView = UIStackView.configureStackView(
+//        arrangedSubviews: [self.topStackView,
+//                           self.bottomStackView],
+//        axis: .vertical,
+//        spacing: 4,
+//        alignment: .fill,
+//        distribution: .fill)
+//
+//
     
     
     
@@ -53,12 +86,18 @@ final class EasyWritingScreenController: UIViewController {
     weak var delegate: EasyWritingScreenDelegate?
     
     
+    var selectedDate: Date? = Date()
+    
+    
+    
+    
+    
     
     
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.dateLbl.text = "djfasdl;dsfa"
         self.configureAction()
         self.configureAotoLayout()
         self.configureUI()
@@ -103,10 +142,16 @@ final class EasyWritingScreenController: UIViewController {
         self.view.backgroundColor = .darkGray.withAlphaComponent(0.4)
         // 코너 둥글게
         self.containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        [self.containerView].forEach { view in
+        [self.containerView,
+         self.sendBtn].forEach { view in
             view.layer.cornerRadius = 10
             view.clipsToBounds = true
         }
+        // 데이트뷰에 날짜 설정
+        self.dateLbl.text = Date.dateReturn_Custom(
+            todayFormat: .a_hmm,
+            UTC_Plus9: false,
+            date: Date())
     }
     
     
@@ -114,47 +159,53 @@ final class EasyWritingScreenController: UIViewController {
     
     // MARK: - 오토레이아웃 설정
     private func configureAotoLayout() {
-        
-        
-        [self.accessoryCustomView,
-         self.recodeTextView,
-         self.placeholderLbl,
-         self.expansionBtn].forEach { view in
-            self.containerView.addSubview(view)
-        }
-        
+        // ********** addSubview 설정 **********
+        self.containerView.addSubview(self.topStackView)
+        self.containerView.addSubview(self.bottomStackView)
+        self.containerView.addSubview(self.placeholderLbl)
         self.view.addSubview(self.containerView)
         
-        // 하단 악세서리뷰 (스택뷰 (카메라/앨범/날짜))
-        self.accessoryCustomView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(5)
-            make.trailing.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-10)
+        
+        // ********** 오토레이아웃 설정 **********
+        // 저장 버튼
+        self.sendBtn.snp.makeConstraints { make in
+            make.width.equalTo(70)
+            make.height.equalTo(30)
+        }
+        // 하단 스택뷰
+        self.bottomStackView.snp.makeConstraints { make in
+            make.top.equalTo(self.topStackView.snp.bottom).offset(4)
+            make.leading.equalToSuperview().offset(15)
+            make.trailing.equalToSuperview().offset(-10)
+            make.bottom.equalToSuperview().offset(-5)
             make.height.equalTo(40)
-        }
-        // 텍스트뷰
-        self.recodeTextView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().offset(10)
-            make.trailing.equalTo(self.expansionBtn.snp.leading).offset(-15)
-            make.bottom.equalTo(self.accessoryCustomView.snp.top).offset(-5)
-            make.height.greaterThanOrEqualTo(60)
-            make.height.lessThanOrEqualTo(150)
-        }
-        // 플레이스 홀더
-        self.placeholderLbl.snp.makeConstraints { make in
-            make.top.equalTo(self.recodeTextView).offset(9)
-            make.leading.equalTo(self.recodeTextView).offset(5)
         }
         // 확대 버튼
         self.expansionBtn.snp.makeConstraints { make in
-            make.top.equalTo(self.recodeTextView)
-            make.trailing.equalToSuperview().offset(-16)
             make.height.width.equalTo(20)
+        }
+        // 텍스트뷰
+        self.recodeTextView.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(60)
+            make.height.lessThanOrEqualTo(160)
+        }
+        // 상단 스택뷰
+        self.topStackView.snp.makeConstraints { make in
+            make.top.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-10)
+            make.height.greaterThanOrEqualTo(60)
+            make.height.lessThanOrEqualTo(200)
+        }
+        // 플레이스 홀더
+        self.placeholderLbl.snp.makeConstraints { make in
+            make.top.equalTo(self.topStackView).offset(9)
+            make.leading.equalTo(self.topStackView).offset(5)
         }
         // 컨테이너뷰
         self.containerView.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
             make.height.greaterThanOrEqualTo(50)
+            make.height.lessThanOrEqualTo(500)
         }
     }
     
@@ -176,7 +227,8 @@ final class EasyWritingScreenController: UIViewController {
         self.expansionBtn.addTarget(self, action: #selector(self.expansionBtnTapped), for: .touchUpInside)
         
         
-        
+        // 액션
+        self.sendBtn.addTarget(self, action: #selector(self.sendBtnTapped), for: .touchUpInside)
     }
     
     
@@ -230,7 +282,14 @@ final class EasyWritingScreenController: UIViewController {
         // 뒤로가기
         self.dismiss(animated: false)
         // DetailWritingScreen으로 진입
-        self.delegate?.expansionBtnTapped()
+        self.delegate?.expansionBtnTapped(context: self.recodeTextView.text)
+    }
+    
+    
+    
+    // MARK: - 저장 버튼 액션
+    @objc private func sendBtnTapped() {
+        self.dismissView()
     }
     
     
@@ -238,10 +297,14 @@ final class EasyWritingScreenController: UIViewController {
     
     
     
-    // MARK: - 뒤로가기 액션
+    
     /// 컨테이너뷰를 클릭했을 때 viewTapped가 불려 뒤로 가는 현상으로 인해 해당 메서드를 만들었음
     @objc private func nothingHappened() {
     }
+    
+    
+    
+    // MARK: - 뒤로가기 액션 + API
     /// 화면을 누르면 + 보내기 버튼 누르면 뒤로 가기
     /// 키보드 닫기 + 뒤로가기 재사용
     @objc private func dismissView() {
@@ -249,10 +312,11 @@ final class EasyWritingScreenController: UIViewController {
             // DB에 저장
         if self.recodeTextView.hasText {
             // 나중에 주석 풀기
-            Recode_API
+            Record_API
                 .shared
-                .createRecode(context: self.recodeTextView.text) { recode in
-                self.delegate?.addRecode(recode: recode)
+                .createRecode(date: self.selectedDate,
+                              context: self.recodeTextView.text) { record in
+                self.delegate?.createRecord(record: record)
                 self.recodeTextView.resignFirstResponder()
                 self.dismiss(animated: false)
             }
@@ -279,13 +343,14 @@ extension EasyWritingScreenController: UITextViewDelegate {
         if textView.text.count == 0 {
             // 플레이스홀더 띄우기
             self.placeholderLbl.isHidden = false
-            self.accessoryCustomView.sendBtnIsEnable(isEnable: false)
-            
+            self.sendBtn.isEnabled = false
+            self.sendBtn.backgroundColor = UIColor.btnGrayColor
         // 텍스트뷰에 텍스트가 있다면
         } else {
             // 플레이스홀더 없애기
             self.placeholderLbl.isHidden = true
-            self.accessoryCustomView.sendBtnIsEnable(isEnable: true)
+            self.sendBtn.isEnabled = true
+            self.sendBtn.backgroundColor = UIColor.customblue6
         }
         
         // 현재 테이블의 높이 가져오기
@@ -304,25 +369,5 @@ extension EasyWritingScreenController: UITextViewDelegate {
             self.dismissView()
         }
         return true
-    }
-}
-
-
-
-
-
-// MARK: - 악세서리 델리게이트
-extension EasyWritingScreenController: AccessoryViewDelegate {
-    func cameraBtnTapped() {
-        print("Easy --- \(#function)")
-    }
-    
-    func albumBtnTapped() {
-        print("Easy --- \(#function)")
-    }
-    
-    func accessoryRightBtnTapped() {
-        print("Easy --- \(#function)")
-        self.dismissView()
     }
 }

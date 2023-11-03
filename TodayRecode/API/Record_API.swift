@@ -10,8 +10,8 @@ import FirebaseAuth
 import FirebaseFirestore
 
 
-struct Recode_API {
-    static let shared: Recode_API = Recode_API()
+struct Record_API {
+    static let shared: Record_API = Record_API()
     init() {}
     
     // MARK: - 한 달 기록 가져오기
@@ -31,7 +31,7 @@ struct Recode_API {
     
     // MARK: - 오늘 기록 가져오기
     func fetchRecode(date: Date,
-                     completion: @escaping ([Recode]) -> Void) {
+                     completion: @escaping ([Record]) -> Void) {
         // uid가져오기
         // 오늘 날짜 구하기 (+ 시간 / 분 / 초 0으로 만들기)
         // 내일 날짜 구하기
@@ -51,13 +51,13 @@ struct Recode_API {
                 // 일치하는 문서 바인딩
                 guard let datas = snapshot?.documents else { return }
                 // 리턴할 Recode 배열 만들기
-                var recordArray: [Recode] = []
+                var recordArray: [Record] = []
                 // 가져온 문서[배열] .forEach을 통해 하나씩 Recode 모델로 만듦
                 datas.forEach { snapshot in
                     // 데이터 가져오기
                     let dictionary = snapshot.data()
                     // Recode 모델 만들기
-                    let record = Recode(dictionary: dictionary)
+                    let record = Record(dictionary: dictionary)
                     // 배열에 추가
                     recordArray.append(record)
                 }
@@ -74,15 +74,16 @@ struct Recode_API {
     
     
     
-    
     // MARK: - 오늘 기록 쓰기
-    func createRecode(context: String,
+    func createRecode(date: Date?,
+                      context: String,
                       image: [UIImage]? = nil,
-                      completion: @escaping (Recode) -> Void) {
+                      completion: @escaping (Record) -> Void) {
         // uid가져오기
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        guard let uid = Auth.auth().currentUser?.uid,
+              let current = Date.UTC_Plus9(date: date ?? Date()) else { return }
         
-        let current = Date()
+        
         
         // DB에 저장할 딕셔너리 만들기
         var value: [String: Any] = [
@@ -107,7 +108,7 @@ struct Recode_API {
                 value[API_String.created_at] = Timestamp(date: current)
                 
                 // 컴플리션
-                completion(Recode(dictionary: value))
+                completion(Record(dictionary: value))
             }
     }
 }

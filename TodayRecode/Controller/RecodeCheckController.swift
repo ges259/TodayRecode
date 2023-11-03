@@ -48,7 +48,7 @@ final class RecodeCheckController: UIViewController {
     /// 셀의 개수
 //    private var tableCellCount: Int = 0
     
-    var todayRecodes: [Recode]? {
+    var todayRecodes: [Record]? {
         didSet {
             if let todayRecodes = self.todayRecodes?.first {
                 self.dateView.configureDate(selectedDate: todayRecodes.date)

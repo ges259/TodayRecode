@@ -67,8 +67,9 @@ enum DetailEditMode {
 }
 /// 상세 작성 화면 일기모드 / 기록모드 설정 열거형
 enum DetailViewMode {
+    case record_plusBtn
+    case record // 기록
     case diary // 일기
-    case recode // 기록
 }
 
 

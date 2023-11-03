@@ -55,6 +55,7 @@ final class RecordController: UIViewController {
         let calendar = CalendarView()
             calendar.delegate = self
             calendar.calendar.scope = .week
+        calendar.isHidden = true
         return calendar
     }()
     /// 달력의 높이 제약
@@ -78,17 +79,37 @@ final class RecordController: UIViewController {
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // MARK: - 프로퍼티
     /// 오늘인지 아닌지 판단하는 변수
     private var isToday: Bool = true
-    /// 오늘 기록
-    private var todayRecords: [Recode] = [Recode]()
-    /// 다른 날의 기록
-    private var anotherDayRecords: [Recode] = [Recode]()
-    /// 오늘 날짜 배열 [년, 월, 일]
-    private lazy var todayArray: Date? = Date.UTC_Plus9(date: Date())
     
-    private var anotherDayArray: Date?
+    /// 오늘 기록
+    private var todayRecords_Array: [Record] = [Record]()
+    /// 다른 날의 기록
+    private var anotherDayRecords_Array: [Record] = [Record]()
+    /// 오늘 날짜
+    private lazy var today_Date: Date? = Date.UTC_Plus9(date: Date())
+    /// 다른 날짜 (
+    private var anotherDay_Date: Date?
+    
+    /// 셀을 통해 상세 작성 화면으로 넘어간 후 수정했을 때, 셀을 업데이트를 하기 위한 index 표시
+    private var currentIndex: Int = 0
+    
+    
+    
+    
+    
+    
     
     
     
@@ -97,13 +118,10 @@ final class RecordController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.configureUI()
-        self.configureAutoLayout()
-        self.configureAction()
-        // dateLabel에 날짜 띄우기
-        self.configureDate()
-        
-        self.fetchRecords()
+        self.fetchRecords()         // 데이터 가져오기
+        self.configureUI()          // UI 설정
+        self.configureAutoLayout()  // 오토레이아웃 설정
+        self.configureAction()      // 액션 설정
     }
 }
     
@@ -137,6 +155,10 @@ extension RecordController {
         
         // 네비게이션 타이틀(String) 설정
         self.setNavTitle(date: Date())
+        // dateLabel에 날짜 띄우기
+        self.configureDate()
+        // 달력에 오늘 날짜 선택 (원래 기본적으로 선택 안 되어있음)
+        self.calendar.calendar.select(Date())
         
         // 코너 둥글게 설정
         self.tableView.clipsToBounds = true
@@ -229,6 +251,13 @@ extension RecordController {
         
         // 플러스 버튼 액션 설정
         self.plusBtn.addTarget(self, action: #selector(self.plusBtnTapped), for: .touchUpInside)
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage.calendar,
+            style: .done,
+            target: self,
+            action: #selector(self.navCalendarBtnTapped))
+        
     }
 }
 
@@ -251,13 +280,13 @@ extension RecordController {
 extension RecordController {
     private func fetchRecords(date: Date = Date()) {
         // 해당 날짜의 데이터 가져오기
-        Recode_API.shared.fetchRecode(date: date) { recodeArray in
+        Record_API.shared.fetchRecode(date: date) { recodeArray in
             // 오늘이라면
             if self.isToday {
-                self.todayRecords = recodeArray
+                self.todayRecords_Array = recodeArray
                 // 오늘이 아니라면
             } else {
-                self.anotherDayRecords = recodeArray
+                self.anotherDayRecords_Array = recodeArray
             }
             // 테이블뷰 리로드
             self.tableView.reloadData()
@@ -284,27 +313,9 @@ extension RecordController {
 
 
 
-// MARK: - 액션
+// MARK: - 셀렉터
 
 extension RecordController {
-    
-    // MARK: - 네비게이션 타이틀 재설정
-    /// 선택된 날짜에 따라 네비게이션 타이틀을 설정하는 메서드
-    private func setNavTitle(date: Date = Date()) {
-        self.navTitle.attributedText = self.configureNavTitle(
-            "하루 기록",
-            date: date)
-    }
-    
-    
-    
-    // MARK: - 날짜 설정 액션
-    /// dateLabel에 날짜를 띄우는 메서드
-    func configureDate(selectedDate: Date = Date()) {
-        self.dateView.configureDate(selectedDate: selectedDate)
-    }
-    
-    
     
     // MARK: - 위/아래 스와이프
     /// 스와이프를 하면 자동으로 불리는 메서드
@@ -318,56 +329,126 @@ extension RecordController {
     
     
     
-    // MARK: - 플러스 버튼
+    // MARK: - 네비게이션 버튼 액션
+    /// 네비게이션 오른쪽 버튼, 달력 이미지누르면 달력을 숨기거나 보이게할 수 있다.
+    @objc private func navCalendarBtnTapped() {
+        UIView.animate(withDuration: 0.5) {
+            // 캘린더 숨기기 / 보이게 하기
+            self.calendar.isHidden.toggle()
+            self.stackView.layoutIfNeeded()
+            // 캘린더의 현재 상태(isHidden)를 저장
+            calendarIsHidden_Static.toggle()
+            // calendar(달력)에서 현재 선택된 날짜를 받아옴
+            guard let date = self.calendar.returnSelectedDate else { return }
+            // 네비게이션 타이틀 재설정
+            self.setNavTitle(date: date)
+        }
+    }
+    
+    
+    
+    // MARK: - 간편 작성 화면 이동 (플러스 버튼)
     /// 플러스 버튼을 누르면 간편 작성 화면으로 이동
     @objc private func plusBtnTapped() {
-        if !self.isToday {
-            self.isToday = true
-            self.tableView.reloadData()
-        }
-        
         let vc = EasyWritingScreenController()
-            vc.modalPresentationStyle = .overFullScreen
-            vc.delegate = self
+        vc.modalPresentationStyle = .overFullScreen
+        vc.delegate = self
+        // 달력에 선택된 날짜 보내기
+        vc.selectedDate = self.calendar.calendar.selectedDate
+        // 화면 이동
         self.present(vc, animated: false)
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// MARK: - 액션
+
+extension RecordController {
+    
+    // MARK: - 네비게이션 타이틀 재설정
+    /// 선택된 날짜에 따라 네비게이션 타이틀을 설정하는 메서드
+    private func setNavTitle(date: Date = Date()) {
+        if calendarIsHidden_Static {
+            self.navTitle.text = "하루 기록"
+        } else {
+            self.navTitle.attributedText = self.configureNavTitle( "하루 기록", date: date)
+        }
+    }
+    
+    
+    
+    // MARK: - 날짜 설정 액션
+    /// dateLabel에 날짜를 띄우는 메서드
+    func configureDate(selectedDate: Date = Date()) {
+        self.dateView.configureDate(selectedDate: selectedDate)
     }
     
     
     
     // MARK: - 상세 작성 화면으로 이동
     /// 상세 작성 화면으로 이동
-    private func pushToDetailWritingScreen(indexRecord: Recode? = nil,
+    private func pushToDetailWritingScreen(selectedRecord: Record? = nil,
                                            easyViewString: String? = nil) {
         let vc = DetailWritingScreenController()
         // 상세 작성뷰에서 탭바 없애기
         vc.hidesBottomBarWhenPushed = true
-        
-        // 기록 화면에서 넘어갔다는 표시
-        vc.detailViewMode = .recode
+        // 델리게이트 설정
+        vc.delegate = self
         
         // 기록 확인 화면에서 사용할 해당 날짜 배열
         vc.todayRecords = self.isToday
-        ? self.todayRecords // 오늘일 때
-        : self.anotherDayRecords // 오늘이 아닐 때
+        ? self.todayRecords_Array // 오늘일 때
+        : self.anotherDayRecords_Array // 오늘이 아닐 때
         
-        // ***** 셀을 통해 넘어간 경우 *****
-        if let indexRecode = indexRecord {
-            // 데이터 넘겨주기 (파라미터로 받은 데이터)
-            vc.currentRecord = indexRecode
-        // ***** 확장 버튼을 통해 넘어간 경우 *****
-        } else {
+        
+        // 기록 화면에서 넘어갔다는 표시
+        vc.detailViewMode = selectedRecord == nil
+        ? .record_plusBtn
+        : .record
+        
+        
+        // 확장 버튼을 통해 넘어간 경우
+            // -> 아무 것도 적혀있지 않다면
+        if easyViewString != "" {
             // 문자열만 가져간다.
             vc.diaryTextView.text = easyViewString
+            vc.placeholderLbl.isHidden = true
         }
+        
+        // 데이터 넘겨주기 (파라미터로 받은 데이터)
+        vc.selectedRecord = selectedRecord
+        
+            
+        
         
         // 화면 이동
         self.navigationController?.pushViewController(vc, animated: true)
-        // MARK: - Fix
-        /*
-         추가해야할 것
-         - 셀을 눌러서 넘어갈 때 -> 셀의 데이터 가져가기 (o)
-         - 확대 버튼을 눌러서 넘어갈 때 -> easyWritingScreen에 있는 텍스트 가져가기
-         */
+    }
+    
+    
+    
+    // MARK: - 테이블에 데이터 추가
+    private func addRecord(record: Record) {
+        // 오늘이라면
+        if self.isToday {
+            // 오늘 배열에 넣기
+            self.todayRecords_Array.insert(record, at: 0)
+        // 오늘이 아니라면
+        } else {
+            self.anotherDayRecords_Array.insert(record, at: 0)
+        }
+        // 테이블뷰 특정 셀 리로드
+        self.tableView.insertRows(
+            at: [IndexPath(row: 0, section: 0)],
+            with: .none)
     }
 }
 
@@ -400,13 +481,13 @@ extension RecordController: CalendarDelegate {
         let selectedDate = Date.UTC_Plus9(date: date)
         
         // 선택된 날짜가 오늘이라면
-        if self.todayArray == selectedDate {
+        if self.today_Date == selectedDate {
             self.isToday = true
             self.tableView.reloadData()
 
         // 선택된 날짜가 오늘이 아니라면
             // 1. 가장 최근에 선택되었던 날이라면
-        } else if self.anotherDayArray == selectedDate {
+        } else if self.anotherDay_Date == selectedDate {
             self.isToday = false
             self.tableView.reloadData()
             
@@ -416,7 +497,7 @@ extension RecordController: CalendarDelegate {
             // 선택한 날짜의 데이터 가져오기
             self.fetchRecords(date: date)
             // 가장 최근에 선택되었다는 표시 남기기
-            self.anotherDayArray = selectedDate
+            self.anotherDay_Date = selectedDate
         }
     }
     
@@ -501,12 +582,12 @@ extension RecordController: UITableViewDelegate {
                    didSelectRowAt indexPath: IndexPath) {
         
         // 오늘인지 아닌지 판단
-        let array: [Recode] = self.isToday
-        ? self.todayRecords      // 오늘일 때
-        : self.anotherDayRecords // 오늘이 아닐 때
+        let array: [Record] = self.isToday
+        ? self.todayRecords_Array      // 오늘일 때
+        : self.anotherDayRecords_Array // 오늘이 아닐 때
         
         // 상세 작성 화면으로 이동
-        self.pushToDetailWritingScreen(indexRecord: array[indexPath.row])
+        self.pushToDetailWritingScreen(selectedRecord: array[indexPath.row])
     }
 }
 
@@ -516,8 +597,8 @@ extension RecordController: UITableViewDataSource {
                    numberOfRowsInSection section: Int) -> Int {
         // 오늘인지 아닌지 판단
         return self.isToday
-        ? self.todayRecords.count       // 오늘일 때
-        : self.anotherDayRecords.count  // 오늘이 아닐 때
+        ? self.todayRecords_Array.count       // 오늘일 때
+        : self.anotherDayRecords_Array.count  // 오늘이 아닐 때
     }
     /// 셀 구현
     func tableView(_ tableView: UITableView,
@@ -528,8 +609,12 @@ extension RecordController: UITableViewDataSource {
         
         // 오늘인지 아닌지 판단
         cell.cellRecord = self.isToday
-        ? self.todayRecords[indexPath.row]      // 오늘일 때
-        : self.anotherDayRecords[indexPath.row] // 오늘이 아닐 때
+        ? self.todayRecords_Array[indexPath.row]      // 오늘일 때
+        : self.anotherDayRecords_Array[indexPath.row] // 오늘이 아닐 때
+        
+        // index 표시
+        self.currentIndex = indexPath.row
+        
         // 리턴
         return cell
     }
@@ -546,19 +631,40 @@ extension RecordController: UITableViewDataSource {
 
 // MARK: - 간편 작성 화면 델리게이트
 extension RecordController: EasyWritingScreenDelegate {
-    /// 확대 버튼을 누르면 호출되는 메서드
-    func expansionBtnTapped() {
-        // 상세 작성 화면으로 이동
-        self.pushToDetailWritingScreen()
+    /// 확대 버튼을 누르면 -> 상세 작성 화면으로 이동
+    func expansionBtnTapped(context: String?) {
+        self.pushToDetailWritingScreen(easyViewString: context)
     }
     
-    /// 데이터를 추가하면 호출되는 메서드
-    func addRecode(recode: Recode) {
-        // 오늘 배열에 넣기
-        self.todayRecords.insert(recode, at: 0)
-        // 테이블뷰 특정 셀 리로드
-        self.tableView.insertRows(
-            at: [IndexPath(row: 0, section: 0)],
-            with: .none)
+    /// 데이터를 생성하면 -> 셀에 추가
+    func createRecord(record: Record) {
+        self.addRecord(record: record)
+    }
+}
+
+
+
+
+
+
+
+
+
+
+extension RecordController: DetailWritingScreenDelegate {
+    /// 데이터를 생성하면 -> 셀에 추가
+    func createRocord(record: Record) {
+        self.addRecord(record: record)
+    }
+    
+    /// 데이터를 업데이트하면 -> 셀을 업데이트
+    func updateRecord(context: String, image: String?) {
+        // currentIndex를 사용
+        
+        // String 및 이미지만 바꾸면 됨
+    }
+    
+    func deleteRecord() {
+        /// 데이터를 삭제하면 -> 셀 삭제
     }
 }

@@ -140,7 +140,8 @@ extension Date {
     
     
     
-    func reset_h_m_s() -> Date? {
+    func reset_h_m_s(day_set0: Bool = false,
+                     month_plus1: Bool = false) -> Date? {
         // 현재 시간
         let calendar = Calendar.current
         // 표현할? 정보들 선택하기
@@ -152,6 +153,14 @@ extension Date {
         components.minute = 0
         components.second = 0
         
+        // 현재 달 1일로 맞춤
+        if day_set0 {
+            components.day = 1
+            // 다음달 1일로 맞춤
+        } else if month_plus1 {
+            components.day = 1
+            components.month! += 1
+        }
         // Date로 변환하여 반환
         return calendar.date(from: components)
     }
