@@ -9,30 +9,36 @@ import UIKit
 /// 시간의 형식을 리턴하는 열거형
 enum TodayFormatEnum {
     case d
-    case M_d
-    case M
-    
-    case yyyy_M
     case h
-    case yyyy_MM_dd_HH_dd_ss
-    
-    case yyyy
     case yyyy_MM_dd
     // PM 2:00
     case a_hmm
     // 14:00
     case Hmm
+    case yyyy
+    case M
     
-    case api_yyyy_M
+    case M월d일
+    case M월
+    case yyyy년M월
+    case yyyy_MM_dd_HH_dd_ss
+    
+    case yyyy년
+    
+    case yyyyM
+    
+    
     
     var today: String {
         switch self {
             // 날짜
+        case .yyyy: return "yyyy"
+        case .M: return "M"
         case .d: return "d"
-        case .M_d: return "M월 d일"
-        case .M: return "M월"
-        case .yyyy: return "yyyy년"
-        case .yyyy_M: return "yyyy년 M월"
+        case .M월d일: return "M월 d일"
+        case .M월: return "M월"
+        case .yyyy년: return "yyyy년"
+        case .yyyy년M월: return "yyyy년 M월"
         case .yyyy_MM_dd: return "yyyy-MM-dd"
         case .h: return "h"
         case .yyyy_MM_dd_HH_dd_ss: return "yyyy-MM-dd 00:00:00 +0000"
@@ -41,7 +47,7 @@ enum TodayFormatEnum {
         case .a_hmm: return "a h:mm"
         case .Hmm: return "H:mm"
             
-        case .api_yyyy_M: return "yyyyM"
+        case .yyyyM: return "yyyyM"
         }
     }
 }
@@ -68,7 +74,7 @@ enum DetailEditMode {
 /// 상세 작성 화면 일기모드 / 기록모드 설정 열거형
 enum DetailViewMode {
     case record_plusBtn
-    case record // 기록
+    case record_CellTapped // 기록
     case diary // 일기
 }
 

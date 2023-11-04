@@ -41,7 +41,8 @@ final class TabBarController: UITabBarController {
     /// 탭바 설정
     private func configureTabBar() {
         // 오늘 날짜 가져오기
-        let today = Date.dateReturn_Custom(todayFormat: .d)
+        let today = Date.dateReturn_Custom(todayFormat: .d,
+                                           UTC_Plus9: true)
         
         // 기록 화면
         let recode = self.templateNavContoller(

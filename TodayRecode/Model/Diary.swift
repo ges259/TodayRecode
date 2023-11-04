@@ -26,16 +26,22 @@ struct Diary {
         let timeFormat: TodayFormatEnum = timeFormat_Static == 0
         ? .a_hmm // PM 2:00
         : .Hmm // 14: 00
-        return Date.dateReturn_Custom(todayFormat: timeFormat, date: self.date)
+        return Date.dateReturn_Custom(todayFormat: timeFormat,
+                                      UTC_Plus9: true,
+                                      date: self.date)
     }
     
     // 날짜
     /// ex) 10일
     var diary_d: String {
-        return Date.dateReturn_Custom(todayFormat: .d, date: self.date)
+        return Date.dateReturn_Custom(todayFormat: .d,
+                                      UTC_Plus9: true,
+                                      date: self.date)
     }
     /// ex) 9월 10일
     var diary_M_d: String {
-        return Date.dateReturn_Custom(todayFormat: .M_d, date: self.date)
+        return Date.dateReturn_Custom(todayFormat: .M월d일,
+                                      UTC_Plus9: true,
+                                      date: self.date)
     }
 }

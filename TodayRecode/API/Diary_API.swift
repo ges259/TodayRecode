@@ -35,35 +35,35 @@ struct Diary_API {
         // uid가져오기
         // 오늘 날짜 구하기 (+ 시간 / 분 / 초 0으로 만들기)
         // 내일 날짜 구하기
-        guard let uid = Auth.auth().currentUser?.uid,
-              let today = date.reset_h_m_s(),
-              let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)
-        else { return }
-        
+//        guard let uid = Auth.auth().currentUser?.uid,
+//              let today = date.reset_time(h_m_s: true),
+//              let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)
+//        else { return }
+//
         // 데이터 가져오기
-        API_String
-            .diaryDB
-            .whereField(API_String.user, isEqualTo: uid) // uid
-            .whereField(API_String.created_at, isGreaterThanOrEqualTo: today) // ?일0시
-            .whereField(API_String.created_at, isLessThan: tomorrow) // ?일24시
-            .order(by: API_String.created_at, descending: true) // 내림차순
-            .getDocuments { snapshot, error in
-                // 일치하는 문서 바인딩
-                guard let datas = snapshot?.documents else { return }
-                // 리턴할 Recode 배열 만들기
-                var recordArray: [Record] = []
-                // 가져온 문서[배열] .forEach을 통해 하나씩 Recode 모델로 만듦
-                datas.forEach { snapshot in
-                    // 데이터 가져오기
-                    let dictionary = snapshot.data()
-                    // Recode 모델 만들기
-                    let record = Record(dictionary: dictionary)
-                    // 배열에 추가
-                    recordArray.append(record)
-                }
-                // 컴플리션
-                completion(recordArray)
-            }
+//        API_String
+//            .diaryDB
+//            .whereField(API_String.user, isEqualTo: uid) // uid
+//            .whereField(API_String.created_at, isGreaterThanOrEqualTo: today) // ?일0시
+//            .whereField(API_String.created_at, isLessThan: tomorrow) // ?일24시
+//            .order(by: API_String.created_at, descending: true) // 내림차순
+//            .getDocuments { snapshot, error in
+//                // 일치하는 문서 바인딩
+//                guard let datas = snapshot?.documents else { return }
+//                // 리턴할 Recode 배열 만들기
+//                var recordArray: [Record] = []
+//                // 가져온 문서[배열] .forEach을 통해 하나씩 Recode 모델로 만듦
+//                datas.forEach { snapshot in
+//                    // 데이터 가져오기
+//                    let dictionary = snapshot.data()
+//                    // Recode 모델 만들기
+//                    let record = Record(dictionary: dictionary)
+//                    // 배열에 추가
+//                    recordArray.append(record)
+//                }
+//                // 컴플리션
+//                completion(recordArray)
+//            }
     }
     
     
@@ -82,7 +82,7 @@ struct Diary_API {
         // uid가져오기
         // 시간 / 분 / 초 0으로 만들기
         guard let uid = Auth.auth().currentUser?.uid,
-              let current = Date().reset_h_m_s()
+              let current = Date().reset_time(h_m_s: true)
         else { return }
         
         // DB에 저장할 딕셔너리 만들기
@@ -107,7 +107,7 @@ struct Diary_API {
                     // -> TimeStamp로 타입캐스팅
                 value[API_String.created_at] = Timestamp(date: current)
                 // 컴플리션
-                completion(Record(dictionary: value))
+//                completion(Record(dictionary: value))
             }
     }
     

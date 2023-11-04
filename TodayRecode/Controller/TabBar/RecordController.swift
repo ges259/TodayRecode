@@ -118,7 +118,7 @@ final class RecordController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.fetchRecords()         // 데이터 가져오기
+//        self.fetchRecords()         // 데이터 가져오기
         self.configureUI()          // UI 설정
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
@@ -278,7 +278,7 @@ extension RecordController {
 
 // MARK: - API
 extension RecordController {
-    private func fetchRecords(date: Date = Date()) {
+    private func fetchRecords_API(date: Date = Date()) {
         // 해당 날짜의 데이터 가져오기
         Record_API.shared.fetchRecode(date: date) { recodeArray in
             // 오늘이라면
@@ -291,6 +291,24 @@ extension RecordController {
             // 테이블뷰 리로드
             self.tableView.reloadData()
         }
+    }
+    
+    private func deleteRecord_API(documentID: String?) {
+        // 옵셔널 바인딩
+        guard let documentID = documentID else { return }
+        // 배열에서 해당 데이터 삭제
+        
+        if self.isToday {
+            self.todayRecords_Array.remove(at: self.currentIndex)
+        } else {
+            self.anotherDayRecords_Array.remove(at: self.currentIndex)
+        }
+        // 삭제
+        Record_API.shared.deleteRecord(documentID: documentID)
+        // 테이블뷰의 해당 셀 리로드
+        self.tableView.deleteRows(at: [IndexPath(row: self.currentIndex,
+                                                 section: 0)],
+                                  with: .automatic)
     }
 }
 
@@ -339,7 +357,7 @@ extension RecordController {
             // 캘린더의 현재 상태(isHidden)를 저장
             calendarIsHidden_Static.toggle()
             // calendar(달력)에서 현재 선택된 날짜를 받아옴
-            guard let date = self.calendar.returnSelectedDate else { return }
+            guard let date = self.calendar.returnSelectedDate_exceptToday else { return }
             // 네비게이션 타이틀 재설정
             self.setNavTitle(date: date)
         }
@@ -354,7 +372,7 @@ extension RecordController {
         vc.modalPresentationStyle = .overFullScreen
         vc.delegate = self
         // 달력에 선택된 날짜 보내기
-        vc.selectedDate = self.calendar.calendar.selectedDate
+        vc.selectedDate = self.calendar.returnSelectedDate_exceptToday
         // 화면 이동
         self.present(vc, animated: false)
     }
@@ -412,23 +430,20 @@ extension RecordController {
         // 기록 화면에서 넘어갔다는 표시
         vc.detailViewMode = selectedRecord == nil
         ? .record_plusBtn
-        : .record
+        : .record_CellTapped
         
         
         // 확장 버튼을 통해 넘어간 경우
             // -> 아무 것도 적혀있지 않다면
-        if easyViewString != "" {
+        if easyViewString != nil {
             // 문자열만 가져간다.
             vc.diaryTextView.text = easyViewString
             vc.placeholderLbl.isHidden = true
+            vc.writeDate = self.calendar.returnSelectedDate_exceptToday ?? Date()
         }
         
         // 데이터 넘겨주기 (파라미터로 받은 데이터)
         vc.selectedRecord = selectedRecord
-        
-            
-        
-        
         // 화면 이동
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -495,7 +510,7 @@ extension RecordController: CalendarDelegate {
         } else {
             self.isToday = false
             // 선택한 날짜의 데이터 가져오기
-            self.fetchRecords(date: date)
+            self.fetchRecords_API(date: date)
             // 가장 최근에 선택되었다는 표시 남기기
             self.anotherDay_Date = selectedDate
         }
@@ -564,8 +579,20 @@ extension RecordController: UITableViewDelegate {
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // 왼쪽에 만들기
-        let trash = UIContextualAction(style: .normal, title: "삭제") { (_, _, success: @escaping (Bool) -> Void) in
-            print("trash 클릭 됨")
+        let trash = UIContextualAction(style: .normal, title: nil) { (_, _, success: @escaping (Bool) -> Void) in
+            // 셀의 인덱스 저장
+            self.currentIndex = indexPath.row
+            // 문서ID 가져오기
+            let documentID: String?
+            // 오늘이라면
+            if self.isToday {   // 오늘 배열에서 문서ID 가져오기
+                documentID = self.todayRecords_Array[indexPath.row].documentID
+            } else {            // 다른 날 배열에서 문서ID 가져오기
+                documentID =  self.anotherDayRecords_Array[indexPath.row].documentID
+            }
+            
+            // DB삭제 + 셀 삭제
+            self.deleteRecord_API(documentID: documentID)
             success(true)
         }
         // 이미지 및 색상 설정
@@ -585,6 +612,9 @@ extension RecordController: UITableViewDelegate {
         let array: [Record] = self.isToday
         ? self.todayRecords_Array      // 오늘일 때
         : self.anotherDayRecords_Array // 오늘이 아닐 때
+        
+        // 클릭한 셀의 index 저장
+        self.currentIndex = indexPath.row
         
         // 상세 작성 화면으로 이동
         self.pushToDetailWritingScreen(selectedRecord: array[indexPath.row])
@@ -611,9 +641,6 @@ extension RecordController: UITableViewDataSource {
         cell.cellRecord = self.isToday
         ? self.todayRecords_Array[indexPath.row]      // 오늘일 때
         : self.anotherDayRecords_Array[indexPath.row] // 오늘이 아닐 때
-        
-        // index 표시
-        self.currentIndex = indexPath.row
         
         // 리턴
         return cell
@@ -654,17 +681,26 @@ extension RecordController: EasyWritingScreenDelegate {
 extension RecordController: DetailWritingScreenDelegate {
     /// 데이터를 생성하면 -> 셀에 추가
     func createRocord(record: Record) {
+        print(self.isToday)
         self.addRecord(record: record)
     }
     
     /// 데이터를 업데이트하면 -> 셀을 업데이트
-    func updateRecord(context: String, image: String?) {
-        // currentIndex를 사용
-        
-        // String 및 이미지만 바꾸면 됨
+    func updateRecord(record: Record) {
+        // currentIndex를 사용 (셀을 클릭했을 때 해당 셀의 index를 저장한다.)
+        if self.isToday {   // 오늘이라면 -> 오늘 배열에 저장
+            self.todayRecords_Array[self.currentIndex] = record
+        } else {            // 오늘이 아니라면 -> 다른 날 배열에 저장
+            self.anotherDayRecords_Array[self.currentIndex] = record
+        }
+        // 해당 셀만 리로드
+        self.tableView.reloadRows(at: [IndexPath(row: self.currentIndex,
+                                                 section: 0)],
+                                  with: .automatic)
     }
     
-    func deleteRecord() {
+    func deleteRecord(documentID: String) {
         /// 데이터를 삭제하면 -> 셀 삭제
+        self.deleteRecord_API(documentID: documentID)
     }
 }

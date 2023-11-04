@@ -14,10 +14,12 @@ struct Record {
     var date: Date
     let imageUrl: String
     
-//    let recodeID: String
+    let documentID: String
     
     
-    init(dictionary: [String: Any]) {
+    init(documentID: String, dictionary: [String: Any]) {
+        self.documentID = documentID
+        
         self.context = dictionary[API_String.context] as? String ?? ""
         self.imageUrl = dictionary[API_String.image_url] as? String ?? ""
         
@@ -43,10 +45,14 @@ struct Record {
     }
     /// ex) 10일
     var recodeDay: String {
-        return Date.dateReturn_Custom(todayFormat: .d, date: self.date)
+        return Date.dateReturn_Custom(todayFormat: .d,
+                                      UTC_Plus9: true,
+                                      date: self.date)
     }
     /// ex) 9월 10일
     var recodeMonthAndDay: String {
-        return Date.dateReturn_Custom(todayFormat: .M_d, date: self.date)
+        return Date.dateReturn_Custom(todayFormat: .M월d일,
+                                      UTC_Plus9: true,
+                                      date: self.date)
     }
 }

@@ -72,17 +72,24 @@ final class CalendarView: UIView {
     
     var diaryArray: [Date] = [] {
         didSet {
-            print(#function)
             self.calendar.reloadData()
         }
     }
-    
+    /// 선택된 날짜 0시 0분 0초
     var returnSelectedDate: Date? {
-        return Date.UTC_Plus9(date: self.calendar.selectedDate!)
+        return Date.UTC_Plus9(date: self.calendar.selectedDate ?? Date())
     }
-    
-    
-    
+    /// selectedData는 시간/분/초가 모두 0이기 때문에 현재 시간 + 선택된 날짜 년/월/일
+    var returnSelectedDate_exceptToday: Date? {
+        // 현재 시간 구하기
+        let current = Date.UTC_Plus9(date: calendar.today ?? Date())
+        // 달력에 선택된 시간 가져오기
+        let selectedDate = Date.UTC_Plus9(date: self.calendar.selectedDate ?? Date())
+        // 리턴
+        return current == selectedDate
+        ? Date()        // 만약 서로 같다면 -> 오늘날짜 리턴
+        : selectedDate  // 다른 날이라면 -> 달력에 선택된 날짜 리턴
+    }
     
     
     

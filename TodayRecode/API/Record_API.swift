@@ -17,7 +17,8 @@ struct Record_API {
     // MARK: - 한 달 기록 가져오기
     
     
-    
+    typealias RecordCompletion = (Result<Record, Error>) -> Void
+    typealias RecordArrayCompletion = (Result<[Record], Error>) -> Void
     
     
     
@@ -36,7 +37,7 @@ struct Record_API {
         // 오늘 날짜 구하기 (+ 시간 / 분 / 초 0으로 만들기)
         // 내일 날짜 구하기
         guard let uid = Auth.auth().currentUser?.uid,
-              let today = date.reset_h_m_s(),
+              let today = date.reset_time(h_m_s: true),
               let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)
         else { return }
         
@@ -50,6 +51,7 @@ struct Record_API {
             .getDocuments { snapshot, error in
                 // 일치하는 문서 바인딩
                 guard let datas = snapshot?.documents else { return }
+                
                 // 리턴할 Recode 배열 만들기
                 var recordArray: [Record] = []
                 // 가져온 문서[배열] .forEach을 통해 하나씩 Recode 모델로 만듦
@@ -57,7 +59,8 @@ struct Record_API {
                     // 데이터 가져오기
                     let dictionary = snapshot.data()
                     // Recode 모델 만들기
-                    let record = Record(dictionary: dictionary)
+                    let record = Record(documentID: snapshot.documentID,
+                                        dictionary: dictionary)
                     // 배열에 추가
                     recordArray.append(record)
                 }
@@ -75,15 +78,16 @@ struct Record_API {
     
     
     // MARK: - 오늘 기록 쓰기
-    func createRecode(date: Date?,
+    func createRecord(date: Date?,
                       context: String,
-                      image: [UIImage]? = nil,
+                      image: [UIImage]?,
                       completion: @escaping (Record) -> Void) {
         // uid가져오기
         guard let uid = Auth.auth().currentUser?.uid,
-              let current = Date.UTC_Plus9(date: date ?? Date()) else { return }
+              let current = date else { return }
         
-        
+        // 문서 ID만들기
+        let documentID = NSUUID().uuidString
         
         // DB에 저장할 딕셔너리 만들기
         var value: [String: Any] = [
@@ -94,7 +98,8 @@ struct Record_API {
         // DB에 저장
         API_String
             .recodeDB
-            .addDocument(data: value) { error in
+            .document(documentID)
+            .setData(value, completion: { error in
                 // 에러가 있다면
                 if let error = error {
                     print("\(#function) --- \(error)")
@@ -106,9 +111,64 @@ struct Record_API {
                 // Recode 모델에는 created_at이 TimeStamp로 받기 때문에
                     // -> TimeStamp로 타입캐스팅
                 value[API_String.created_at] = Timestamp(date: current)
-                
                 // 컴플리션
-                completion(Record(dictionary: value))
-            }
+                completion(Record(documentID: documentID, dictionary: value))
+            })
+    }
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - 기록 업데이트
+    func updateRecord(record: Record,
+                      context: String,
+                      image: [UIImage]?,
+                      completion: @escaping (Record) -> Void) {
+        
+        // uid가져오기
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        // 시간 가져오기
+        let current = record.date
+        
+        // DB에 저장할 딕셔너리 만들기
+        var value: [String: Any] = [
+            API_String.context: context,    // context
+            API_String.created_at: current, // record의 날짜
+            API_String.user: uid]           // uid
+                                            // 이미지_url
+        // DB에 저장
+        API_String
+            .recodeDB
+            .document(record.documentID)
+            .updateData(value, completion: { error in
+                
+                // 에러가 있다면
+                if let error = error {
+                    print("\(#function) --- \(error)")
+                    print("실패")
+                    return
+                }
+                // 성공
+                print("성공")
+                // Recode 모델에는 created_at이 TimeStamp로 받기 때문에
+                    // -> TimeStamp로 타입캐스팅
+                value[API_String.created_at] = Timestamp(date: current)
+                // 컴플리션
+                completion(Record(documentID: record.documentID, dictionary: value))
+            })
+    }
+    
+    
+    
+    
+    // MARK: - 기록 삭제
+    func deleteRecord(documentID: String) {
+        // uid 가져오기
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        API_String.recodeDB.document(documentID).delete()
     }
 }

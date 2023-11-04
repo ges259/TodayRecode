@@ -18,7 +18,8 @@ extension UIViewController {
         let selectedDate = Date.dateArray_yyyy_M_d(date: date)
         
         // 올해 년도 가져오기
-        let currentYear = Date.dateReturn_Custom(todayFormat: .yyyy)
+        let currentYear = Date.dateReturn_Custom(todayFormat: .yyyy년,
+                                                 UTC_Plus9: true)
         // 달력의 현재 년도와 올해 년도가
             // 같으면 -> 몇 월인지만 표시
             // 다르면 -> 몇 년도 몇 월인지 까지 표시

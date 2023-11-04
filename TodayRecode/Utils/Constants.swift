@@ -11,11 +11,7 @@ import FirebaseFirestore
 // MARK: - Format
 let timeFormat_Static: Int = 0
 let dateFormat_Static: Int = 0
-var calendarIsHidden_Static: Bool = true {
-    didSet {
-        print(calendarIsHidden_Static)
-    }
-}
+var calendarIsHidden_Static: Bool = true 
 
 
 

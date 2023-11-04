@@ -27,8 +27,8 @@ protocol EasyWritingScreenDelegate: AnyObject {
 
 protocol DetailWritingScreenDelegate: AnyObject {
     func createRocord(record: Record)
-    func updateRecord(context: String, image: String?)
-    func deleteRecord()
+    func updateRecord(record: Record)
+    func deleteRecord(documentID: String)
 }
 
 

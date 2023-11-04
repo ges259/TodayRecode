@@ -86,7 +86,11 @@ final class EasyWritingScreenController: UIViewController {
     weak var delegate: EasyWritingScreenDelegate?
     
     
-    var selectedDate: Date? = Date()
+    var selectedDate: Date? = Date() {
+        didSet {
+//            print(selectedDate)
+        }
+    }
     
     
     
@@ -308,24 +312,20 @@ final class EasyWritingScreenController: UIViewController {
     /// 화면을 누르면 + 보내기 버튼 누르면 뒤로 가기
     /// 키보드 닫기 + 뒤로가기 재사용
     @objc private func dismissView() {
-        // 텍스트뷰에 텍스트가 있다면
-            // DB에 저장
+        // 텍스트뷰에 텍스트가 있다면 -> 저장
         if self.recodeTextView.hasText {
             // 나중에 주석 풀기
             Record_API
                 .shared
-                .createRecode(date: self.selectedDate,
-                              context: self.recodeTextView.text) { record in
-                self.delegate?.createRecord(record: record)
-                self.recodeTextView.resignFirstResponder()
-                self.dismiss(animated: false)
-            }
-            
-        // 텍스트가 없다면
-            // 그냥 뒤로가기
-        } else {
-            self.dismiss(animated: false)
+                .createRecord(date: self.selectedDate,
+                              context: self.recodeTextView.text,
+                              image: nil) { record in
+                    self.delegate?.createRecord(record: record)
+                    self.recodeTextView.resignFirstResponder()
+                }
         }
+        // 뒤로가기
+        self.dismiss(animated: false)
     }
 }
 
