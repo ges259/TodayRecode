@@ -75,7 +75,7 @@ final class EasyWritingScreenController: UIViewController {
     weak var delegate: EasyWritingScreenDelegate?
     
     
-    
+    var todayDate: Date?
     
     
     
@@ -83,7 +83,7 @@ final class EasyWritingScreenController: UIViewController {
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.dateLbl.text = "djfasdl;dsfa"
+        
         self.configureAction()
         self.configureAotoLayout()
         self.configureUI()
@@ -297,12 +297,37 @@ final class EasyWritingScreenController: UIViewController {
         // 텍스트뷰에 텍스트가 있다면 -> 저장
         if self.recodeTextView.hasText {
             // DB에 데이터 생성
-            self.delegate?.createRecord(context: self.recodeTextView.text)
+            self.createRecord_API()
             // 뒤로갈 때 키보드 내리기
             self.recodeTextView.resignFirstResponder()
         }
         // 뒤로가기
         self.dismiss(animated: false)
+    }
+}
+
+
+
+// MARK: - API
+extension EasyWritingScreenController {
+    private func createRecord_API() {
+        // DB에 데이터 생성
+        Record_API.shared.createRecord(writing_Type: .record_plusBtn,
+                                       date: self.todayDate,
+                                       context: self.recodeTextView.text,
+                                       image: nil) { result in
+            switch result {
+            case .success(let record):
+                print("데이터 생성 성공")
+                // DB 생성
+                self.delegate?.createRecord(record: record)
+
+                break
+            case .failure(_):
+                // Fix
+                break
+            }
+        }
     }
 }
 

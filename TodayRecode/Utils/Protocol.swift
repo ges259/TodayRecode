@@ -22,13 +22,13 @@ protocol AccessoryViewDelegate: AnyObject {
 
 protocol EasyWritingScreenDelegate: AnyObject {
     func expansionBtnTapped(context: String?)
-    func createRecord(context: String)
+    func createRecord(record: Record?)
 }
 
 protocol DetailWritingScreenDelegate: AnyObject {
-    func createRocord(context: String, image: [UIImage]?)
-    func updateRecord(context: String, image: [UIImage]?)
-    func deleteRecord(documentID: String)
+    func createRocord(record: Record?)
+    func updateRecord(record: Record?)
+    func deleteRecord(bool: Bool)
 }
 
 

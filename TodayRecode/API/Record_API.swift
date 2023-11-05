@@ -16,37 +16,59 @@ struct Record_API {
     
     
     
+    
+    
     // typealias
     typealias RecordCompletion = (Result<Record, Error>) -> Void
     typealias RecordArrayCompletion = (Result<[Record], Error>) -> Void
     
     
     
+    
+    
     // MARK: - 오늘 기록 가져오기
-    func fetchRecode(date: Date,
+    func fetchRecode(writing_Type: DetailViewMode,
+                     date: Date,
                      completion: @escaping RecordArrayCompletion) {
+        // 날짜 설정
+        var dateRangeFirst: Date? // 오늘 or 1일
+        var dateRangeLast: Date? // 내일 or 달의 마지막 날
+        
+        
+        if writing_Type == .diary {
+            // 해당 달의 첫 날 날짜 구하기
+            dateRangeFirst = date.reset_time(currentMonth_1: true)
+            // 해당 달의 마지막 날 날짜 구하기
+            dateRangeLast = date.reset_time(nextMonth_1: true)
+        } else {
+            // 오늘 날짜 구하기 (+ 시간 / 분 / 초 0으로 설정)
+            dateRangeFirst = date.reset_time()
+            // 다음 날 날짜 구하기 (+ 시간 / 분 / 초 0으로 설정)
+            dateRangeLast = Calendar.current.date(byAdding: .day,
+                                             value: 1,
+                                             to: dateRangeFirst ?? Date())
+        }
+        
         // uid가져오기
-        // 오늘 날짜 구하기 (+ 시간 / 분 / 초 0으로 만들기)
-        // 내일 날짜 구하기
         guard let uid = Auth.auth().currentUser?.uid,
-              let today = date.reset_time(h_m_s: true),
-              let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)
-        else { return }
+              let today = dateRangeFirst,
+              let tomorrow = dateRangeLast else { return }
         
         // 데이터 가져오기
         API_String
             .recodeDB
+            .whereField(API_String.writing_Type, isEqualTo: writing_Type.api) // record/diary
             .whereField(API_String.user, isEqualTo: uid) // uid
             .whereField(API_String.created_at, isGreaterThanOrEqualTo: today) // ?일0시
             .whereField(API_String.created_at, isLessThan: tomorrow) // ?일24시
             .order(by: API_String.created_at, descending: true) // 내림차순
             .getDocuments { snapshot, error in
+                
                 // 에러가 생기면 -> error를 컴플리션
                 if let error = error {
                     completion(.failure(error))
                     return
                 }
-                
                 // 가져온 문서 데이터들 옵셔널 바인딩
                 guard let datas = snapshot?.documents else { return }
                 
@@ -76,7 +98,8 @@ struct Record_API {
     
     
     // MARK: - 오늘 기록 쓰기
-    func createRecord(date: Date?,
+    func createRecord(writing_Type: DetailViewMode,
+                      date: Date?,
                       context: String,
                       image: [UIImage]?,
                       completion: @escaping RecordCompletion) {
@@ -89,6 +112,7 @@ struct Record_API {
         
         // DB에 저장할 딕셔너리 만들기
         var value: [String: Any] = [
+            API_String.writing_Type: writing_Type.api,
             API_String.context: context,
             API_String.created_at: current,
             API_String.user: uid]
@@ -122,7 +146,8 @@ struct Record_API {
     
     
     // MARK: - 기록 업데이트
-    func updateRecord(record: Record,
+    func updateRecord(writing_Type: DetailViewMode,
+                      record: Record,
                       context: String,
                       image: [UIImage]?,
                       completion: @escaping RecordCompletion) {
@@ -135,10 +160,11 @@ struct Record_API {
         
         // DB에 저장할 딕셔너리 만들기
         var value: [String: Any] = [
-            API_String.context: context,    // context
-            API_String.created_at: current, // record의 날짜
-            API_String.user: uid]           // uid
-                                            // 이미지_url
+            API_String.writing_Type: writing_Type.api,  // writing_Type
+            API_String.context: context,                // context
+            API_String.created_at: current,             // record의 날짜
+            API_String.user: uid]                       // uid
+                                                        // 이미지_url
         // DB에 저장
         API_String
             .recodeDB

@@ -12,32 +12,47 @@ extension UIViewController {
     
     // MARK: - 네비게이션 타이틀 설정
     func configureNavTitle(_ currentController: String,
+                           navTitleSetEnum: NavTitleSetEnum,
                            date: Date = Date())
     -> NSMutableAttributedString {
-        
+        // 달력의 날짜 가져오기 (년,월,일)
         let selectedDate = Date.dateArray_yyyy_M_d(date: date)
-        
         // 올해 년도 가져오기
         let currentYear = Date.dateReturn_Custom(todayFormat: .yyyy년,
-                                                 UTC_Plus9: true)
-        // 달력의 현재 년도와 올해 년도가
-            // 같으면 -> 몇 월인지만 표시
-            // 다르면 -> 몇 년도 몇 월인지 까지 표시
-        let first = currentYear == selectedDate[0]
-        ? selectedDate[1]
-        : "\(selectedDate[0]) \(selectedDate[1])"
+                                                 UTC_Plus9: false)
+        // 날짜 문자열 (ex - 11월 / 2023년 11월 / 2023년 11월 5일)
+        var dateString: String = ""
         
+        if navTitleSetEnum == .yyyy년M월 {
+            // 달력의 현재 년도와 올해 년도가
+                // 같으면 -> 몇 월인지만 표시
+                // 다르면 -> 몇 년도 몇 월인지 까지 표시
+            dateString = selectedDate[0] == currentYear
+            ? selectedDate[1]
+            : "\(selectedDate[0]) \(selectedDate[1])"
+            
+        } else {
+            // 달력의 현재 년도와 올해 년도가
+                // 같으면 -> 몇 월인지만 표시
+                // 다르면 -> 몇 년도 몇 월인지 까지 표시
+            dateString = selectedDate[0] == currentYear
+            ? "\(selectedDate[1]) \(selectedDate[2])"
+            : "\(selectedDate[0]) \(selectedDate[1]) \(selectedDate[2])"
+        }
         // Mutable_Attributed_String 설정
         let attributedTitle = NSMutableAttributedString(
             string: "\(currentController)\n",
             attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)]
         )
         attributedTitle.append(NSAttributedString(
-            string: "\(first)",
+            string: "\(dateString)",
             attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 15)])
         )
         return attributedTitle
+
     }
+    
+    
     
     
     
@@ -101,6 +116,10 @@ extension UIViewController {
         present(alertController, animated: true) //보여줘
     }
     
+    
+    
+    
+    
     // MARK: - 얼럿 타이틀 및 폰트 설정
     private func alertTitleAndFont(title: String, font: UIFont) -> NSAttributedString {
         return NSAttributedString(
@@ -109,6 +128,9 @@ extension UIViewController {
                 NSAttributedString.Key.font : UIFont.systemFont(ofSize: 13),
                 NSAttributedString.Key.foregroundColor : UIColor.cancelGray2222222])
     }
+    
+    
+    
     
     
     // MARK: - 커스텀 얼럿 액션 설정

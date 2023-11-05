@@ -26,6 +26,7 @@ extension UILabel {
         lbl.numberOfLines = 2
         lbl.textAlignment = .center
         lbl.textColor = .black
+        lbl.font = .boldSystemFont(ofSize: 17)
         return lbl
     }
 }

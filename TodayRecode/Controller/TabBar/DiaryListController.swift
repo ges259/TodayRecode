@@ -68,14 +68,18 @@ final class DiaryListController: UIViewController {
     
     
     /// 일기를 쓴 날
-    private lazy var diaryArray: [Date] = [] {
+    private lazy var diaryDateArray: [Date] = [] {
         didSet {
             // 날짜(일기를 쓴 날)를 콜렉션뷰 / 달력에 전달
-            self.deliverTheDate(dateArray: self.diaryArray)
+            self.deliverTheDate(dateArray: self.diaryDateArray)
         }
     }
     
-    
+    private lazy var diaryArray: [Record] = [] {
+        didSet {
+            dump(self.diaryArray)
+        }
+    }
 
     
     
@@ -85,33 +89,13 @@ final class DiaryListController: UIViewController {
     
     
     
-    // MARK: - Fix
-    // DateType을 만들어주는 메서드
-    func makeDate(dateArray: [Int]) {
-        print(#function)
-        var arrayDate: [Date] = []
-        
-        dateArray.forEach { date in
-            
-            let dateComponents = DateComponents(year: 2023, month: 11, day: date, hour: 21)
-            
-            let dateType = Calendar.current.date(from: dateComponents)
-            
-            arrayDate.append(dateType!)
-            
-            
-        }
-        self.diaryArray = arrayDate
-    }
-    
-    
     
     // MARK: - 라이프 사이클
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // MARK: - Fix
-        self.makeDate(dateArray: [1, 2, 6, 13, 14, 18, 19, 25, 28])
+        self.fetchDiaryArray()
+        
         
         self.configureUI()
         self.configureAutoLayout()
@@ -149,6 +133,8 @@ extension DiaryListController {
     private func configureUI() {
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
+        // 달력에 오늘 날짜 선택 (원래 기본적으로 선택 안 되어있음)
+        self.calendar.calendar.select(Date())
         
         // 네비게이션 타이틀(String) 설정
         self.setNavTitle() // -> 오늘로 설정
@@ -229,13 +215,14 @@ extension DiaryListController {
     private func setNavTitle(date: Date = Date()) {
         self.navTitle.attributedText = self.configureNavTitle(
             "하루 일기",
+            navTitleSetEnum: .yyyy년M월,
             date: date)
     }
     
     
     // MARK: - 날짜 다른 뷰로 전달
     private func deliverTheDate(dateArray: [Date]) {
-        dump(dateArray)
+//        dump(dateArray)
         // 이것도 calenderView의 이벤트 표시로 이동
         let date = Date.todayReturnDateType(dates: dateArray)
         // 캘린더뷰에는 날짜만 가면 됨
@@ -254,21 +241,40 @@ extension DiaryListController {
     }
     
     
-    // MARK: - 디테일뷰로 이동
+    // MARK: - 상세 작성 화면 이동
     private func goToDetailWriting(data: Int? = nil) {
         let vc = DetailWritingScreenController()
-            // 상세 작성뷰에서 탭바 없애기
+            // 상세 작성 화면의 탭바 없애기
             vc.hidesBottomBarWhenPushed = true
             vc.detailViewMode = .diary
-        // 디테일뷰에 데이터 넣기
-//        vc.data~~~ = data
+            // 상세 작성 화면에 데이터 넣기
+        
+            // 상세 작성 화면에 날짜 전달
+            vc.todayDate = self.calendar.returnSelectedDate_exceptToday
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
 
-
+extension DiaryListController {
+    private func fetchDiaryArray(date: Date = Date()) {
+        
+        
+        
+        Record_API.shared.fetchRecode(writing_Type: .diary,
+                                      date: date) { result in
+            switch result {
+            case .success(let recordArray):
+                self.diaryArray = recordArray
+                break
+            case .failure(_):
+                // Fix
+                break
+            }
+        }
+    }
+}
 
 
 
@@ -332,5 +338,39 @@ extension DiaryListController: CollectionViewDelegate {
     }
     func collectionViewScrolled() {
         print(#function)
+    }
+}
+
+
+
+
+
+// MARK: - 상세 작성 화면 델리게이트
+extension DiaryListController: DetailWritingScreenDelegate {
+    func createRocord(record: Record?) {
+        if let record = record {
+            print("DairyList - record")
+            dump(record)
+        } else {
+            print("create_Error")
+        }
+    }
+    
+    func updateRecord(record: Record?) {
+        if let record = record {
+            print("DairyList - record")
+            dump(record)
+        } else {
+            print("update_Error")
+        }
+    }
+    
+    func deleteRecord(bool: Bool) {
+        if bool {
+            print("DairyList - record")
+            print(bool)
+        } else {
+            print("delete_Error")
+        }
     }
 }

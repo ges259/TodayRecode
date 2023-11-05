@@ -17,7 +17,8 @@ final class DetailWritingScreenController: UIViewController {
     /// 배경 뷰
     private lazy var backgroundImg: UIImageView = UIImageView(
         image: UIImage.blueSky)
-    
+    /// 네비게이션 타이틀 레이블
+    private lazy var navTitle: UILabel = UILabel.navTitleLbl()
     /// 콜렉션뷰
     private lazy var collectionView: ImageCollectionView = {
         let collectionView = ImageCollectionView()
@@ -32,7 +33,6 @@ final class DetailWritingScreenController: UIViewController {
     /// 스크롤뷰
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.delegate = self
         scrollView.showsVerticalScrollIndicator = false
         scrollView.bounces = false
         return scrollView
@@ -169,7 +169,19 @@ final class DetailWritingScreenController: UIViewController {
     private lazy var imageViewHeight: CGFloat = self.collectionView.frame.height
     
     
-    private var diaryTextViewHeight: NSLayoutConstraint?
+    private lazy var diaryTextViewLine: CGFloat = 0
+    private lazy var textViewFontHeight: CGFloat = self.diaryTextView.font!.lineHeight
+    
+    
+    
+    /// 일기 모드 / 기록 모드를 알 수 있는 enum변수
+    var detailViewMode: DetailViewMode? {
+        // 네비게이션바 오른쪽 버튼 및 타이틀 설정
+        didSet { self.configureNavBtn() }
+    }
+    /// 델리게이트
+    weak var delegate: DetailWritingScreenDelegate?
+    
     
     
     /// 키보드가 올라와있는지 확인하는 변수
@@ -178,11 +190,7 @@ final class DetailWritingScreenController: UIViewController {
     /// 콜렉션뷰 현재 페이지
     var currentPage: CGFloat = 0
     
-    /// 일기 모드 / 기록 모드를 알 수 있는 enum변수
-    var detailViewMode: DetailViewMode? {
-        // 네비게이션바 오른쪽 버튼 및 타이틀 설정
-        didSet { self.configureNavTitleAndBtn() }
-    }
+
     
     
     /// 기록 확인 화면에서 오늘 기록을 볼 수 있게 하는 Record배열
@@ -193,11 +201,11 @@ final class DetailWritingScreenController: UIViewController {
             self.configureData()
         }
     }
+    /// DB에 저장할 날짜를 받음
+    var todayDate: Date?
     
-    /// 델리게이트
-    weak var delegate: DetailWritingScreenDelegate?
     
-    
+
     
     
     
@@ -245,7 +253,7 @@ final class DetailWritingScreenController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // 노티피케이션 생성 ( 삭제는 왼쪽 네비게이션 버튼을 눌러야 함)
+        // 노티피케이션 생성 (-삭제는 왼쪽 네비게이션 버튼을 눌러야 함)
         // 키보드 올라올 때
         NotificationCenter.default.addObserver(
             self,
@@ -297,6 +305,11 @@ extension DetailWritingScreenController {
     // MARK: - UI 설정
     private func configreUI() {
         self.collectionView.isHidden = true
+        
+        // 네비게이션 타이틀뷰(View) 설정
+        self.navigationItem.titleView = self.navTitle
+        // 네비게이션 타이틀(String) 설정
+        self.setNavTitle(keyboard_Up: false)
         
         // cornerRadius 설정
         [self.collectionView,
@@ -355,10 +368,6 @@ extension DetailWritingScreenController {
         self.diaryTextView.snp.makeConstraints { make in
             make.height.greaterThanOrEqualTo(270)
         }
-//        self.diaryTextView.translatesAutoresizingMaskIntoConstraints = false
-//        self.diaryTextViewHeight = self.diaryTextView.heightAnchor.constraint(equalToConstant: 300)
-//        self.diaryTextViewHeight?.isActive = true
-        
         // 스택뷰
         self.verticalStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
@@ -395,12 +404,16 @@ extension DetailWritingScreenController {
             make.leading.equalToSuperview().offset(10)
             make.top.equalToSuperview().offset(10)
         }
-        // ********** 프레임 설정 **********
-        // 기록 확인 버튼
-        self.recodeShowBtn.frame = CGRect(x: self.view.frame.width - 53 - 15,
-                                          y: self.viewHeight - self.safeArea - 53,
-                                          width: 53,
-                                          height: 53)
+        // 기록 확인 버튼 설정
+        self.recodeShowBtn.snp.makeConstraints { make in
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-17)
+            make.trailing.equalToSuperview().offset(-17)
+            make.width.height.equalTo(58)
+        }
+        // 네비게이션 타이틀
+        self.navTitle.snp.makeConstraints { make in
+            make.width.lessThanOrEqualTo(200)
+        }
     }
     
     
@@ -416,7 +429,7 @@ extension DetailWritingScreenController {
     
     
     // MARK: - 오른쪽 네비게이션바 설정
-    private func configureNavTitleAndBtn() {
+    private func configureNavBtn() {
         // ********** 네비게이션 오르쪽 버튼 설정 **********
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage.option,
@@ -437,11 +450,9 @@ extension DetailWritingScreenController {
         if self.detailViewMode == .diary {
             self.navigationItem.rightBarButtonItem?.menu = UIMenu(
                 children: [deleteMenu])
-            self.navigationItem.title = "오늘 일기"
         } else {
             self.navigationItem.rightBarButtonItem?.menu = UIMenu(
                 children: [addRecodeMenu, deleteMenu])
-            self.navigationItem.title = "오늘 기록"
         }
         
         // ********** 네비게이션 왼쪽 버튼 설정 **********
@@ -456,10 +467,9 @@ extension DetailWritingScreenController {
     
     // MARK: - 날짜 및 텍스트 설정
     /// 셀을 클릭하여 상세작성화면에 들어온 경우 데이터 설정
-    private func configureData() {
-        // 셀을 통해 들어온 경우
+    private func configureData() {        // 셀을 통해 들어온 경우
         if let currentRecode = self.selectedRecord {
-            // 내용
+            // 텍스트뷰에 텍스트 넣기
             self.diaryTextView.text = currentRecode.context
             self.placeholderLbl.isHidden = true
             
@@ -471,12 +481,12 @@ extension DetailWritingScreenController {
                 todayFormat: .a_hmm,
                 UTC_Plus9: false,
                 date: currentRecode.date)
-            
             // 이미지 (콜렉션뷰)
             
             
         // 플러스버튼을 통해 들어온 경우
         } else {
+            // 시간
             // 날짜뷰에 현재 시간 표시
             self.dateView.configureDate()
             // 날짜뷰에 기록(Record)의 시간 표시
@@ -516,54 +526,47 @@ extension DetailWritingScreenController {
         // 키보드 높이 가져오기
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
         
-        // 키보드가 올라와 있는 상태
-            // 기록 확인 버튼 위로 올리기
-            // 화면 올리기
+        // 키보드가 올라와 있는 상태라면
+            // 화면 내리기 + 스택뷰 간격 설정
         if !self.keyboardShow {
-            self.bottomAccessoryViewIsHidden(true, keyboardSize: keyboardSize)
+            self.keyboardStateChanged(keyboard_Up: true,
+                                      keyboardSize: keyboardSize)
         }
     }
     @objc private func keyboardWillHide(_ notification: Notification) {
         // 키보드 높이 가져오기
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
         
-        // 키보드가 올라와있다면
-            // 기록 확인 버튼 내리기
-            // 화면 내리기
+        // 키보드가 올라와있는 상태라면
+            // 화면 내리기 + 스택뷰 간격 설정
         if self.keyboardShow {
-            self.bottomAccessoryViewIsHidden(false, keyboardSize: keyboardSize)
+            self.keyboardStateChanged(keyboard_Up: false,
+                                      keyboardSize: keyboardSize)
         }
     }
-    /// 하단 악세서리뷰 isHidden 설정
-    /// 기록 확인 버튼 위치 변경
-    private func bottomAccessoryViewIsHidden(_ isHidden: Bool, keyboardSize: CGFloat) {
-        // 키보드 올리는 상황 -> 바텀 악세서리뷰 없애기
-        if isHidden {
-            // 기록 확인 버튼 위치 올리기
-            self.recodeShowBtn.frame.origin.y = self.viewHeight - keyboardSize - 53 - 10
-            // 이미지뷰가 있다면 -> 화면 올리기
-            if !self.collectionView.isHidden {
-                self.view.frame.origin.y -= keyboardSize
-            }
+    /// 화면 내리기 + 스택뷰 간격 설정
+    private func keyboardStateChanged(keyboard_Up: Bool,
+                                      keyboardSize: CGFloat) {
+        // 키보드 올리는 상황
+        if keyboard_Up {
+            // 화면 올리기
+            self.view.frame.origin.y -= keyboardSize
+            // 스택뷰 간격 설정 (뷰를 올리면 키보드에 가려지는 현상 때문)
+            self.verticalStackView.setCustomSpacing(keyboardSize - 33,
+                                                    after: self.dateView)
             
-//            self.diaryTextViewHeight?.constant = 800
-//            self.view.layoutIfNeeded()
-            
-            // 키보드가 올라왔다는 표시
-            self.keyboardShow = true
-            
-        // 키보드 내리는 상황 -> 바텀 악세서리뷰 보이게 하기
+        // 키보드 내리는 상황
         } else {
-            // 기록 확인 버튼 위치 내리기
-            self.recodeShowBtn.frame.origin.y = self.viewHeight - self.safeArea - 53
             // 화면 내리기
             self.view.frame.origin.y = 0
-            
-//            self.diaryTextViewHeight?.constant = self.diaryTextView.frame.height
-//            self.view.layoutIfNeeded()
-            // 키보드가 내려가 있다는 표시
-            self.keyboardShow = false
+            // 스택뷰 간격 설정 (뷰를 올리면 키보드에 가려지는 현상 때문)
+            self.verticalStackView.setCustomSpacing(7, after: self.dateView)
         }
+        // 네비게이션 타이틀(String) 설정
+        self.setNavTitle(date: self.todayDate ?? Date(),
+                         keyboard_Up: keyboard_Up)
+        // 키보드 상태 바뀜 표시
+        self.keyboardShow.toggle()
     }
     
     
@@ -575,15 +578,15 @@ extension DetailWritingScreenController {
         print(#function)
     }
     @objc private func deleteBtnTapped() {
+        // 얼럿창 띄우기
         self.customAlert(
             withTitle: "정말 삭제 하시겠습니까?",
             firstBtnName: "삭제하기",
             firstBtnColor: UIColor.red) { _ in
                 // 레코드 데이터가 있다면
                 // 플러스 버튼으로 들어온 경우 X
-                if let selectedRecord = self.selectedRecord {
-                    // 삭제를 위해 문서ID를 보냄
-                    self.delegate?.deleteRecord(documentID: selectedRecord.documentID)
+                if self.selectedRecord != nil {
+                    self.deleteRecord_API()
                 }
                 // 뒤로가기
                 self.navigationController?.popViewController(animated: true)
@@ -621,7 +624,22 @@ extension DetailWritingScreenController {
     
     
     
-    
+    // MARK: - 네비게이션 타이틀 재설정
+    /// 선택된 날짜에 따라 네비게이션 타이틀을 설정하는 메서드
+    private func setNavTitle(date: Date = Date(), keyboard_Up: Bool) {
+        let navMainTitle = self.detailViewMode == .diary
+        ? "오늘 일기"
+        : "오늘 기록"
+        
+        if keyboard_Up {
+            self.navTitle.attributedText = self.configureNavTitle(
+                navMainTitle,
+                navTitleSetEnum: .M월d일,
+                date: date)
+        } else {
+            self.navTitle.text = navMainTitle
+        }
+    }
     
     
     
@@ -651,7 +669,6 @@ extension DetailWritingScreenController {
                 for i in assets {
                     self.selectedAssets.append(i)
                 }
-
             // PHAsset을 UIImage로 변환 후 저장
             let images = self.convertAssetToImage(selectedAssets: self.selectedAssets)
             
@@ -681,9 +698,9 @@ extension DetailWritingScreenController {
             // 텍스트뷰가 빈칸인 경우 저장X
             guard self.diaryTextView.text != "" else { return }
             // 나머지 무조건 저장
-            self.delegate?.createRocord(context: self.diaryTextView.text,
-                                        image: nil)
+            self.createRecord_API()
             break
+            
             
         // 셀을 통해 들어온 경우
         case .record_CellTapped:
@@ -691,21 +708,22 @@ extension DetailWritingScreenController {
             // -> 바뀌지 않은 경우 아무 행동도 하지 않음
             guard self.selectedRecord?.context != self.diaryTextView.text else { return }
             // -> 바뀐경우 업데이트
-            self.delegate?.updateRecord(context: self.diaryTextView.text,
-                                        image: nil)
+            self.updateRecord_API()
             break
+            
             
         // 일기목록화면을 통해 들어온 경우
         case .diary:
-            // 오늘이 아닌 경우 저장하지 않음
-            // 오늘인 경우 저장
-            
-            // 데이터 저장
-    //            Diary_API.shared.createDiary(context: "dd") { data in
-    //                dump(data)
-    //                // static 변수를 통해서 일기를 썼다는 것을 표시
-    //            }
-            print("diary")
+            // 오늘인 경우만 저장
+            // 텍스트뷰가 빈칸인 경우 저장X
+            guard self.diaryTextView.text != "" else { return }
+            // selectedRecord가 없는 경우 -> 생성
+            if self.selectedRecord == nil {
+                self.createRecord_API()
+            // selectedRecord가 있는 경우 -> 업데이트
+            } else {
+                self.updateRecord_API()
+            }
             break
         }
     }
@@ -720,36 +738,88 @@ extension DetailWritingScreenController {
 
 
 
+// MARK: - API
 
-
-
-
-
-
-
-
-
-
-
-// MARK: - 스크롤뷰 델리게이트
-extension DetailWritingScreenController: UIScrollViewDelegate {
-    /// 스크롤이 끝났을 때 호출
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        self.keyboardHide()
+extension DetailWritingScreenController {
+    
+    // MARK: - 삭제
+    private func deleteRecord_API() {
+        // 문서ID 가져오기
+        guard let documentID = self.selectedRecord?.documentID else { return }
+        // DB - 삭제
+        Record_API.shared.deleteRecord(documentID: documentID) { result in
+            switch result {
+            case .success(_):
+                print("데이터 삭제 성공")
+                // 셀 삭제
+                self.delegate?.deleteRecord(bool: true)
+                break
+            case .failure(_):
+                // Fix
+                break
+            }
+        }
     }
     
-    /// 사진의 높이(맨 밑)에까지 올리면 자동으로 키보드가 내려가도록 설정
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.keyboardHide()
+    // MARK: - 업데이트
+    private func updateRecord_API() {
+        guard let selectedRecord = selectedRecord,
+              let writing_Type = self.detailViewMode else { return }
+        
+        // DB + 셀 업데이트
+        Record_API.shared.updateRecord(writing_Type: writing_Type,
+                                       record: selectedRecord,
+                                       context: self.diaryTextView.text,
+                                       image: nil) { result in
+            switch result {
+            case .success(let record):
+                print("데이터 업데이트 성공")
+                // currentIndex를 사용 (셀을 클릭했을 때 해당 셀의 index를 저장한다.)
+                self.delegate?.updateRecord(record: record)
+                break
+            case .failure(_):
+                // Fix
+                self.delegate?.updateRecord(record: nil)
+                break
+            }
+        }
     }
     
-    /// 스크뷰 오프셋이 1보다 작으면 키보드 내리기
-    private func keyboardHide() {
-        if self.keyboardShow && scrollView.contentOffset.y < 1 {
-            self.diaryTextView.resignFirstResponder()
+    // MARK: - 생성
+    private func createRecord_API() {
+        // 날짜 가져오기
+        guard let date = self.todayDate,
+              let writing_Type = self.detailViewMode else { return }
+        
+        // DB에 데이터 생성
+        Record_API.shared.createRecord(writing_Type: writing_Type,
+                                       date: date,
+                                       context: self.diaryTextView.text,
+                                       image: nil) { result in
+            switch result {
+            case .success(let record):
+                print("데이터 생성 성공")
+                // 셀 업데이트
+                self.delegate?.createRocord(record: record)
+                break
+            case .failure(_):
+                // Fix
+                self.delegate?.createRocord(record: nil)
+                break
+            }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -767,45 +837,8 @@ extension DetailWritingScreenController: UITextViewDelegate {
         self.placeholderLbl.isHidden = textView.text.count == 0
         ? false // 텍스트뷰에 텍스트의 개수가 0개라면 ---> 플레이스홀더 띄우기
         : true // 텍스트뷰에 텍스트가 있다면 ---> 플레이스홀더 없애기
-        
-        // ********** 키보드 높이 설정 **********
-        self.configureKeyboardHeight()
-    }
-    
-    
-    
-    /// 키보드 높이 설정
-    private func configureKeyboardHeight() {
-        // 예상 높이 구하기
-        let estimatedSize = self.diaryTextView.sizeThatFits(self.size).height
-        // 텍스트뷰의 높이가 300보다 크다면 (- 최소 높이가 300이기 때문)
-        if estimatedSize >= 800 {
-            // 텍스트뷰의 제약 forEach
-            self.diaryTextView.constraints.forEach{ (constraint) in
-                // 높이 제약이라면
-                if constraint.firstAttribute == .height {
-                    // 높이 재설정
-                    constraint.constant = estimatedSize
-                }
-//                self.diaryTextViewHeight?.constant += 20
-//                self.view.layoutIfNeeded()
-                
-            }
-        }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

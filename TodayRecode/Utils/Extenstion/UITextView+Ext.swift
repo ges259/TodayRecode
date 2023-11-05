@@ -28,4 +28,10 @@ extension UITextView {
         tv.font = UIFont.systemFont(ofSize: fontSize)
         return tv
     }
+    
+    func numberOfLine() -> CGFloat {
+        let size = CGSize(width: self.frame.width, height: .infinity)
+        let estimatedSize = sizeThatFits(size)
+        return (estimatedSize.height - 36) / (self.font!.lineHeight)
+    }
 }

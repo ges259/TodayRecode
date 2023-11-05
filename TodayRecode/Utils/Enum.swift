@@ -6,48 +6,65 @@
 //
 import UIKit
 
-/// 시간의 형식을 리턴하는 열거형
+/// 날짜의 형식을 리턴하는 열거형
 enum TodayFormatEnum {
-    case d
-    case h
-    case yyyy_MM_dd
-    // PM 2:00
-    case a_hmm
-    // 14:00
-    case Hmm
-    case yyyy
-    case M
+    // 시간
+    case a_hmm // PM 2:00
+    case Hmm // 14:00
+    // 날짜
+    case h // 1시
+    case d // 4일
+    case M // 11월
+    case yyyy // 2023
+    case yyyy_MM_dd // 2023-11-4
+    case yyyy_MM_dd_HH_dd_ss // 2023-11-04 01:05:05 +0000
     
-    case M월d일
+    case d일
     case M월
-    case yyyy년M월
-    case yyyy_MM_dd_HH_dd_ss
-    
+    case M월d일
     case yyyy년
-    
-    case yyyyM
-    
+    case yyyy년M월
     
     
+    // String 리턴
     var today: String {
         switch self {
-            // 날짜
-        case .yyyy: return "yyyy"
-        case .M: return "M"
-        case .d: return "d"
-        case .M월d일: return "M월 d일"
-        case .M월: return "M월"
-        case .yyyy년: return "yyyy년"
-        case .yyyy년M월: return "yyyy년 M월"
-        case .yyyy_MM_dd: return "yyyy-MM-dd"
-        case .h: return "h"
-        case .yyyy_MM_dd_HH_dd_ss: return "yyyy-MM-dd 00:00:00 +0000"
-            
-            // 시간
+        // 시간
         case .a_hmm: return "a h:mm"
         case .Hmm: return "H:mm"
-            
-        case .yyyyM: return "yyyyM"
+        // 날짜
+        case .h: return "h"
+        case .d: return "d"
+        case .M: return "M"
+        case .yyyy: return "yyyy"
+        case .yyyy_MM_dd: return "yyyy-MM-dd"
+        case .yyyy_MM_dd_HH_dd_ss: return "yyyy-MM-dd 00:00:00 +0000"
+        
+        case .d일: return "d일"
+        case .M월: return "M월"
+        case .M월d일: return "M월 d일"
+        case .yyyy년: return "yyyy년"
+        case .yyyy년M월: return "yyyy년 M월"
+        }
+    }
+}
+
+
+
+enum NavTitleSetEnum {
+    case yyyy년M월
+    case M월d일
+    
+    var first: String {
+        switch self {
+        case .yyyy년M월: return "yyyy년"
+        case .M월d일: return "M월"
+        }
+    }
+    var second: String {
+        switch self {
+        case .yyyy년M월: return " M월"
+        case .M월d일: return " d일"
         }
     }
 }
@@ -56,74 +73,65 @@ enum TodayFormatEnum {
 
 /// 상세 작성 화면 및 간편 작성 화면,
 /// 오른쪽 버튼을 설정하기 위한 열겨형
-enum AccessoryViewMode {
+enum WritingScreenMode {
     case easyWritingScreen // 간편 작성 화면
     case detailWritingScreen // 상세 작성 화면
 }
 
-
-
-
-
-
-/// 상세 작성 화면 쓰기모드 / 저장모드 설정 열거형
-enum DetailEditMode {
-    case writingMode // 쓰기 모드
-    case saveMode // 저장 모드
-}
 /// 상세 작성 화면 일기모드 / 기록모드 설정 열거형
 enum DetailViewMode {
-    case record_plusBtn
-    case record_CellTapped // 기록
+    case record_plusBtn // 기록 - 플러스버튼
+    case record_CellTapped // 기록 - 셀 클릭
     case diary // 일기
+    
+    var api: String {
+        switch self {
+        case .record_plusBtn: return "record" // fallthrough 사용X
+        case .record_CellTapped: return "record"
+        case .diary: return "diary"
+        }
+    }
 }
 
-
-
-
-
-
+/// Enum에 따라 콜렉션뷰의 UI가 다름
 enum CollectionViewEnum {
     case diaryList
     case photoList
 }
 
-
-
-
-
+/// 설정 화면에서 테이블뷰의 화면 구성
 enum SettingTableEnum: Int {
     case dateFormat = 0
     case timeFormat = 1
-    
+    /// 시스템이미지
     var image: UIImage? {
         switch self {
         case .dateFormat: return UIImage.calendar
         case .timeFormat: return UIImage.clock
         }
     }
-    
+    /// 셀을 눌렀을 때 얼럿창 타이틀
     var alertTitle: String {
         switch self {
         case .dateFormat: return "일주일 시작일을 선택해주세요"
         case .timeFormat: return "날짜 형식을 선택해주세요"
         }
     }
-    
+    /// 얼럿창의 설명창
     var text: String {
         switch self {
         case .dateFormat: return "일주일 시작일"
         case .timeFormat: return "시간 형식"
         }
     }
-    
+    /// 첫 번째 옵션
     var firstOption: String {
         switch self {
         case .dateFormat: return "일요일 시작"
         case .timeFormat: return "12시간 형식: PM 2:00"
         }
     }
-    
+    /// 두 번째 옵션
     var secondOption: String {
         switch self {
         case .dateFormat: return "월요일 시작"

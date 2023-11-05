@@ -23,10 +23,10 @@ extension Date {
         
         var current = date
         // 9시간 더하기 UTC+9
-        if UTC_Plus9 {
-            guard let date = Date.UTC_Plus9(date: date) else { return "" }
-            current = date
-        }
+//        if UTC_Plus9 {
+//            guard let date = Date.UTC_Plus9(date: date) else { return "" }
+//            current = date
+//        }
         
         let formatter = DateFormatter()
             formatter.dateFormat = todayFormat.today
@@ -60,11 +60,11 @@ extension Date {
         
         dates.forEach { date in
             // 9시간 더하기 UTC+9
-            guard let current = Date.UTC_Plus9(date: date) else { return }
+//            guard let current = Date.UTC_Plus9(date: date) else { return }
             dateArray.append(formatter.date(from: self.dateReturn_Custom(
                 todayFormat: .yyyy_MM_dd,
                 UTC_Plus9: true,
-                date: current))!)
+                date: date))!)
         }
         return dateArray
     }
@@ -83,10 +83,10 @@ extension Date {
     /// - Parameter date: 원하는 날짜
     /// - Returns: [String] --- 문자열 배열로 리턴]
     static func dateArray_yyyy_M_d(
-        date: Date? = Date.UTC_Plus9(),
+        date: Date? = Date(), // .UTC_Plus9()
         firstFormat: TodayFormatEnum = .yyyy년,
         secondFormat: TodayFormatEnum = .M월,
-        thirdFormat: TodayFormatEnum = .d) -> [String] {
+        thirdFormat: TodayFormatEnum = .d일) -> [String] {
             // 옵셔널 바인딩
             guard let date = date else { return [""] }
             
@@ -116,59 +116,39 @@ extension Date {
     // MARK: - 9시간 더하기 (UTC+9)
     /// 9시간 더하기
     /// isAPI라면 -> 시간 / 분 / 초 0으로 만들기
-    static func UTC_Plus9(date: Date = Date()) -> Date? {
-        // 현재 시간
-        let calendar = Calendar.current
-        // 표현할? 정보들 선택하기
-        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
-        // isAPI가 true라면
-            // 분, 초를 0으로 만듦
-//        if isAPI == true {
-////            print("true")
-//            components.hour = 0
-//            components.minute = 0
-//            components.second = 0
-//
-//        // false라면
-//        } else {
-        // 현재 시간 + 9 (UTC의 영향)
-            components.hour! += 9
-//        }
-        // Date로 변환하여 반환
-        return calendar.date(from: components)
-    }
+//    static func UTC_Plus9(date: Date = Date()) -> Date? {
+//        // 현재 시간
+//        let calendar = Calendar.current
+//        // 표현할? 정보들 선택하기
+//        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+//        // 9시간 더하기
+//            components.hour! += 9
+//        // Date로 변환하여 반환
+//        return calendar.date(from: components)
+//    }
     
     
     
     ///
-    func reset_time(h_m_s: Bool = false,
-                    currentMonth_1: Bool = false,
-                    nextMonth_1: Bool = false,
-                    yyyy_MM_dd: [String]? = nil) -> Date? {
+    func reset_time(currentMonth_1: Bool = false,
+                    nextMonth_1: Bool = false) -> Date? {
         // 현재 시간
         var calendar = Calendar.current
         calendar.timeZone = TimeZone.current
         // 표현할? 정보들 선택하기
         var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: self)
         // 시간, 분, 초를 0으로 만듦
-        if h_m_s {
-            components.hour = 0
-            components.minute = 0
-            components.second = 0
+        components.hour = 0
+        components.minute = 0
+        components.second = 0
         // 현재 달 1일로 맞춤
-        } else if currentMonth_1 {
+        if currentMonth_1 {
             components.day = 1
         // 다음달 1일로 맞춤
         } else if nextMonth_1 {
             components.day = 1
             components.month! += 1
-        // 년/월/일 을 원하는대로 맞춤
-        } else if let yyyy_MM_dd {
-            components.year = Int(yyyy_MM_dd[0])
-            components.month = Int(yyyy_MM_dd[1])
-            components.day = Int(yyyy_MM_dd[2])
         }
-        // Date로 변환하여 반환
         return calendar.date(from: components)
     }
 }

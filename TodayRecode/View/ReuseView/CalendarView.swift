@@ -42,15 +42,10 @@ final class CalendarView: UIView {
         calendar.headerHeight = 0
         
         calendar.adjustsBoundingRectWhenChangingMonths = true
-        
         // 찾았다
         calendar.appearance.borderRadius = 0
-        
         // 오늘 날짜 생상
         calendar.appearance.todayColor = UIColor.customblue3
-        //
-        
-        
         
         calendar.layer.masksToBounds = true
         calendar.clipsToBounds = true
@@ -75,16 +70,12 @@ final class CalendarView: UIView {
             self.calendar.reloadData()
         }
     }
-    /// 선택된 날짜 0시 0분 0초
-    var returnSelectedDate: Date? {
-        return Date.UTC_Plus9(date: self.calendar.selectedDate ?? Date())
-    }
     /// selectedData는 시간/분/초가 모두 0이기 때문에 현재 시간 + 선택된 날짜 년/월/일
     var returnSelectedDate_exceptToday: Date? {
         // 현재 시간 구하기
-        let current = Date.UTC_Plus9(date: calendar.today ?? Date())
+        let current = Date().reset_time()
         // 달력에 선택된 시간 가져오기
-        let selectedDate = Date.UTC_Plus9(date: self.calendar.selectedDate ?? Date())
+        let selectedDate = self.calendar.selectedDate?.reset_time()
         // 리턴
         return current == selectedDate
         ? Date()        // 만약 서로 같다면 -> 오늘날짜 리턴
@@ -190,10 +181,8 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDele
          4. self.currentDiary.firstIndex(of: Date)로 몇 번째 인덱스인지 찾기
             -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
          */
-        
-        
         // dateLabel에 선택된 날짜 띄우기
-         self.delegate?.selectDate(date: Date.UTC_Plus9(date: date)!)
+         self.delegate?.selectDate(date: date)
     }
     
     /// 달력의 페이지(월)가 바뀌면 호출 됨
@@ -204,7 +193,8 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDele
     /// 이벤트가 있는 날짜에 점으로 표시
     func calendar(_ calendar: FSCalendar,
                   numberOfEventsFor date: Date) -> Int {
-        return self.diaryArray.contains(Date.UTC_Plus9(date: date)!)
+//        return self.diaryArray.contains(Date.UTC_Plus9(date: date)!)
+        return self.diaryArray.contains(date)
         ? 1
         : 0
     }
