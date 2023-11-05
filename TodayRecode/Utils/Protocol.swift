@@ -5,7 +5,7 @@
 //  Created by 계은성 on 2023/10/17.
 //
 
-import Foundation
+import UIKit
 
 
 
@@ -22,12 +22,12 @@ protocol AccessoryViewDelegate: AnyObject {
 
 protocol EasyWritingScreenDelegate: AnyObject {
     func expansionBtnTapped(context: String?)
-    func createRecord(record: Record)
+    func createRecord(context: String)
 }
 
 protocol DetailWritingScreenDelegate: AnyObject {
-    func createRocord(record: Record)
-    func updateRecord(record: Record)
+    func createRocord(context: String, image: [UIImage]?)
+    func updateRecord(context: String, image: [UIImage]?)
     func deleteRecord(documentID: String)
 }
 

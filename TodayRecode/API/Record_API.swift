@@ -14,25 +14,17 @@ struct Record_API {
     static let shared: Record_API = Record_API()
     init() {}
     
-    // MARK: - 한 달 기록 가져오기
     
     
+    // typealias
     typealias RecordCompletion = (Result<Record, Error>) -> Void
     typealias RecordArrayCompletion = (Result<[Record], Error>) -> Void
     
     
     
-    
-    
-    
-    
-    
-    
-
-    
     // MARK: - 오늘 기록 가져오기
     func fetchRecode(date: Date,
-                     completion: @escaping ([Record]) -> Void) {
+                     completion: @escaping RecordArrayCompletion) {
         // uid가져오기
         // 오늘 날짜 구하기 (+ 시간 / 분 / 초 0으로 만들기)
         // 내일 날짜 구하기
@@ -49,7 +41,13 @@ struct Record_API {
             .whereField(API_String.created_at, isLessThan: tomorrow) // ?일24시
             .order(by: API_String.created_at, descending: true) // 내림차순
             .getDocuments { snapshot, error in
-                // 일치하는 문서 바인딩
+                // 에러가 생기면 -> error를 컴플리션
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                
+                // 가져온 문서 데이터들 옵셔널 바인딩
                 guard let datas = snapshot?.documents else { return }
                 
                 // 리턴할 Recode 배열 만들기
@@ -65,7 +63,7 @@ struct Record_API {
                     recordArray.append(record)
                 }
                 // 컴플리션
-                completion(recordArray)
+                completion(.success(recordArray))
             }
     }
     
@@ -81,7 +79,7 @@ struct Record_API {
     func createRecord(date: Date?,
                       context: String,
                       image: [UIImage]?,
-                      completion: @escaping (Record) -> Void) {
+                      completion: @escaping RecordCompletion) {
         // uid가져오기
         guard let uid = Auth.auth().currentUser?.uid,
               let current = date else { return }
@@ -102,17 +100,18 @@ struct Record_API {
             .setData(value, completion: { error in
                 // 에러가 있다면
                 if let error = error {
-                    print("\(#function) --- \(error)")
-                    print("실패")
+                    completion(.failure(error))
                     return
                 }
-                // 성공
-                print("성공")
                 // Recode 모델에는 created_at이 TimeStamp로 받기 때문에
                     // -> TimeStamp로 타입캐스팅
                 value[API_String.created_at] = Timestamp(date: current)
+                
+                // Record 모델 만들기
+                let record = Record(documentID: documentID, dictionary: value)
+                
                 // 컴플리션
-                completion(Record(documentID: documentID, dictionary: value))
+                completion(.success(record))
             })
     }
     
@@ -126,7 +125,7 @@ struct Record_API {
     func updateRecord(record: Record,
                       context: String,
                       image: [UIImage]?,
-                      completion: @escaping (Record) -> Void) {
+                      completion: @escaping RecordCompletion) {
         
         // uid가져오기
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -148,17 +147,16 @@ struct Record_API {
                 
                 // 에러가 있다면
                 if let error = error {
-                    print("\(#function) --- \(error)")
-                    print("실패")
+                    completion(.failure(error))
                     return
                 }
-                // 성공
-                print("성공")
                 // Recode 모델에는 created_at이 TimeStamp로 받기 때문에
                     // -> TimeStamp로 타입캐스팅
                 value[API_String.created_at] = Timestamp(date: current)
+                // Record 모델 만들기
+                let record = Record(documentID: record.documentID, dictionary: value)
                 // 컴플리션
-                completion(Record(documentID: record.documentID, dictionary: value))
+                completion(.success(record))
             })
     }
     
@@ -166,9 +164,19 @@ struct Record_API {
     
     
     // MARK: - 기록 삭제
-    func deleteRecord(documentID: String) {
-        // uid 가져오기
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        API_String.recodeDB.document(documentID).delete()
+    func deleteRecord(documentID: String?,
+                      completion: @escaping (Result<Void, Error>) -> Void) {
+        // 문서ID 옵셔널 바인딩
+        guard let documentID = documentID else { return }
+        // DB에서 삭제
+        API_String.recodeDB.document(documentID).delete { error in
+            // 에러가 있다면
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            // 삭제에 성공한다면
+            completion(.success(()))
+        }
     }
 }

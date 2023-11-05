@@ -61,17 +61,6 @@ final class EasyWritingScreenController: UIViewController {
         alignment: .center,
         distribution: .fill)
     
-//
-//    /// 전체 버티컬 스택뷰
-//    private lazy var verticalStackView: UIStackView = UIStackView.configureStackView(
-//        arrangedSubviews: [self.topStackView,
-//                           self.bottomStackView],
-//        axis: .vertical,
-//        spacing: 4,
-//        alignment: .fill,
-//        distribution: .fill)
-//
-//
     
     
     
@@ -82,15 +71,8 @@ final class EasyWritingScreenController: UIViewController {
     private lazy var size = CGSize(width: self.recodeTextView.frame.width,
                                    height: .infinity)
     
-    
+    // 델리게이트
     weak var delegate: EasyWritingScreenDelegate?
-    
-    
-    var selectedDate: Date? = Date() {
-        didSet {
-//            print(selectedDate)
-        }
-    }
     
     
     
@@ -314,15 +296,10 @@ final class EasyWritingScreenController: UIViewController {
     @objc private func dismissView() {
         // 텍스트뷰에 텍스트가 있다면 -> 저장
         if self.recodeTextView.hasText {
-            // 나중에 주석 풀기
-            Record_API
-                .shared
-                .createRecord(date: self.selectedDate,
-                              context: self.recodeTextView.text,
-                              image: nil) { record in
-                    self.delegate?.createRecord(record: record)
-                    self.recodeTextView.resignFirstResponder()
-                }
+            // DB에 데이터 생성
+            self.delegate?.createRecord(context: self.recodeTextView.text)
+            // 뒤로갈 때 키보드 내리기
+            self.recodeTextView.resignFirstResponder()
         }
         // 뒤로가기
         self.dismiss(animated: false)

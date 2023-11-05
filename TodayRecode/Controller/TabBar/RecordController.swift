@@ -55,7 +55,7 @@ final class RecordController: UIViewController {
         let calendar = CalendarView()
             calendar.delegate = self
             calendar.calendar.scope = .week
-        calendar.isHidden = true
+            calendar.isHidden = true
         return calendar
     }()
     /// 달력의 높이 제약
@@ -257,7 +257,6 @@ extension RecordController {
             style: .done,
             target: self,
             action: #selector(self.navCalendarBtnTapped))
-        
     }
 }
 
@@ -279,39 +278,144 @@ extension RecordController {
 // MARK: - API
 extension RecordController {
     private func fetchRecords_API(date: Date = Date()) {
-        // 해당 날짜의 데이터 가져오기
-        Record_API.shared.fetchRecode(date: date) { recodeArray in
-            // 오늘이라면
-            if self.isToday {
-                self.todayRecords_Array = recodeArray
-                // 오늘이 아니라면
-            } else {
-                self.anotherDayRecords_Array = recodeArray
+        Record_API.shared.fetchRecode(date: date) { result in
+            switch result {
+            case .success(let recordArray):
+                self.fetchCell(recordArray: recordArray)
+            case .failure(_):
+                // Fix
+                break
             }
-            // 테이블뷰 리로드
-            self.tableView.reloadData()
         }
     }
     
     private func deleteRecord_API(documentID: String?) {
-        // 옵셔널 바인딩
-        guard let documentID = documentID else { return }
+        // DB - 삭제
+        Record_API.shared.deleteRecord(documentID: documentID) { result in
+            switch result {
+            case .success(_):
+                print("데이터 삭제 성공")
+                // 셀 삭제
+                self.deleteCell()
+                
+            case .failure(_):
+                // Fix
+                break
+            }
+        }
+    }
+    
+    private func updateRecord_API(context: String, image: [UIImage]?) {
+        // 오늘인지 확인
+        // Record배열 가져오기
+        let record = self.isToday
+        ? self.todayRecords_Array[self.currentIndex]
+        : self.anotherDayRecords_Array[self.currentIndex]
+        // DB + 셀 업데이트
+        Record_API.shared.updateRecord(record: record,
+                                       context: context,
+                                       image: image) { result in
+            switch result {
+            case .success(let record):
+                print("데이터 업데이트 성공")
+                // currentIndex를 사용 (셀을 클릭했을 때 해당 셀의 index를 저장한다.)
+                self.updateCell(record: record)
+            case .failure(_):
+                // Fix
+                break
+            }
+        }
+    }
+    
+    
+    private func createRecord_API(currentMode: AccessoryViewMode, context: String, image: [UIImage]?) {
+        // 날짜 가져오기
+        let date = self.calendar.returnSelectedDate_exceptToday
+        // DB에 데이터 생성
+        Record_API.shared.createRecord(date: date,
+                                       context: context,
+                                       image: image) { result in
+            switch result {
+            case .success(let record):
+                print("데이터 생성 성공")
+                // 셀 업데이트
+                self.addRecord(record: record)
+            case .failure(_):
+                // Fix
+                break
+            }
+        }
+    }
+}
+
+
+
+
+
+
+// MARK: - API 관렴 메서드
+
+extension RecordController {
+    
+    // MARK: - 셀 추가
+    private func addRecord(record: Record) {
+        // 오늘이라면
+        if self.isToday {
+            // 오늘 배열에 넣기
+            self.todayRecords_Array.insert(record, at: 0)
+        // 오늘이 아니라면
+        } else {
+            self.anotherDayRecords_Array.insert(record, at: 0)
+        }
+        // 테이블뷰 특정 셀 리로드
+        self.tableView.insertRows(
+            at: [IndexPath(row: 0, section: 0)],
+            with: .none)
+    }
+    
+    
+    
+    // MARK: - 셀 업데이트
+    private func updateCell(record: Record) {
+        if self.isToday {   // 오늘이라면 -> 오늘 배열에 저장
+            self.todayRecords_Array[self.currentIndex] = record
+        } else {            // 오늘이 아니라면 -> 다른 날 배열에 저장
+            self.anotherDayRecords_Array[self.currentIndex] = record
+        }
+        // 해당 셀만 리로드
+        self.tableView.reloadRows(at: [IndexPath(row: self.currentIndex,
+                                                 section: 0)],
+                                  with: .automatic)
+    }
+    
+    
+    // MARK: - 셀 삭제
+    private func deleteCell() {
         // 배열에서 해당 데이터 삭제
-        
         if self.isToday {
             self.todayRecords_Array.remove(at: self.currentIndex)
         } else {
             self.anotherDayRecords_Array.remove(at: self.currentIndex)
         }
-        // 삭제
-        Record_API.shared.deleteRecord(documentID: documentID)
         // 테이블뷰의 해당 셀 리로드
         self.tableView.deleteRows(at: [IndexPath(row: self.currentIndex,
                                                  section: 0)],
                                   with: .automatic)
     }
+    
+    
+    // MARK: - 셀 가져오기
+    private func fetchCell(recordArray: [Record]) {
+        
+        if self.isToday { // 오늘이라면
+            self.todayRecords_Array = recordArray
+        } else { // 오늘이 아니라면
+            self.anotherDayRecords_Array = recordArray
+        }
+        // 테이블뷰 리로드
+        self.tableView.reloadData()
+    }
 }
-
 
 
 
@@ -371,8 +475,6 @@ extension RecordController {
         let vc = EasyWritingScreenController()
         vc.modalPresentationStyle = .overFullScreen
         vc.delegate = self
-        // 달력에 선택된 날짜 보내기
-        vc.selectedDate = self.calendar.returnSelectedDate_exceptToday
         // 화면 이동
         self.present(vc, animated: false)
     }
@@ -439,31 +541,12 @@ extension RecordController {
             // 문자열만 가져간다.
             vc.diaryTextView.text = easyViewString
             vc.placeholderLbl.isHidden = true
-            vc.writeDate = self.calendar.returnSelectedDate_exceptToday ?? Date()
         }
         
         // 데이터 넘겨주기 (파라미터로 받은 데이터)
         vc.selectedRecord = selectedRecord
         // 화면 이동
         self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    
-    
-    // MARK: - 테이블에 데이터 추가
-    private func addRecord(record: Record) {
-        // 오늘이라면
-        if self.isToday {
-            // 오늘 배열에 넣기
-            self.todayRecords_Array.insert(record, at: 0)
-        // 오늘이 아니라면
-        } else {
-            self.anotherDayRecords_Array.insert(record, at: 0)
-        }
-        // 테이블뷰 특정 셀 리로드
-        self.tableView.insertRows(
-            at: [IndexPath(row: 0, section: 0)],
-            with: .none)
     }
 }
 
@@ -663,44 +746,32 @@ extension RecordController: EasyWritingScreenDelegate {
         self.pushToDetailWritingScreen(easyViewString: context)
     }
     
-    /// 데이터를 생성하면 -> 셀에 추가
-    func createRecord(record: Record) {
-        self.addRecord(record: record)
+    /// 데이터를 생성하면 -> DB + 셀에 추가
+    func createRecord(context: String) {
+        self.createRecord_API(currentMode: .easyWritingScreen,
+                              context: context,
+                              image: nil)
     }
 }
 
 
 
-
-
-
-
-
-
-
+// MARK: - 상세 작성 화면 델리게이트
 extension RecordController: DetailWritingScreenDelegate {
-    /// 데이터를 생성하면 -> 셀에 추가
-    func createRocord(record: Record) {
-        print(self.isToday)
-        self.addRecord(record: record)
+    /// 데이터를 생성하면 -> DB + 셀 추가
+    func createRocord(context: String, image: [UIImage]?) {
+        self.createRecord_API(currentMode: .detailWritingScreen,
+                              context: context,
+                              image: image)
     }
     
-    /// 데이터를 업데이트하면 -> 셀을 업데이트
-    func updateRecord(record: Record) {
-        // currentIndex를 사용 (셀을 클릭했을 때 해당 셀의 index를 저장한다.)
-        if self.isToday {   // 오늘이라면 -> 오늘 배열에 저장
-            self.todayRecords_Array[self.currentIndex] = record
-        } else {            // 오늘이 아니라면 -> 다른 날 배열에 저장
-            self.anotherDayRecords_Array[self.currentIndex] = record
-        }
-        // 해당 셀만 리로드
-        self.tableView.reloadRows(at: [IndexPath(row: self.currentIndex,
-                                                 section: 0)],
-                                  with: .automatic)
+    /// 데이터를 업데이트하면 -> DB + 셀 업데이트
+    func updateRecord(context: String, image: [UIImage]?) {
+        self.updateRecord_API(context: context, image: image)
     }
     
+    /// 데이터를 삭제하면 -> DB + 셀 삭제
     func deleteRecord(documentID: String) {
-        /// 데이터를 삭제하면 -> 셀 삭제
         self.deleteRecord_API(documentID: documentID)
     }
 }

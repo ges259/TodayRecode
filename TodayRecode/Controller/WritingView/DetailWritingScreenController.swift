@@ -103,12 +103,11 @@ final class DetailWritingScreenController: UIViewController {
         image: UIImage.keyboardDown,
         tintColor: UIColor.btnGrayColor)
     
-    
+    /// 키보드가 올라오면 보이는 악세서리 컨테이너뷰
     private lazy var accessoryCustomView: UIView = {
         let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50)
         let view = UIView(frame: frame)
-        view.backgroundColor = .white
-        
+            view.backgroundColor = .white
         return view
     }()
     
@@ -170,7 +169,7 @@ final class DetailWritingScreenController: UIViewController {
     private lazy var imageViewHeight: CGFloat = self.collectionView.frame.height
     
     
-    
+    private var diaryTextViewHeight: NSLayoutConstraint?
     
     
     /// 키보드가 올라와있는지 확인하는 변수
@@ -179,18 +178,12 @@ final class DetailWritingScreenController: UIViewController {
     /// 콜렉션뷰 현재 페이지
     var currentPage: CGFloat = 0
     
-    
-    
-    /**
-     일기 모드 / 기록 모드를 알 수 있는 enum변수
-     - DetailViewMode
-     - diary (일기 모드)
-     - recode (기록 모드)
-     */
+    /// 일기 모드 / 기록 모드를 알 수 있는 enum변수
     var detailViewMode: DetailViewMode? {
         // 네비게이션바 오른쪽 버튼 및 타이틀 설정
         didSet { self.configureNavTitleAndBtn() }
     }
+    
     
     /// 기록 확인 화면에서 오늘 기록을 볼 수 있게 하는 Record배열
     var todayRecords: [Record] = []
@@ -200,8 +193,6 @@ final class DetailWritingScreenController: UIViewController {
             self.configureData()
         }
     }
-    /// 플러스 버튼을 통해 들어온 경우 해당 날짜를 알 수 있도록 해주는 변수
-    lazy var writeDate: Date? = Date()
     
     /// 델리게이트
     weak var delegate: DetailWritingScreenDelegate?
@@ -252,32 +243,31 @@ final class DetailWritingScreenController: UIViewController {
         self.configureAutoLayout()
         self.configureAction()
     }
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        // 키보드 올리기
-        self.diaryTextView.becomeFirstResponder()
-    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // 노티피케이션
+        // 노티피케이션 생성 ( 삭제는 왼쪽 네비게이션 버튼을 눌러야 함)
+        // 키보드 올라올 때
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(self.keyboardWillShow(_:)),
             name: UIResponder.keyboardWillShowNotification,
             object: nil)
-        
+        // 키보드 내려갈 때
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(self.keyboardWillHide(_:)),
             name: UIResponder.keyboardWillHideNotification,
             object: nil)
     }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // 화면에 들어오면 키보드 올리기
+        self.diaryTextView.becomeFirstResponder()
+    }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        // 키보드 내리기
+        // 화면을 나가면 키보드 내리기
         self.diaryTextView.resignFirstResponder()
-        // 노티피케이션 삭제
-        NotificationCenter.default.removeObserver(self)
     }
 }
     
@@ -365,6 +355,10 @@ extension DetailWritingScreenController {
         self.diaryTextView.snp.makeConstraints { make in
             make.height.greaterThanOrEqualTo(270)
         }
+//        self.diaryTextView.translatesAutoresizingMaskIntoConstraints = false
+//        self.diaryTextViewHeight = self.diaryTextView.heightAnchor.constraint(equalToConstant: 300)
+//        self.diaryTextViewHeight?.isActive = true
+        
         // 스택뷰
         self.verticalStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
@@ -504,91 +498,6 @@ extension DetailWritingScreenController {
 
 
 
-
-
-
-
-
-
-    
-// MARK: - API
-
-extension DetailWritingScreenController {
-    
-    // MARK: - 데이터 저장
-    @objc private func leftNavBtnTapped() {
-        // 뒤로가기
-        self.navigationController?.popViewController(animated: true)
-        
-        // 현재 모드 확인
-        guard let mode = self.detailViewMode else { return }
-        
-        // 스위치문
-        switch mode {
-        // 플러스버튼을 통해 들어온 경우
-        case .record_plusBtn:
-            print("recordBtn0")
-            // 빈칸인 경우 저장X
-            guard self.diaryTextView.text != "",
-                  let date = self.writeDate else { return }
-            print("recordBtn1")
-            // 나머지 무조건 저장
-            Record_API
-                .shared
-                .createRecord(date: date,
-                              context: self.diaryTextView.text,
-                              image: nil) { record in
-                    print("데이터 생성 성공")
-                    self.delegate?.createRocord(record: record)
-                }
-            print("recordBtn2")
-            break
-            
-        // 셀을 통해 들어온 경우
-        case .record_CellTapped:
-            // textVeiw와 currentRecord의 context를 비교
-                // -> 바뀌지 않은 경우 아무 행동도 하지 않음
-            guard self.selectedRecord?.context != self.diaryTextView.text,
-                    let record = self.selectedRecord else { return }
-                // -> 바뀐경우 업데이트
-                    // Record_API
-            Record_API
-                .shared
-                .updateRecord(record: record,
-                              context: self.diaryTextView.text,
-                              image: nil) { record in
-                    print("업데이트 성공")
-                    self.delegate?.updateRecord(record: record)
-                }
-            break
-            
-        // 일기목록화면을 통해 들어온 경우
-        case .diary:
-            // 오늘이 아닌 경우 저장하지 않음
-            // 오늘인 경우 저장
-            
-            // 데이터 저장
-    //            Diary_API.shared.createDiary(context: "dd") { data in
-    //                dump(data)
-    //                // static 변수를 통해서 일기를 썼다는 것을 표시
-    //            }
-            print("diary")
-            break
-        }
-    }
-    
-    private func updateData() {
-        
-    }
-}
-
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -598,7 +507,7 @@ extension DetailWritingScreenController {
     
     
     
-// MARK: - 액션
+// MARK: - 액션 + 셀렉터
     
 extension DetailWritingScreenController {
     
@@ -637,6 +546,9 @@ extension DetailWritingScreenController {
                 self.view.frame.origin.y -= keyboardSize
             }
             
+//            self.diaryTextViewHeight?.constant = 800
+//            self.view.layoutIfNeeded()
+            
             // 키보드가 올라왔다는 표시
             self.keyboardShow = true
             
@@ -646,6 +558,9 @@ extension DetailWritingScreenController {
             self.recodeShowBtn.frame.origin.y = self.viewHeight - self.safeArea - 53
             // 화면 내리기
             self.view.frame.origin.y = 0
+            
+//            self.diaryTextViewHeight?.constant = self.diaryTextView.frame.height
+//            self.view.layoutIfNeeded()
             // 키보드가 내려가 있다는 표시
             self.keyboardShow = false
         }
@@ -747,6 +662,53 @@ extension DetailWritingScreenController {
             self.selectedImages.append(contentsOf: images)
         })
     }
+    
+    
+    
+    // MARK: - 화면 나가기 (+ API)
+    @objc private func leftNavBtnTapped() {
+        // 뒤로가기
+        self.navigationController?.popViewController(animated: true)
+        // 노티피케이션 삭제
+        NotificationCenter.default.removeObserver(self)
+        
+        // 현재 모드 확인
+        guard let mode = self.detailViewMode else { return }
+        // 스위치문
+        switch mode {
+        // 플러스버튼을 통해 들어온 경우
+        case .record_plusBtn:
+            // 텍스트뷰가 빈칸인 경우 저장X
+            guard self.diaryTextView.text != "" else { return }
+            // 나머지 무조건 저장
+            self.delegate?.createRocord(context: self.diaryTextView.text,
+                                        image: nil)
+            break
+            
+        // 셀을 통해 들어온 경우
+        case .record_CellTapped:
+            // textVeiw와 currentRecord의 context를 비교
+            // -> 바뀌지 않은 경우 아무 행동도 하지 않음
+            guard self.selectedRecord?.context != self.diaryTextView.text else { return }
+            // -> 바뀐경우 업데이트
+            self.delegate?.updateRecord(context: self.diaryTextView.text,
+                                        image: nil)
+            break
+            
+        // 일기목록화면을 통해 들어온 경우
+        case .diary:
+            // 오늘이 아닌 경우 저장하지 않음
+            // 오늘인 경우 저장
+            
+            // 데이터 저장
+    //            Diary_API.shared.createDiary(context: "dd") { data in
+    //                dump(data)
+    //                // static 변수를 통해서 일기를 썼다는 것을 표시
+    //            }
+            print("diary")
+            break
+        }
+    }
 }
 
 
@@ -817,7 +779,7 @@ extension DetailWritingScreenController: UITextViewDelegate {
         // 예상 높이 구하기
         let estimatedSize = self.diaryTextView.sizeThatFits(self.size).height
         // 텍스트뷰의 높이가 300보다 크다면 (- 최소 높이가 300이기 때문)
-        if estimatedSize >= 300 {
+        if estimatedSize >= 800 {
             // 텍스트뷰의 제약 forEach
             self.diaryTextView.constraints.forEach{ (constraint) in
                 // 높이 제약이라면
@@ -825,6 +787,9 @@ extension DetailWritingScreenController: UITextViewDelegate {
                     // 높이 재설정
                     constraint.constant = estimatedSize
                 }
+//                self.diaryTextViewHeight?.constant += 20
+//                self.view.layoutIfNeeded()
+                
             }
         }
     }
