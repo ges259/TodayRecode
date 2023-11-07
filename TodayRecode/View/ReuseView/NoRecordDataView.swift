@@ -43,10 +43,9 @@ final class NoRecordDataView: UIView {
     // MARK: - 라이프사이클
     init(frame: CGRect, nodataEnum: NoDataEnum) {
         super.init(frame: frame)
-        // 오토레이아웃 설정
-        self.configureAutoLayout()
-        // 레이블의 텍스트 설정
-        self.configureUI(nodataEnum: nodataEnum)
+        
+        self.configureAutoLayout() // 오토레이아웃 설정
+        self.configureUI(nodataEnum: nodataEnum) // 레이블의 텍스트 설정
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

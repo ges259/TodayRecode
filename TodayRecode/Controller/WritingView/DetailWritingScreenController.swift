@@ -21,9 +21,10 @@ final class DetailWritingScreenController: UIViewController {
     private lazy var navTitle: UILabel = UILabel.navTitleLbl()
     /// 콜렉션뷰
     private lazy var collectionView: ImageCollectionView = {
-        let collectionView = ImageCollectionView()
-        collectionView.collectionViewEnum = .photoList
-        collectionView.delegate = self
+        let collectionView = ImageCollectionView(
+            frame: .zero,
+            collectionViewEnum: .photoList)
+            collectionView.delegate = self
         return collectionView
     }()
     
@@ -147,21 +148,20 @@ final class DetailWritingScreenController: UIViewController {
     
     // MARK: - 프로퍼티
     /// 일기 모드 / 기록 모드를 알 수 있는 enum변수
-    private var detailViewMode: DetailViewMode?
+    var detailViewMode: DetailViewMode?
     /// 델리게이트
     weak var delegate: DetailWritingScreenDelegate?
     
     
     /// 기록 확인 화면에서 오늘 기록을 볼 수 있게 하는 Record배열
-    var todayRecords: [Record] = []
+    lazy var todayRecords: [Record] = []
     /// 셀을 클릭하여 상세작성 화면에 들어온 경우
-    var selectedRecord: Record?
-    /// DB에 저장할 날짜를 받음
-    var todayDate: Date? {
-        didSet {
-            print(todayDate!)
-        }
+    var selectedRecord: Record? {
+        // 해당 데이터의 날짜를 표시
+        didSet { self.todayDate = selectedRecord?.date }
     }
+    /// DB에 저장할 날짜를 표시
+    lazy var todayDate: Date? = Date()
     
     
     /// 키보드가 올라와있는지 확인하는 변수
@@ -222,15 +222,6 @@ final class DetailWritingScreenController: UIViewController {
         self.configureAction()
         self.configureData()
         self.configureNavBtn() // 네비게이션바 오른쪽 버튼 및 타이틀 설정
-    }
-    init(detailViewMode: DetailViewMode) {
-        super.init(nibName: nil, bundle: nil)
-        
-        self.detailViewMode = detailViewMode
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     
@@ -440,14 +431,16 @@ extension DetailWritingScreenController {
         let deleteMenu = UIAction(title: "삭제", image: UIImage.trash) { _ in
             self.deleteBtnTapped()
         }
-        // 네비게이션 타이틀 및 메뉴 버튼 설정
-        if self.detailViewMode == .diary {
-            self.navigationItem.rightBarButtonItem?.menu = UIMenu(
-                children: [deleteMenu])
-        } else {
-            self.navigationItem.rightBarButtonItem?.menu = UIMenu(
-                children: [addRecodeMenu, deleteMenu])
-        }
+        
+        // 오른쪽 네비게이션 메뉴 버튼 설정
+        self.navigationItem.rightBarButtonItem?.menu
+        // 네비게이션 타이틀 및 메뉴 버튼 설정 or 오늘이 아니라면
+        = self.detailViewMode == .diary || !self.isToday
+        // [삭제 버튼]
+        ? UIMenu(children: [deleteMenu])
+        // [기록 추가 버튼, 삭제 버튼]
+        : UIMenu(children: [addRecodeMenu, deleteMenu])
+        
         
         // ********** 네비게이션 왼쪽 버튼 설정 **********
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(
@@ -759,7 +752,7 @@ extension DetailWritingScreenController {
             case .success(_):
                 print("데이터 삭제 성공")
                 // 셀 삭제
-                self.delegate?.deleteRecord(bool: true)
+                self.delegate?.deleteRecord(success: true)
                 break
             case .failure(_):
                 // Fix
@@ -861,7 +854,7 @@ extension DetailWritingScreenController: CollectionViewDelegate {
     func itemDeleteBtnTapped(index: Int) {
         self.selectedImages.remove(at: index)
     }
-    func itemTapped() {
+    func itemTapped(index: Int) {
         print(#function)
     }
     func collectionViewScrolled(index: Int) {

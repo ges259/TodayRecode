@@ -511,7 +511,7 @@ extension RecordController {
     private func pushToDetailWritingScreen(selectedRecord: Record? = nil,
                                            easyViewString: String? = nil) {
         // 기록 화면에서 넘어갔다는 표시
-        let vc = DetailWritingScreenController(detailViewMode: .record_plusBtn)
+        let vc = DetailWritingScreenController()
         // ********** 공통 **********
         // 상세 작성뷰에서 탭바 없애기
         vc.hidesBottomBarWhenPushed = true
@@ -530,10 +530,13 @@ extension RecordController {
             vc.todayDate = self.calendar.returnSelectedDate
             // 문자열 가져가기
             vc.diaryTextView.text = easyViewString
+            vc.detailViewMode = .record_plusBtn
+            
         // 셀을 선택하여 넘어간 경우
         } else {
             // 데이터 넘겨주기 (파라미터로 받은 데이터)
             vc.selectedRecord = selectedRecord
+            vc.detailViewMode = .record_CellTapped
         }
         
         // 화면 이동
@@ -767,8 +770,8 @@ extension RecordController: DetailWritingScreenDelegate {
         }
     }
     
-    func deleteRecord(bool: Bool) {
-        if bool {
+    func deleteRecord(success: Bool) {
+        if success {
             self.deleteCell()
         } else {
             // Fix

@@ -20,54 +20,12 @@ extension Date {
     static func dateReturn_Custom(todayFormat: TodayFormatEnum,
                                   UTC_Plus9: Bool,
                                   date: Date = Date()) -> String {
-        
-//        var current = date
-        // 9시간 더하기 UTC+9
-//        if UTC_Plus9 {
-//            guard let date = Date.UTC_Plus9(date: date) else { return "" }
-//            current = date
-//        }
-        
         let formatter = DateFormatter()
             formatter.dateFormat = todayFormat.today
             formatter.locale = Locale(identifier: "ko_KR")
         return formatter.string(from: date)
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    /*
-     9시간을 추가해야한다면 -> 아래 메서드 (startOfHout)
-     9시간을 추가해야할 필요가 없다면 -> 이 메서드
-     */
-    
-    // MARK: - Fix
-    /// Date배열 타입을 리턴하는 함수
-    /// - Parameter date: [Date] --- Date배열 타입
-    /// - Returns: [Date] --- Date배열 타입
-    static func todayReturnDateType(dates: [Date]) -> [Date] {
-        let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "ko_KR")
-            formatter.dateFormat = "yyyy-MM-dd"
-        var dateArray = [Date]()
-        
-        dates.forEach { date in
-            // 9시간 더하기 UTC+9
-//            guard let current = Date.UTC_Plus9(date: date) else { return }
-            dateArray.append(formatter.date(from: self.dateReturn_Custom(
-                todayFormat: .yyyy_MM_dd,
-                UTC_Plus9: true,
-                date: date))!)
-        }
-        return dateArray
-    }
     
     
     

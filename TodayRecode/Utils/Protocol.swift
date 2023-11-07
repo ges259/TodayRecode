@@ -28,7 +28,7 @@ protocol EasyWritingScreenDelegate: AnyObject {
 protocol DetailWritingScreenDelegate: AnyObject {
     func createRocord(record: Record?)
     func updateRecord(record: Record?)
-    func deleteRecord(bool: Bool)
+    func deleteRecord(success: Bool)
 }
 
 
@@ -46,6 +46,6 @@ protocol ImageCollectionViewDelegate: AnyObject {
 
 protocol CollectionViewDelegate: AnyObject {
     func itemDeleteBtnTapped(index: Int)
-    func itemTapped()
+    func itemTapped(index: Int)
     func collectionViewScrolled(index: Int)
 }

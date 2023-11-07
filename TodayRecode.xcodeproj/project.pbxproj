@@ -251,8 +251,8 @@
 			isa = PBXGroup;
 			children = (
 				5F785B8F2ADED33A00955C4A /* DateView.swift */,
-				5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */,
 				5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */,
+				5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */,
 				5F3E3FD42AF9363D00B1F36B /* NoRecordDataView.swift */,
 			);
 			path = ReuseView;

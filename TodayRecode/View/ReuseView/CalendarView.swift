@@ -31,25 +31,30 @@ final class CalendarView: UIView {
         calendar.appearance.weekdayFont = UIFont.systemFont(ofSize: 12)
         // 색상
         calendar.appearance.weekdayTextColor = .black.withAlphaComponent(0.7)
-        // 주(월,화,수)와 상단의 간격 넓히기
-        calendar.weekdayHeight = 40
-        // ----- 이벤트 -----
-        // 이벤트 - 선택되지 않은 날짜 색깔
-        calendar.appearance.eventDefaultColor = UIColor.yellow
-        // 이벤트 - 선택된 날짜 색깔
-        calendar.appearance.eventSelectionColor = UIColor.yellow
         // 헤더(10월) 없애기
         calendar.headerHeight = 0
+        // 주(월,화,수)와 상단의 간격 넓히기
+        calendar.weekdayHeight = 40
         
-        calendar.adjustsBoundingRectWhenChangingMonths = true
+        // ----- 이벤트 -----
+        // 이벤트 - 점 위치
+        calendar.appearance.eventOffset.y -= 5
+        // 이벤트 - 선택되지 않은 날짜 색깔
+        calendar.appearance.eventDefaultColor = UIColor.customblue6
+        // 이벤트 - 선택된 날짜 색깔
+        calendar.appearance.eventSelectionColor = UIColor.customblue6
+        
         // 찾았다
-        calendar.appearance.borderRadius = 0
+        calendar.appearance.borderRadius = .zero
         // 오늘 날짜 생상
-        calendar.appearance.todayColor = UIColor.customblue3
+        calendar.appearance.todayColor = UIColor.clear
+        // 오늘 날짜 타이틀 생상
+        calendar.appearance.titleTodayColor = .black
         
-        calendar.layer.masksToBounds = true
+        // cornerRadius
         calendar.clipsToBounds = true
         calendar.layer.cornerRadius = 10
+        
         return calendar
     }()
     
@@ -66,12 +71,7 @@ final class CalendarView: UIView {
     weak var delegate: CalendarDelegate?
     
     var diaryArray: [Date] = [] {
-        didSet {
-            self.calendar.reloadData()
-            print("*************************************************")
-            dump(self.diaryArray)
-            print("*************************************************")
-        }
+        didSet { self.calendar.reloadData() }
     }
     
     
@@ -81,7 +81,7 @@ final class CalendarView: UIView {
         let current = Date().reset_time()
         // 달력에 선택된 시간 가져오기
         let selectedDate = self.calendar.selectedDate?.reset_time()
-        // 리턴
+        // 오늘 날짜 == 선택된 날짜
         return current == selectedDate
         ? Date()        // 만약 서로 같다면 -> 오늘날짜 리턴
         : selectedDate  // 다른 날이라면 -> 달력에 선택된 날짜 리턴
@@ -186,7 +186,8 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDele
          4. self.currentDiary.firstIndex(of: Date)로 몇 번째 인덱스인지 찾기
             -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
          */
-        print(date)
+        
+        print(#function)
         
         // dateLabel에 선택된 날짜 띄우기
          self.delegate?.selectDate(date: date)
@@ -200,7 +201,6 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDele
     /// 이벤트가 있는 날짜에 점으로 표시
     func calendar(_ calendar: FSCalendar,
                   numberOfEventsFor date: Date) -> Int {
-//        return self.diaryArray.contains(Date.UTC_Plus9(date: date)!)
         return self.diaryArray.contains(date)
         ? 1
         : 0

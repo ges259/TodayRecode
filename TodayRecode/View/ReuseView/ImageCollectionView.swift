@@ -47,23 +47,9 @@ final class ImageCollectionView: UIView {
     
     weak var delegate: CollectionViewDelegate?
     
-    var currentPage: CGFloat = 0 {
-        didSet {
-            if self.collectionViewEnum == .diaryList {
-                // MARK: - Fix
-                // 현재 페이지 = diaryArray의 index값
-                /*
-                 1. 스크롤을 한다.
-                 2. 현재 페이지가 바뀐다.
-                 3. delegate를 통해 현재 페이지(currentPage)값을 넘김
-                 4. 캘린더 바꾸기 (선택된 날짜)
-                    -> 바뀐 현재 페이지값에 맞추기 (diaryArray가 1일 -> 5일이라면 캘린더도 5일로 이동)
-                 5. 날짜뷰(dateView)의 레이블 바꾸기
-                 */
-                self.delegate?.collectionViewScrolled(index: Int(self.currentPage))
-            }
-        }
-    }
+    /// 콜렉션뷰의 현재 페이지를 표시
+    var currentPage: CGFloat = 0
+    
     /// collectionViewEnum이 .photoList일 때
     var currentImage: [UIImage] = [] {
         didSet { self.collectionView.reloadData() }
@@ -75,14 +61,23 @@ final class ImageCollectionView: UIView {
     
     
     
+    
+    
+    
+    
+    
+    
     // MARK: - 라이프사이클
-    override init(frame: CGRect) {
+    init(frame: CGRect, collectionViewEnum: CollectionViewEnum) {
         super.init(frame: frame)
         
-        self.configureAutoLayout()
-        self.configureAction()
+        self.collectionViewEnum = collectionViewEnum
+        
         self.configureUI()
+        self.configureAutoLayout()
     }
+    
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -120,13 +115,6 @@ extension ImageCollectionView {
             make.edges.equalToSuperview()
         }
     }
-    
-    
-    
-    // MARK: - 액션 설정
-    private func configureAction() {
-        
-    }
 }
     
     
@@ -144,13 +132,17 @@ extension ImageCollectionView {
     
     // MARK: - 아이템 이동
     func moveToItem(date: Date) {
-        let dateType = Date.todayReturnDateType(dates: [date])
         
-        if let index = self.currentDiary.firstIndex(of: dateType.first!) {
-            self.collectionView.scrollToItem(
-                at: IndexPath(row: index, section: 0),
-                at: .right,
-                animated: true)
+        guard let dateType = date.reset_time() else { return }
+        
+        if let index = self.currentDiary.firstIndex(of: dateType) {
+            // 자꾸 index가 -1되어 스크롤되는 상황이 발생하여 해당 코드 처럼 바꿈
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()) {
+                self.collectionView.scrollToItem(
+                    at: IndexPath(row: index, section: 0),
+                    at: .right,
+                    animated: true)
+            }
         }
     }
 }
@@ -185,7 +177,7 @@ extension ImageCollectionView {
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
         if self.collectionViewEnum == .diaryList {
-            self.delegate?.itemTapped()
+            self.delegate?.itemTapped(index: indexPath.item)
         }
     }
 }
@@ -273,36 +265,52 @@ extension ImageCollectionView {
         
         // 스크롤한 위치값
         var index = scrolledOffsetX / cellWidth
+        
+        // 이동하는 위치 가져오기
+        let scrolledX = scrollView.contentOffset.x
+        let pointeeX = targetContentOffset.pointee.x
+        
+        // 어디서 어디로 스크롤하는지 확인
+        if scrolledX > pointeeX {
+            // 왼쪽 -> 오른쪽으로 갈 때 자연스럽게
+            index = floor(index)
+        } else if scrolledX < pointeeX {
+            // 오른쪽 -> 왼쪽으로 갈 때 자연스럽게
+            index = ceil(index)
+        } else {
+            index = round(index)
+        }
+        
+        
         // 한 페이지씩 움직일 수 있도록 설정
+        // 페이지 이동 (+델리게이트)
         if self.currentPage > index {
             self.currentPage -= 1
         } else if currentPage < index {
             self.currentPage += 1
         }
+        
         // 현재 페이지 저장
         index = self.currentPage
+        if self.collectionViewEnum == .diaryList {
+            // MARK: - Fix
+            // 현재 페이지 = diaryArray의 index값
+            /*
+             1. 스크롤을 한다.
+             2. 현재 페이지가 바뀐다.
+             3. delegate를 통해 현재 페이지(currentPage)값을 넘김
+             4. 캘린더 바꾸기 (선택된 날짜)
+                -> 바뀐 현재 페이지값에 맞추기 (diaryArray가 1일 -> 5일이라면 캘린더도 5일로 이동)
+             5. 날짜뷰(dateView)의 레이블 바꾸기
+             */
+            self.delegate?.collectionViewScrolled(index: Int(self.currentPage))
+        }
         // 스크롤 속도가 줄어들어 정지될 때 예상되는 위치 설정
         // 즉, 멈출 페이지
         targetContentOffset.pointee = CGPoint(
             x: index * cellWidth - scrollView.contentInset.left,
             y: scrollView.contentInset.top)
     }
-    
-    
-    
-    
-    /*
-     // 어디서 어디로 스크롤하는지 확인
-     let scrolled = scrollView.contentOffset.x > targetContentOffset.pointee.x
-     if scrollView.contentOffset.x > targetContentOffset.pointee.x {
-         // 왼쪽 -> 오른쪽으로 갈 때 자연스럽게
-         index = floor(index)
-
-     } else if scrollView.contentOffset.x < targetContentOffset.pointee.x {
-         // 오른쪽 -> 왼쪽으로 갈 때 자연스럽게
-         index = ceil(index)
-     }
-     */
 }
 
 
