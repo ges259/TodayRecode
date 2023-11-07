@@ -30,6 +30,8 @@ extension UIImage {
     static let check: UIImage? = UIImage(systemName: "checkmark")
     /// 더하기 이미지
     static let plus: UIImage? = UIImage(systemName: "plus")
+    //
+    static let circle_plus: UIImage? = UIImage(systemName: "plus.circle.fill")
     /// 키보드 내리기 이미지
     static let keyboardDown: UIImage? = UIImage(systemName: "chevron.down")
     /// 문서 확인 이미지 (오늘 기록 확인 버튼)

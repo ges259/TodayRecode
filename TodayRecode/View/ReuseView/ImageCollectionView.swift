@@ -38,6 +38,8 @@ final class ImageCollectionView: UIView {
     
     
     
+    
+    
     // MARK: - 프로퍼티
     private lazy var collectionViewWidth: CGFloat = self.collectionView.frame.width
     
@@ -50,7 +52,6 @@ final class ImageCollectionView: UIView {
             if self.collectionViewEnum == .diaryList {
                 // MARK: - Fix
                 // 현재 페이지 = diaryArray의 index값
-                
                 /*
                  1. 스크롤을 한다.
                  2. 현재 페이지가 바뀐다.
@@ -59,7 +60,7 @@ final class ImageCollectionView: UIView {
                     -> 바뀐 현재 페이지값에 맞추기 (diaryArray가 1일 -> 5일이라면 캘린더도 5일로 이동)
                  5. 날짜뷰(dateView)의 레이블 바꾸기
                  */
-                self.delegate?.collectionViewScrolled()
+                self.delegate?.collectionViewScrolled(index: Int(self.currentPage))
             }
         }
     }
@@ -143,8 +144,6 @@ extension ImageCollectionView {
     
     // MARK: - 아이템 이동
     func moveToItem(date: Date) {
-        
-        
         let dateType = Date.todayReturnDateType(dates: [date])
         
         if let index = self.currentDiary.firstIndex(of: dateType.first!) {
@@ -185,7 +184,9 @@ extension ImageCollectionView {
     /// 아이템을 선택했을 때
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
-        self.delegate?.itemTapped()
+        if self.collectionViewEnum == .diaryList {
+            self.delegate?.itemTapped()
+        }
     }
 }
 
@@ -206,13 +207,19 @@ extension ImageCollectionView: UICollectionViewDataSource {
             withReuseIdentifier: Identifier.imageListCollectionViewCell,
             for: indexPath) as! ImageCollectionViewCell
         
-        cell.collectionViewEnum = self.collectionViewEnum
         cell.delegate = self
+        cell.collectionViewEnum = self.collectionViewEnum
         
+        // 상세 작성 화면 콜렉션뷰
         if self.collectionViewEnum == .photoList {
             cell.imageView.image = self.currentImage[indexPath.row]
-        } else {
             
+        // 일기 목록 화면 콜렉션뷰
+        } else {
+            cell.dateLbl.text = Date.dateReturn_Custom(
+                todayFormat: .d일,
+                UTC_Plus9: false,
+                date: self.currentDiary[indexPath.row])
         }
         return cell
     }
@@ -280,6 +287,10 @@ extension ImageCollectionView {
             x: index * cellWidth - scrollView.contentInset.left,
             y: scrollView.contentInset.top)
     }
+    
+    
+    
+    
     /*
      // 어디서 어디로 스크롤하는지 확인
      let scrolled = scrollView.contentOffset.x > targetContentOffset.pointee.x

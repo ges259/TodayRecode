@@ -66,19 +66,12 @@ final class DiaryListController: UIViewController {
     /// 캘린더 IsHidden
     private lazy var calendarIsHidden: Bool = true
     
+    private lazy var currentPage: Int = 0
     
-    /// 일기를 쓴 날
-    private lazy var diaryDateArray: [Date] = [] {
-        didSet {
-            // 날짜(일기를 쓴 날)를 콜렉션뷰 / 달력에 전달
-            self.deliverTheDate(dateArray: self.diaryDateArray)
-        }
-    }
-    
+    /// Record데이터 배열
     private lazy var diaryArray: [Record] = [] {
-        didSet {
-            dump(self.diaryArray)
-        }
+        // 날짜(일기를 쓴 날)를 콜렉션뷰 / 달력에 전달
+        didSet { self.deliverTheDate() }
     }
 
     
@@ -94,12 +87,10 @@ final class DiaryListController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.fetchDiaryArray()
-        
-        
-        self.configureUI()
-        self.configureAutoLayout()
-        self.configureAction()
+        self.fetchDiaryArray()      // 일기 가져오기
+        self.configureUI()          // UI 설정
+        self.configureAutoLayout()  // 오토레이아웃 설정
+        self.configureAction()      // 액션 설정
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -134,7 +125,7 @@ extension DiaryListController {
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         // 달력에 오늘 날짜 선택 (원래 기본적으로 선택 안 되어있음)
-        self.calendar.calendar.select(Date())
+//        self.calendarDateSelect()
         
         // 네비게이션 타이틀(String) 설정
         self.setNavTitle() // -> 오늘로 설정
@@ -213,25 +204,28 @@ extension DiaryListController {
     
     // MARK: - 네비게이션 타이틀 설정 액션
     private func setNavTitle(date: Date = Date()) {
+        let navEnum: NavTitleSetEnum = .yyyy년M월
         self.navTitle.attributedText = self.configureNavTitle(
-            "하루 일기",
-            navTitleSetEnum: .yyyy년M월,
+            navEnum.diary_String,
+            navTitleSetEnum: navEnum,
             date: date)
     }
     
     
     // MARK: - 날짜 다른 뷰로 전달
-    private func deliverTheDate(dateArray: [Date]) {
-//        dump(dateArray)
-        // 이것도 calenderView의 이벤트 표시로 이동
-        let date = Date.todayReturnDateType(dates: dateArray)
+    private func deliverTheDate() {
+        // Record 배열에서 날짜만 가져오기
+        let diaryDateArray: [Date] = self.diaryArray.map { record in
+            record.date.reset_time() ?? Date()
+        }
+        
         // 캘린더뷰에는 날짜만 가면 됨
             // dateArray그대로 보내고 이벤트 표시할 때 바꾸는 것으로
-        self.calendar.diaryArray = date
+        self.calendar.diaryArray = diaryDateArray
         
         // MARK: - Fix
         // 콜렉션뷰는 날짜 및 이미지url, month가 가야함
-        self.collectionView.currentDiary = date
+        self.collectionView.currentDiary = diaryDateArray
     }
     
     
@@ -242,31 +236,67 @@ extension DiaryListController {
     
     
     // MARK: - 상세 작성 화면 이동
-    private func goToDetailWriting(data: Int? = nil) {
-        let vc = DetailWritingScreenController()
+    private func goToDetailWriting(index: Int? = nil) {
+        // 일기 목록 화면에서 넘어갔다는 표시
+        let vc = DetailWritingScreenController(detailViewMode: .diary)
+            // 델리게이트
+            vc.delegate = self
             // 상세 작성 화면의 탭바 없애기
             vc.hidesBottomBarWhenPushed = true
-            vc.detailViewMode = .diary
-            // 상세 작성 화면에 데이터 넣기
         
+        // 아이템 선택
+        if let index = index {
+            vc.selectedRecord = self.diaryArray[index]
             // 상세 작성 화면에 날짜 전달
-            vc.todayDate = self.calendar.returnSelectedDate_exceptToday
-        
+            vc.todayDate = self.diaryArray[self.currentPage].date
+        // 플러스 버튼
+        } else {
+            // 상세 작성 화면에 오늘 날짜 전달
+            vc.todayDate = Date()
+        }
+        // 화면 이동
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    
+    
+    
+    // MARK: - 달력 날짜 바꾸기
+    private func calendarDateSelect(date: Date) {
+        // 달력에 오늘 날짜 선택
+        self.calendar.calendar.select(date)
+        // 해당 날짜로 콜렉션뷰 이동
+        self.collectionView.moveToItem(date: date)
     }
 }
 
 
+
+
+
+
+
+
+
+
+// MARK: - API
 extension DiaryListController {
     private func fetchDiaryArray(date: Date = Date()) {
-        
-        
-        
         Record_API.shared.fetchRecode(writing_Type: .diary,
                                       date: date) { result in
             switch result {
             case .success(let recordArray):
                 self.diaryArray = recordArray
+                
+                
+                // 마지막 날 인덱스
+                self.currentPage = recordArray.count - 1
+                // 마지막 날 날짜
+                let lastIndexDate: Date = recordArray[self.currentPage].date
+                // 마지막날 선택되도록 설정
+                self.calendarDateSelect(date: lastIndexDate)
+                
+                
                 break
             case .failure(_):
                 // Fix
@@ -301,7 +331,7 @@ extension DiaryListController: CalendarDelegate {
         self.dateView.configureDate(selectedDate: date)
         // 4. self.currentDiary.firstIndex(of: Date)로 몇 번째 인덱스인지 찾기
             // -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
-        self.collectionView.moveToItem(date: date)
+        self.calendarDateSelect(date: date)
     }
     /// 달력의 형태(week <-> month)가 바뀌면  높이가 업데이트된다.
     func heightChanged(height: CGFloat) {
@@ -334,10 +364,11 @@ extension DiaryListController: CollectionViewDelegate {
         print(#function)
     }
     func itemTapped() {
-        self.goToDetailWriting()
+        self.goToDetailWriting(index: self.currentPage)
     }
-    func collectionViewScrolled() {
-        print(#function)
+    func collectionViewScrolled(index: Int) {
+        print(index)
+        self.currentPage = index
     }
 }
 
@@ -349,8 +380,9 @@ extension DiaryListController: CollectionViewDelegate {
 extension DiaryListController: DetailWritingScreenDelegate {
     func createRocord(record: Record?) {
         if let record = record {
-            print("DairyList - record")
-            dump(record)
+            self.diaryArray.insert(record, at: self.diaryArray.count)
+            self.calendarDateSelect(date: record.date)
+            
         } else {
             print("create_Error")
         }
@@ -358,8 +390,9 @@ extension DiaryListController: DetailWritingScreenDelegate {
     
     func updateRecord(record: Record?) {
         if let record = record {
-            print("DairyList - record")
-            dump(record)
+            self.diaryArray[self.currentPage] = record
+            self.calendarDateSelect(date: record.date)
+            
         } else {
             print("update_Error")
         }
@@ -367,8 +400,9 @@ extension DiaryListController: DetailWritingScreenDelegate {
     
     func deleteRecord(bool: Bool) {
         if bool {
-            print("DairyList - record")
-            print(bool)
+            self.calendarDateSelect(date: self.diaryArray[self.currentPage].date)
+            self.diaryArray.remove(at: self.currentPage)
+            
         } else {
             print("delete_Error")
         }

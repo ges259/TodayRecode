@@ -16,6 +16,8 @@
 		5F2F5AE52AE9482400F117FC /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F5AE42AE9482400F117FC /* SettingTableViewCell.swift */; };
 		5F2F5AE72AE99A0600F117FC /* UITextField+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F5AE62AE99A0600F117FC /* UITextField+Ext.swift */; };
 		5F39E0382AE175DA00E5623C /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F39E0372AE175DA00E5623C /* ImageCollectionViewCell.swift */; };
+		5F3E3FD32AF8BD7D00B1F36B /* UIDevice+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F3E3FD22AF8BD7D00B1F36B /* UIDevice+Ext.swift */; };
+		5F3E3FD52AF9363D00B1F36B /* NoRecordDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F3E3FD42AF9363D00B1F36B /* NoRecordDataView.swift */; };
 		5F4B667C2ADA3452004FE62E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B667B2ADA3452004FE62E /* AppDelegate.swift */; };
 		5F4B667E2ADA3452004FE62E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B667D2ADA3452004FE62E /* SceneDelegate.swift */; };
 		5F4B66802ADA3452004FE62E /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B667F2ADA3452004FE62E /* TabBarController.swift */; };
@@ -70,6 +72,8 @@
 		5F2F5AE42AE9482400F117FC /* SettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
 		5F2F5AE62AE99A0600F117FC /* UITextField+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Ext.swift"; sourceTree = "<group>"; };
 		5F39E0372AE175DA00E5623C /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
+		5F3E3FD22AF8BD7D00B1F36B /* UIDevice+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Ext.swift"; sourceTree = "<group>"; };
+		5F3E3FD42AF9363D00B1F36B /* NoRecordDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoRecordDataView.swift; sourceTree = "<group>"; };
 		5F4B66782ADA3452004FE62E /* TodayRecode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodayRecode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F4B667B2ADA3452004FE62E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5F4B667D2ADA3452004FE62E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -230,6 +234,7 @@
 				5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */,
 				5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */,
 				5F0803452AEC206800A52C3E /* Date+Ext.swift */,
+				5F3E3FD22AF8BD7D00B1F36B /* UIDevice+Ext.swift */,
 			);
 			path = Extenstion;
 			sourceTree = "<group>";
@@ -248,6 +253,7 @@
 				5F785B8F2ADED33A00955C4A /* DateView.swift */,
 				5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */,
 				5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */,
+				5F3E3FD42AF9363D00B1F36B /* NoRecordDataView.swift */,
 			);
 			path = ReuseView;
 			sourceTree = "<group>";
@@ -378,7 +384,9 @@
 				5F7A02772ADAC8F100128DC4 /* ViewController+Ext.swift in Sources */,
 				5F7A02852ADAD3D700128DC4 /* Color+Ext.swift in Sources */,
 				5F785B882ADEA80300955C4A /* UIButton+Ext.swift in Sources */,
+				5F3E3FD32AF8BD7D00B1F36B /* UIDevice+Ext.swift in Sources */,
 				5F6EECEB2ADA6D700046E686 /* Diary_API.swift in Sources */,
+				5F3E3FD52AF9363D00B1F36B /* NoRecordDataView.swift in Sources */,
 				5F572CF92ADCDF660030EC7B /* EasyWritingScreenController.swift in Sources */,
 				5F6EECE92ADA418F0046E686 /* SelectALoginMethodController.swift in Sources */,
 				5F785B8C2ADEA84A00955C4A /* Protocol.swift in Sources */,

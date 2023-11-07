@@ -49,7 +49,6 @@ extension UIViewController {
             attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 15)])
         )
         return attributedTitle
-
     }
     
     

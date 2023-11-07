@@ -53,7 +53,7 @@ final class DetailWritingScreenController: UIViewController {
     }()
     
     /// 플레이스홀더 레이블
-    let placeholderLbl: UILabel = UILabel.configureLbl(
+    private lazy var placeholderLbl: UILabel = UILabel.configureLbl(
         text: "오늘 무슨 일이 있었지?",
         font: UIFont.systemFont(ofSize: 14),
         textColor: UIColor.gray)
@@ -73,8 +73,6 @@ final class DetailWritingScreenController: UIViewController {
         image: UIImage.recodeShow,
         tintColor: UIColor.black,
         backgroundColor: UIColor.white)
-    
-
     
     // 악세서리 뷰
     /// 카메라 버튼
@@ -107,7 +105,7 @@ final class DetailWritingScreenController: UIViewController {
     private lazy var accessoryCustomView: UIView = {
         let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50)
         let view = UIView(frame: frame)
-            view.backgroundColor = .white
+        view.backgroundColor = .white
         return view
     }()
     
@@ -119,22 +117,22 @@ final class DetailWritingScreenController: UIViewController {
         imagePicker.modalPresentationStyle = .fullScreen
         // 최대 5개 선택 가능
         imagePicker.settings.selection.max = 5
-
+        
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
-
+        
         imagePicker.settings.theme.selectionFillColor = .white
         imagePicker.settings.theme.selectionStrokeColor = .black
-
+        
         imagePicker.settings.preview.enabled = true
         
         // 버튼 설정
         imagePicker.title = "이미지 선택"
         imagePicker.doneButtonTitle = "선택완료"
-
+        
         imagePicker.doneButton.tintColor = UIColor.black
         imagePicker.cancelButton.tintColor = UIColor.black
-
+        
         return imagePicker
     }()
     
@@ -147,71 +145,43 @@ final class DetailWritingScreenController: UIViewController {
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     // MARK: - 프로퍼티
-    // 텍스트뷰의 높이를 바꿀 때 사용
-    private lazy var size = CGSize(width: self.view.frame.width, height: .infinity)
-    /// 뷰의 높이 (기록 확인 버튼 위치를 옮길 때 사용)
-    private lazy var viewHeight: CGFloat = self.view.frame.height
-    /// safeArea 설정
-    private lazy var safeArea: CGFloat = 49
-    /// 이미지뷰의 높이 (노티피케이션 액션에서 스크롤뷰의 높이를 조절할 때 사용)
-    private lazy var imageViewHeight: CGFloat = self.collectionView.frame.height
-    
-    
-    private lazy var diaryTextViewLine: CGFloat = 0
-    private lazy var textViewFontHeight: CGFloat = self.diaryTextView.font!.lineHeight
-    
-    
-    
     /// 일기 모드 / 기록 모드를 알 수 있는 enum변수
-    var detailViewMode: DetailViewMode? {
-        // 네비게이션바 오른쪽 버튼 및 타이틀 설정
-        didSet { self.configureNavBtn() }
-    }
+    private var detailViewMode: DetailViewMode?
     /// 델리게이트
     weak var delegate: DetailWritingScreenDelegate?
-    
-    
-    
-    /// 키보드가 올라와있는지 확인하는 변수
-    private var keyboardShow: Bool = false
-    
-    /// 콜렉션뷰 현재 페이지
-    var currentPage: CGFloat = 0
-    
-
     
     
     /// 기록 확인 화면에서 오늘 기록을 볼 수 있게 하는 Record배열
     var todayRecords: [Record] = []
     /// 셀을 클릭하여 상세작성 화면에 들어온 경우
-    var selectedRecord: Record? {
+    var selectedRecord: Record?
+    /// DB에 저장할 날짜를 받음
+    var todayDate: Date? {
         didSet {
-            self.configureData()
+            print(todayDate!)
         }
     }
-    /// DB에 저장할 날짜를 받음
-    var todayDate: Date?
     
     
-
+    /// 키보드가 올라와있는지 확인하는 변수
+    private var keyboardShow: Bool = false
+    
+    
+    // 오늘인지 아닌지를 판단하는 변수
+    private var isToday: Bool {
+        // 일기 목록 화면의 달력에 선택된 날짜
+        let selectedDate = self.todayDate?.reset_time()
+        // 현재 날짜
+        let today = Date().reset_time()
+        return selectedDate == today
+    }
     
     
     
     
     
-
+    
     
     // 이미지 관련 배열
     private lazy var selectedAssets: [PHAsset] = [] {
@@ -250,7 +220,20 @@ final class DetailWritingScreenController: UIViewController {
         self.configreUI()
         self.configureAutoLayout()
         self.configureAction()
+        self.configureData()
+        self.configureNavBtn() // 네비게이션바 오른쪽 버튼 및 타이틀 설정
     }
+    init(detailViewMode: DetailViewMode) {
+        super.init(nibName: nil, bundle: nil)
+        
+        self.detailViewMode = detailViewMode
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // 노티피케이션 생성 (-삭제는 왼쪽 네비게이션 버튼을 눌러야 함)
@@ -269,8 +252,19 @@ final class DetailWritingScreenController: UIViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // 화면에 들어오면 키보드 올리기
-        self.diaryTextView.becomeFirstResponder()
+        
+        // 일기 목록 화면에서 들어오고,
+        // 날짜가 오늘이라면
+        if self.detailViewMode == .diary,
+           self.isToday == false {
+            // 수정 불가능하도록 설정
+            self.diaryTextView.isEditable = false
+            // 더블클릭하면 화면이 올라가는 상황 방지
+            self.diaryTextView.isSelectable = false
+        } else {
+            // 화면에 들어오면 키보드 올리기
+             self.diaryTextView.becomeFirstResponder()
+        }
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -467,7 +461,8 @@ extension DetailWritingScreenController {
     
     // MARK: - 날짜 및 텍스트 설정
     /// 셀을 클릭하여 상세작성화면에 들어온 경우 데이터 설정
-    private func configureData() {        // 셀을 통해 들어온 경우
+    private func configureData() {
+        // 메인화면 or 일기 목록 화면에서 셀(아이템)을 클릭하여 들어온경우
         if let currentRecode = self.selectedRecord {
             // 텍스트뷰에 텍스트 넣기
             self.diaryTextView.text = currentRecode.context
@@ -484,8 +479,14 @@ extension DetailWritingScreenController {
             // 이미지 (콜렉션뷰)
             
             
+            
         // 플러스버튼을 통해 들어온 경우
         } else {
+            // esayWriting뷰에서 텍스를 가져왔다면 -> 플레이스 홀더 없애기
+            if self.diaryTextView.text != "" {
+                self.placeholderLbl.isHidden = true
+            }
+            
             // 시간
             // 날짜뷰에 현재 시간 표시
             self.dateView.configureDate()
@@ -614,7 +615,7 @@ extension DetailWritingScreenController {
         
         let recodeCheckVC = RecodeCheckController()
             recodeCheckVC.modalPresentationStyle = .overFullScreen
-            recodeCheckVC.todayRecodes = self.todayRecords
+            recodeCheckVC.todayRecordArray = self.todayRecords
         // 화면 전환
         self.presentPanModal(recodeCheckVC)
         recodeCheckVC.view.layoutIfNeeded()
@@ -627,14 +628,16 @@ extension DetailWritingScreenController {
     // MARK: - 네비게이션 타이틀 재설정
     /// 선택된 날짜에 따라 네비게이션 타이틀을 설정하는 메서드
     private func setNavTitle(date: Date = Date(), keyboard_Up: Bool) {
-        let navMainTitle = self.detailViewMode == .diary
-        ? "오늘 일기"
-        : "오늘 기록"
+        let navEnum: NavTitleSetEnum = .M월d일
+        
+        let navMainTitle: String = self.detailViewMode == .diary
+        ? navEnum.diary_String
+        : navEnum.record_String
         
         if keyboard_Up {
             self.navTitle.attributedText = self.configureNavTitle(
                 navMainTitle,
-                navTitleSetEnum: .M월d일,
+                navTitleSetEnum: navEnum,
                 date: date)
         } else {
             self.navTitle.text = navMainTitle
@@ -716,14 +719,18 @@ extension DetailWritingScreenController {
         case .diary:
             // 오늘인 경우만 저장
             // 텍스트뷰가 빈칸인 경우 저장X
-            guard self.diaryTextView.text != "" else { return }
-            // selectedRecord가 없는 경우 -> 생성
-            if self.selectedRecord == nil {
-                self.createRecord_API()
-            // selectedRecord가 있는 경우 -> 업데이트
-            } else {
-                self.updateRecord_API()
-            }
+            // 텍스트뷰가 처음 들어왔을 때와 비교해 바뀌지 않으면 저장X
+            guard self.isToday,
+                  self.diaryTextView.text != "",
+                  self.selectedRecord?.context != self.diaryTextView.text
+            else { return }
+            
+            _ = self.selectedRecord == nil
+            // selectedRecord가 없는 경우(셀) -> 생성
+            ? self.createRecord_API()
+            // selectedRecord가 있는 경우(플러스버튼) -> 업데이트
+            : self.updateRecord_API()
+            
             break
         }
     }
@@ -857,7 +864,7 @@ extension DetailWritingScreenController: CollectionViewDelegate {
     func itemTapped() {
         print(#function)
     }
-    func collectionViewScrolled() {
-        print(#function)
+    func collectionViewScrolled(index: Int) {
+        print(index)
     }
 }

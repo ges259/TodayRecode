@@ -21,12 +21,13 @@ extension UILabel {
         return lbl
     }
     /// 네비게이션 타이틀을 설정하는 메서드
-    static func navTitleLbl() -> UILabel {
+    static func navTitleLbl(font: UIFont = UIFont.boldSystemFont(ofSize: 17)) -> UILabel {
+        
         let lbl = UILabel()
         lbl.numberOfLines = 2
         lbl.textAlignment = .center
         lbl.textColor = .black
-        lbl.font = .boldSystemFont(ofSize: 17)
+        lbl.font = font
         return lbl
     }
 }

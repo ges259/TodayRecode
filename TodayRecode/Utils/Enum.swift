@@ -67,7 +67,26 @@ enum NavTitleSetEnum {
         case .M월d일: return " d일"
         }
     }
+    
+    var diary_String: String {
+        return "하루 일기"
+    }
+    var record_String: String {
+        return "하루 기록"
+    }
 }
+enum NoDataEnum {
+    case record_Main
+    case record_Check
+    
+    var lblString: String {
+        switch self {
+        case .record_Main: return "아직 작성한 기록이 없어요.\n +버튼을 눌러 오늘을 기록해보세요!"
+        case .record_Check: return "오늘 작성한 기록이 없어요."
+        }
+    }
+}
+
 
 
 

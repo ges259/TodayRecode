@@ -84,6 +84,14 @@ struct Record_API {
                     // 배열에 추가
                     recordArray.append(record)
                 }
+                
+                // 일기 목록 화면에서는 오름차순으로 설정
+                if writing_Type == .diary {
+                    recordArray.sort { record1, record2 in
+                        return record1.date < record2.date
+                    }
+                }
+                
                 // 컴플리션
                 completion(.success(recordArray))
             }

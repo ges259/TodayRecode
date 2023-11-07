@@ -21,7 +21,7 @@ extension Date {
                                   UTC_Plus9: Bool,
                                   date: Date = Date()) -> String {
         
-        var current = date
+//        var current = date
         // 9시간 더하기 UTC+9
 //        if UTC_Plus9 {
 //            guard let date = Date.UTC_Plus9(date: date) else { return "" }
@@ -31,7 +31,7 @@ extension Date {
         let formatter = DateFormatter()
             formatter.dateFormat = todayFormat.today
             formatter.locale = Locale(identifier: "ko_KR")
-        return formatter.string(from: current)
+        return formatter.string(from: date)
     }
     
     

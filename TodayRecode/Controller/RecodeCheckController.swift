@@ -41,16 +41,26 @@ final class RecodeCheckController: UIViewController {
         alignment: .fill,
         distribution: .fill)
     
+    /// Record데이터가 없을 때 보이는 뷰
+    private lazy var noDataView: NoRecordDataView = {
+        let view = NoRecordDataView(
+            frame: .zero,
+            nodataEnum: .record_Check)
+            view.backgroundColor = .customWhite5
+        return view
+    }()
+    
+    
+    
+    
     
     
     
     // MARK: - 프로퍼티
-    /// 셀의 개수
-//    private var tableCellCount: Int = 0
     
-    var todayRecodes: [Record]? {
+    var todayRecordArray = [Record]() {
         didSet {
-            if let todayRecodes = self.todayRecodes?.first {
+            if let todayRecodes = self.todayRecordArray.first {
                 self.dateView.configureDate(selectedDate: todayRecodes.date)
             }
         }
@@ -69,6 +79,7 @@ final class RecodeCheckController: UIViewController {
         
         self.configureUI()
         self.configureAutoLayout()
+        self.configureDevice()
     }
 }
     
@@ -102,6 +113,7 @@ extension RecodeCheckController {
         // ********** addSubview 설정 **********
         self.view.addSubview(self.containerView)
         self.containerView.addSubview(self.stackView)
+        self.containerView.addSubview(self.noDataView)
         
         // ********** 오토레이아웃 설정 **********
         // 날짜뷰
@@ -113,22 +125,34 @@ extension RecodeCheckController {
         }
         // 테이블뷰
         self.tableView.snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(100)
+            make.height.greaterThanOrEqualTo(300)
         }
         // 스택뷰
         self.stackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
             make.leading.trailing.equalToSuperview()
-            // 10이상
-            make.bottom.equalToSuperview().offset(-40)
-            
-            // se
-//            make.bottom.equalToSuperview()
         }
         // 컨테이너뷰
         self.containerView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
             make.bottom.lessThanOrEqualToSuperview()
+        }
+        // 데이터가 없을 때 나오는 레이블
+        self.noDataView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalTo(self.tableView)
+            make.height.equalTo(300)
+        }
+    }
+    
+    
+    private func configureDevice() {
+        // 아이폰 종류 확인
+        if UIDevice.current.isiPhoneSE {
+            //se or 8
+            self.stackView.bottomAnchor.constraint(equalTo: self.containerView.bottomAnchor).isActive = true
+        } else {
+            // 10이상
+            self.stackView.bottomAnchor.constraint(equalTo: self.containerView.bottomAnchor, constant: -40).isActive = true
         }
     }
 }
@@ -144,8 +168,14 @@ extension RecodeCheckController {
 
 // MARK: - 테이블뷰 데이터소스
 extension RecodeCheckController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.todayRecodes?.count ?? 0
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
+        
+        self.noDataView.isHidden = self.todayRecordArray.count == 0
+        ? false
+        : true
+        
+        return self.todayRecordArray.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -154,7 +184,7 @@ extension RecodeCheckController: UITableViewDataSource, UITableViewDelegate {
             for: indexPath) as! RecodeTableViewCell
         
         
-        cell.cellRecord = self.todayRecodes?[indexPath.row]
+        cell.cellRecord = self.todayRecordArray[indexPath.row]
         
         return cell
     }
@@ -182,7 +212,7 @@ extension RecodeCheckController {
 
 
 
-
+ 
 
 
 
@@ -196,19 +226,17 @@ extension RecodeCheckController: PanModalPresentable {
     }
     /// 최대 사이즈
     var longFormHeight: PanModalHeight {
-        // 10이상
-        return .contentHeight(self.containerView.frame.height - 33)
-        //se
-//        return .contentHeight(self.containerView.frame.height)
+        // 아이폰 종류 확인
+        return UIDevice.current.isiPhoneSE
+        ? .contentHeight(self.containerView.frame.height) //se or 8
+        : .contentHeight(self.containerView.frame.height - 33) // 10이상
     }
     /// 최소 사이즈
     var shortFormHeight: PanModalHeight {
-        // 10이상
-        return .contentHeight(self.containerView.frame.height - 33)
-        
-        
-        // se
-//        return .contentHeight(self.containerView.frame.height)
+        // 아이폰 종류 확인
+        return UIDevice.current.isiPhoneSE
+        ? .contentHeight(self.containerView.frame.height) //se or 8
+        : .contentHeight(self.containerView.frame.height - 33) // 10이상
     }
     // 배경 색
     var panModalBackgroundColor: UIColor {

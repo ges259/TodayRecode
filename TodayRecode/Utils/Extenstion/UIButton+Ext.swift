@@ -10,8 +10,8 @@ import UIKit
 extension UIButton {
     /// 이미지가 들어간 버튼 설정
     static func buttonWithImage(image: UIImage?,
-                             tintColor: UIColor,
-                             backgroundColor: UIColor? = UIColor.clear)
+                                tintColor: UIColor = .black,
+                                backgroundColor: UIColor? = UIColor.clear)
     -> UIButton {
         let btn = UIButton(type: .system)
             btn.setImage(image, for: .normal)

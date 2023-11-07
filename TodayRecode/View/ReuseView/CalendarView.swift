@@ -68,10 +68,15 @@ final class CalendarView: UIView {
     var diaryArray: [Date] = [] {
         didSet {
             self.calendar.reloadData()
+            print("*************************************************")
+            dump(self.diaryArray)
+            print("*************************************************")
         }
     }
+    
+    
     /// selectedData는 시간/분/초가 모두 0이기 때문에 현재 시간 + 선택된 날짜 년/월/일
-    var returnSelectedDate_exceptToday: Date? {
+    var returnSelectedDate: Date? {
         // 현재 시간 구하기
         let current = Date().reset_time()
         // 달력에 선택된 시간 가져오기
@@ -181,6 +186,8 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDele
          4. self.currentDiary.firstIndex(of: Date)로 몇 번째 인덱스인지 찾기
             -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
          */
+        print(date)
+        
         // dateLabel에 선택된 날짜 띄우기
          self.delegate?.selectDate(date: date)
     }

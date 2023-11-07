@@ -71,7 +71,14 @@ final class RecordController: UIViewController {
         distribution: .fill)
     
     
-    
+    /// Record데이터가 없을 때 보이는 뷰
+    private lazy var noDataView: NoRecordDataView = {
+        let view = NoRecordDataView(
+            frame: .zero,
+            nodataEnum: .record_Main)
+            view.backgroundColor = .customWhite5
+        return view
+    }()
     
     
     
@@ -94,13 +101,21 @@ final class RecordController: UIViewController {
     private var isToday: Bool = true
     
     /// 오늘 기록
-    private var todayRecords_Array: [Record] = [Record]() {
-        didSet {
-            dump(self.todayRecords_Array)
-        }
-    }
+    private var todayRecords_Array: [Record] = [Record]()
     /// 다른 날의 기록
     private var anotherDayRecords_Array: [Record] = [Record]()
+    
+    var currentArray: [Record] {
+        return self.isToday
+        // 오늘 배열에서 문서ID 가져오기
+        ? self.todayRecords_Array
+        // 다른 날 배열에서 문서ID 가져오기
+        : self.anotherDayRecords_Array
+    }
+    
+    
+    
+    
     /// 오늘 날짜
     private lazy var today_Date: Date? = Date()
     /// 다른 날짜 (
@@ -111,6 +126,7 @@ final class RecordController: UIViewController {
     
     
     
+
     
     
     
@@ -122,7 +138,7 @@ final class RecordController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.fetchRecords_API()         // 데이터 가져오기
+//        self.fetchRecords_API()         // 데이터 가져오기
         self.configureUI()          // UI 설정
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
@@ -164,8 +180,11 @@ extension RecordController {
         self.calendar.calendar.select(Date())
         
         // 코너 둥글게 설정
-        self.tableView.clipsToBounds = true
-        self.tableView.layer.cornerRadius = 10
+        [self.tableView,
+         self.noDataView].forEach { view in
+            view.clipsToBounds = true
+            view.layer.cornerRadius = 10
+        }
         
         self.plusBtn.clipsToBounds = true
         self.plusBtn.layer.cornerRadius = 58 / 2
@@ -184,6 +203,8 @@ extension RecordController {
         }
         self.scrollView.addSubview(self.contentView)
         self.contentView.addSubview(self.tableView)
+        
+        self.scrollView.addSubview(self.noDataView)
         
         
         // ********** 오토레이아웃 설정 **********
@@ -232,6 +253,11 @@ extension RecordController {
         // 네비게이션 타이틀
         self.navTitle.snp.makeConstraints { make in
             make.width.lessThanOrEqualTo(100)
+        }
+        // 데이터가 없을 때 나오는 레이블
+        self.noDataView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalTo(self.tableView)
+            make.height.equalTo(300)
         }
     }
     
@@ -321,13 +347,12 @@ extension RecordController {
     // MARK: - 셀 추가
     private func addRecord(record: Record) {
         // 오늘이라면
-        if self.isToday {
-            // 오늘 배열에 넣기
-            self.todayRecords_Array.insert(record, at: 0)
+        self.isToday
+        // 오늘 배열에 넣기
+        ? self.todayRecords_Array.insert(record, at: 0)
         // 오늘이 아니라면
-        } else {
-            self.anotherDayRecords_Array.insert(record, at: 0)
-        }
+        : self.anotherDayRecords_Array.insert(record, at: 0)
+        
         // 테이블뷰 특정 셀 리로드
         self.tableView.insertRows(
             at: [IndexPath(row: 0, section: 0)],
@@ -338,9 +363,11 @@ extension RecordController {
     
     // MARK: - 셀 업데이트
     private func updateCell(record: Record) {
-        if self.isToday {   // 오늘이라면 -> 오늘 배열에 저장
+        // 오늘이라면 -> 오늘 배열에 저장
+        if self.isToday {
             self.todayRecords_Array[self.currentIndex] = record
-        } else {            // 오늘이 아니라면 -> 다른 날 배열에 저장
+        // 오늘이 아니라면 -> 다른 날 배열에 저장
+        } else {
             self.anotherDayRecords_Array[self.currentIndex] = record
         }
         // 해당 셀만 리로드
@@ -353,11 +380,10 @@ extension RecordController {
     // MARK: - 셀 삭제
     private func deleteCell() {
         // 배열에서 해당 데이터 삭제
-        if self.isToday {
-            self.todayRecords_Array.remove(at: self.currentIndex)
-        } else {
-            self.anotherDayRecords_Array.remove(at: self.currentIndex)
-        }
+        _ = self.isToday
+        ? self.todayRecords_Array.remove(at: self.currentIndex)
+        : self.anotherDayRecords_Array.remove(at: self.currentIndex)
+        
         // 테이블뷰의 해당 셀 리로드
         self.tableView.deleteRows(at: [IndexPath(row: self.currentIndex,
                                                  section: 0)],
@@ -367,10 +393,11 @@ extension RecordController {
     
     // MARK: - 셀 가져오기
     private func fetchCell(recordArray: [Record]) {
-        
-        if self.isToday { // 오늘이라면
+        // 오늘이라면 -> 오늘 배열에 저장
+        if self.isToday {
             self.todayRecords_Array = recordArray
-        } else { // 오늘이 아니라면
+        // 오늘이 아니라면 -> 다른 날 배열에 저장
+        } else {
             self.anotherDayRecords_Array = recordArray
         }
         // 테이블뷰 리로드
@@ -420,7 +447,7 @@ extension RecordController {
             self.calendar.isHidden.toggle()
             self.stackView.layoutIfNeeded()
             // calendar(달력)에서 현재 선택된 날짜를 받아옴
-            guard let date = self.calendar.returnSelectedDate_exceptToday else { return }
+            guard let date = self.calendar.returnSelectedDate else { return }
             // 네비게이션 타이틀 재설정
             self.setNavTitle(date: date)
         }
@@ -434,8 +461,9 @@ extension RecordController {
         let vc = EasyWritingScreenController()
         vc.modalPresentationStyle = .overFullScreen
         vc.delegate = self
-        vc.todayDate = self.calendar.returnSelectedDate_exceptToday
-        // 화면 이동s
+        // 달력의 선택된 날짜를 보냄 (데이터 생성할 때 사용)
+        vc.todayDate = self.calendar.returnSelectedDate
+        // 화면 이동
         self.present(vc, animated: false)
     }
 }
@@ -456,12 +484,14 @@ extension RecordController {
     // MARK: - 네비게이션 타이틀 재설정
     /// 선택된 날짜에 따라 네비게이션 타이틀을 설정하는 메서드
     private func setNavTitle(date: Date = Date()) {
+        let navEnum: NavTitleSetEnum = .yyyy년M월
+        
         if self.calendar.isHidden {
-            self.navTitle.text = "하루 기록"
+            self.navTitle.text = navEnum.record_String
         } else {
             self.navTitle.attributedText = self.configureNavTitle(
-                "하루 기록",
-                navTitleSetEnum: .yyyy년M월,
+                navEnum.record_String,
+                navTitleSetEnum: navEnum,
                 date: date)
         }
     }
@@ -480,36 +510,32 @@ extension RecordController {
     /// 상세 작성 화면으로 이동
     private func pushToDetailWritingScreen(selectedRecord: Record? = nil,
                                            easyViewString: String? = nil) {
-        let vc = DetailWritingScreenController()
+        // 기록 화면에서 넘어갔다는 표시
+        let vc = DetailWritingScreenController(detailViewMode: .record_plusBtn)
+        // ********** 공통 **********
         // 상세 작성뷰에서 탭바 없애기
         vc.hidesBottomBarWhenPushed = true
         // 델리게이트 설정
         vc.delegate = self
         
         // 기록 확인 화면에서 사용할 해당 날짜 배열
-        vc.todayRecords = self.isToday
-        ? self.todayRecords_Array // 오늘일 때
-        : self.anotherDayRecords_Array // 오늘이 아닐 때
+        vc.todayRecords = self.currentArray
         
         
-        // 기록 화면에서 넘어갔다는 표시
-        vc.detailViewMode = selectedRecord == nil
-        ? .record_plusBtn
-        : .record_CellTapped
-        
-        // 날짜 넘기기
-        vc.todayDate = self.calendar.returnSelectedDate_exceptToday
-        
+        // ********** 상황에 따라 **********
         // 확장 버튼을 통해 넘어간 경우
             // -> 아무 것도 적혀있지 않다면
         if easyViewString != nil {
-            // 문자열만 가져간다.
+            // 데이터를 생성할 때 사용할 날짜 넘기기
+            vc.todayDate = self.calendar.returnSelectedDate
+            // 문자열 가져가기
             vc.diaryTextView.text = easyViewString
-            vc.placeholderLbl.isHidden = true
+        // 셀을 선택하여 넘어간 경우
+        } else {
+            // 데이터 넘겨주기 (파라미터로 받은 데이터)
+            vc.selectedRecord = selectedRecord
         }
         
-        // 데이터 넘겨주기 (파라미터로 받은 데이터)
-        vc.selectedRecord = selectedRecord
         // 화면 이동
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -598,7 +624,8 @@ extension RecordController: UIScrollViewDelegate {
     /// 스크롤이 끝났을 때
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         // 스크롤이 끝났을 때
-        if scrollView.contentOffset.y == 0 && self.calendar.currentCalendarScope() == .week {
+        if scrollView.contentOffset.y == 0
+            && self.calendar.currentCalendarScope() == .week {
             // 한 달 전체가 보이도록 설정
             self.calendar.calendar.setScope(.month, animated: true)
         }
@@ -634,17 +661,11 @@ extension RecordController: UITableViewDelegate {
         let trash = UIContextualAction(style: .normal, title: nil) { (_, _, success: @escaping (Bool) -> Void) in
             // 셀의 인덱스 저장
             self.currentIndex = indexPath.row
-            // 문서ID 가져오기
-            let documentID: String?
-            // 오늘이라면
-            if self.isToday {   // 오늘 배열에서 문서ID 가져오기
-                documentID = self.todayRecords_Array[indexPath.row].documentID
-            } else {            // 다른 날 배열에서 문서ID 가져오기
-                documentID =  self.anotherDayRecords_Array[indexPath.row].documentID
-            }
+            // 배열 가져오기 가져오기
+            let record: Record = self.currentArray[indexPath.row]
             
             // DB삭제 + 셀 삭제
-            self.deleteRecord_API(documentID: documentID)
+            self.deleteRecord_API(documentID: record.documentID)
             success(true)
         }
         // 이미지 및 색상 설정
@@ -659,15 +680,10 @@ extension RecordController: UITableViewDelegate {
     /// 셀을 눌렀을 때
     func tableView(_ tableView: UITableView,
                    didSelectRowAt indexPath: IndexPath) {
-        
-        // 오늘인지 아닌지 판단
-        let array: [Record] = self.isToday
-        ? self.todayRecords_Array      // 오늘일 때
-        : self.anotherDayRecords_Array // 오늘이 아닐 때
-        
         // 클릭한 셀의 index 저장
         self.currentIndex = indexPath.row
-        
+        // 오늘인지 아닌지 판단 + 해당 배열 가져오기
+        let array: [Record] = self.currentArray
         // 상세 작성 화면으로 이동
         self.pushToDetailWritingScreen(selectedRecord: array[indexPath.row])
     }
@@ -677,10 +693,13 @@ extension RecordController: UITableViewDataSource {
     /// 셀의 개수
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
-        // 오늘인지 아닌지 판단
-        return self.isToday
-        ? self.todayRecords_Array.count       // 오늘일 때
-        : self.anotherDayRecords_Array.count  // 오늘이 아닐 때
+        
+        self.noDataView.isHidden = self.currentArray.count == 0
+        ? false
+        : true
+        
+        // 오늘인지 아닌지 판단 + 배열 가져오기
+        return self.currentArray.count
     }
     /// 셀 구현
     func tableView(_ tableView: UITableView,
@@ -689,10 +708,9 @@ extension RecordController: UITableViewDataSource {
             withIdentifier: Identifier.recodeTableCell,
             for: indexPath) as! RecodeTableViewCell
         
+        
         // 오늘인지 아닌지 판단
-        cell.cellRecord = self.isToday
-        ? self.todayRecords_Array[indexPath.row]      // 오늘일 때
-        : self.anotherDayRecords_Array[indexPath.row] // 오늘이 아닐 때
+        cell.cellRecord = self.currentArray[indexPath.row]
         
         // 리턴
         return cell
@@ -729,6 +747,7 @@ extension RecordController: EasyWritingScreenDelegate {
 
 
 // MARK: - 상세 작성 화면 델리게이트
+
 extension RecordController: DetailWritingScreenDelegate {
     func createRocord(record: Record?) {
         if let record = record {
