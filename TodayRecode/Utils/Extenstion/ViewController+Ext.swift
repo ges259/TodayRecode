@@ -90,7 +90,7 @@ extension UIViewController {
             alertController.addAction(first)
         }
         
-        // ********** (두번째 버튼)? **********
+        // ********** 두번째 버튼 **********
         if let secondBtnName = secondBtnName {
             let second = self.customAlertAction(
                 style: .default,
@@ -183,4 +183,26 @@ extension UIViewController {
         return selectedImages
     }
     
+    
+    
+    
+    
+    
+    
+    // MARK: - 이메일 형식
+    func isValidEmail(testStr: String?) -> Bool {
+        
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        
+        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        return emailTest.evaluate(with: testStr)
+    }
+    func isValidPassword(pw: String?) -> Bool{
+        if let hasPassword = pw{
+            if hasPassword.count < 6 {
+                return false
+            }
+        }
+        return true
+    }
 }

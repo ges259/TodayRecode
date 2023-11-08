@@ -12,13 +12,13 @@ struct Auth_API {
     static let shared: Auth_API = Auth_API()
     init() {}
     
-    
+    typealias AuthCompletion = (Result<Void, Error>) -> Void
     
     // MARK: - 회원가입
     func signUp(userName: String,
                 email: String,
                 password: String,
-                completion: @escaping () -> Void) {
+                completion: @escaping AuthCompletion) {
         // 회원가입
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error {
@@ -40,11 +40,12 @@ struct Auth_API {
                     if let error = error {
                         print("\(#function)---userDB_AddDocument---\(error)")
                         print("회원가입 - 데이터 저장 실패")
+                        completion(.failure(error))
                         return
                     }
                     // 회원가입 성공
                     print("회원가입 성공")
-                    completion()
+                    completion(.success(()))
                 }
         }
     }
@@ -54,34 +55,35 @@ struct Auth_API {
     // MARK: - 로그인
     func login(email: String,
                password: String,
-               completion: @escaping (Bool) -> Void) {
+               completion: @escaping AuthCompletion) {
         // 로그인
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             // 로그인에 실패했다면
             if let error = error {
                 print("\(#function)---login---\(error)")
                 print("로그인 실패")
-                completion(false)
+                completion(.failure(error))
                 return
             }
+            
             // 로그인 성공
             print("로그인 성공")
-            completion(true)
+            completion(.success(()))
         }
     }
     
     
     
     // MARK: - 로그아웃
-    func logout(completion: @escaping (Bool) -> Void) {
+    func logout(completion: @escaping AuthCompletion) {
         do {
             // 로그아웃
             try Auth.auth().signOut()
             print("로그아웃 성공")
-            completion(true)
+            completion(.success(()))
         } catch {
             print("로그아웃 실패")
-            completion(false)
+            completion(.failure(error))
         }
     }
 }

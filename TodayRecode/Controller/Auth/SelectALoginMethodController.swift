@@ -74,7 +74,7 @@ final class SelectALoginMethodController: UIViewController {
 extension SelectALoginMethodController {
     
     private func configureUIAndAutoLayout() {
-        self.navigationItem.title = "하루일기"
+        self.navigationItem.title = "로그인 선택"
         
         // ********** addSubview 설정 **********
         self.view.addSubview(self.backgroundImg)
@@ -128,8 +128,6 @@ extension SelectALoginMethodController {
         print(#function)
     }
     @objc private func emailLoginTapped() {
-        print(#function)
-        
         let vc = LoginController()
         self.navigationController?.pushViewController(vc, animated: true)
     }

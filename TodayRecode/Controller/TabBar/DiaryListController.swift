@@ -67,8 +67,7 @@ final class DiaryListController: UIViewController {
             if self.diaryArray.count != 0 {
                 // 1. 달력 날짜 선택
                 // 2. 해당 날짜로 콜렉션뷰 이동
-                self.calendarDateSelect(
-                    date: self.diaryArray[self.currentPage].date)
+                self.calendarDateSelect(date: self.diaryArray[self.currentPage].date)
             }
         }
     }

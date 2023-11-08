@@ -171,6 +171,7 @@ extension RecodeTableViewCell {
         
         
         // 시간 레이블 설정
-        self.timeLabel.text = record.recodeTime
+        self.timeLabel.text = Date.DateLabelString(date: record.date)
+        
     }
 }

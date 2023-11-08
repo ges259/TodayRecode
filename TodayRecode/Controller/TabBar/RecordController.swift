@@ -42,8 +42,6 @@ final class RecordController: UIViewController {
     /// 테이블뷰
     private lazy var tableView: RecodeTableView = {
         let tableView = RecodeTableView()
-            tableView.register(RecodeTableViewCell.self,
-                               forCellReuseIdentifier: Identifier.recodeTableCell)
             tableView.delegate = self
             tableView.dataSource = self
             tableView.isScrollEnabled = false
@@ -137,12 +135,24 @@ final class RecordController: UIViewController {
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
 //        self.fetchRecords_API()         // 데이터 가져오기
         self.configureUI()          // UI 설정
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        
+        
+        print(#function)
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print(#function)
+    }
+    
 }
     
     

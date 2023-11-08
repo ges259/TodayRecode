@@ -37,7 +37,7 @@ struct Record {
     var recodeTime: String {
         let timeFormat: TodayFormatEnum = timeFormat_Static == 0
         ? .a_hmm // PM 2:00
-        : .Hmm // 14: 00
+        : .HHmm // 14: 00
         return Date.dateReturn_Custom(
             todayFormat: timeFormat,
             UTC_Plus9: false,
@@ -55,4 +55,8 @@ struct Record {
                                       UTC_Plus9: true,
                                       date: self.date)
     }
+    
+    
+    
+    
 }

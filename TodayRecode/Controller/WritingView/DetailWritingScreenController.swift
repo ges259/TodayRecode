@@ -25,6 +25,7 @@ final class DetailWritingScreenController: UIViewController {
             frame: .zero,
             collectionViewEnum: .photoList)
             collectionView.delegate = self
+            collectionView.isHidden = true
         return collectionView
     }()
     
@@ -157,8 +158,12 @@ final class DetailWritingScreenController: UIViewController {
     lazy var todayRecords: [Record] = []
     /// 셀을 클릭하여 상세작성 화면에 들어온 경우
     var selectedRecord: Record? {
-        // 해당 데이터의 날짜를 표시
-        didSet { self.todayDate = selectedRecord?.date }
+        didSet {
+            // 데이터가 있다면 -> 해당 데이터의 날짜를 저장
+            if let selectedRecord = selectedRecord {
+                self.todayDate = selectedRecord.date
+            }
+        }
     }
     /// DB에 저장할 날짜를 표시
     lazy var todayDate: Date? = Date()
@@ -217,14 +222,12 @@ final class DetailWritingScreenController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.configreUI()
-        self.configureAutoLayout()
-        self.configureAction()
-        self.configureData()
-        self.configureNavBtn() // 네비게이션바 오른쪽 버튼 및 타이틀 설정
+        self.configreUI()           // UI 설정
+        self.configureAutoLayout()  // 오토레이아웃 설정
+        self.configureAction()      // 액션 설정
+        self.configureData()        // 텍스트 및 시간, 이미지 등 설정
+        self.configureNavBtn()      // 네비게이션바 오른쪽 버튼 및 타이틀 설정
     }
-    
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // 노티피케이션 생성 (-삭제는 왼쪽 네비게이션 버튼을 눌러야 함)
@@ -243,11 +246,9 @@ final class DetailWritingScreenController: UIViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        // 일기 목록 화면에서 들어오고,
-        // 날짜가 오늘이라면
+        // (일기 목록 화면에서 들어온 상황 && 오늘) == true 이라면
         if self.detailViewMode == .diary,
-           self.isToday == false {
+           !self.isToday {
             // 수정 불가능하도록 설정
             self.diaryTextView.isEditable = false
             // 더블클릭하면 화면이 올라가는 상황 방지
@@ -289,8 +290,6 @@ extension DetailWritingScreenController {
     
     // MARK: - UI 설정
     private func configreUI() {
-        self.collectionView.isHidden = true
-        
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         // 네비게이션 타이틀(String) 설정
@@ -421,8 +420,6 @@ extension DetailWritingScreenController {
             style: .plain,
             target: self,
             action: .none)
-        
-        
         // 오른쪽 네비게이션 설정
         // 메뉴 액션 설정
         let addRecodeMenu = UIAction(title: "기록 추가", image: UIImage.plus) { _ in
@@ -431,15 +428,16 @@ extension DetailWritingScreenController {
         let deleteMenu = UIAction(title: "삭제", image: UIImage.trash) { _ in
             self.deleteBtnTapped()
         }
-        
         // 오른쪽 네비게이션 메뉴 버튼 설정
         self.navigationItem.rightBarButtonItem?.menu
-        // 네비게이션 타이틀 및 메뉴 버튼 설정 or 오늘이 아니라면
+        // 네비게이션 타이틀 및 메뉴 버튼 설정
+            // (.record && 오늘) 인 경우에만 기록 추가 버튼 활성화
         = self.detailViewMode == .diary || !self.isToday
         // [삭제 버튼]
         ? UIMenu(children: [deleteMenu])
         // [기록 추가 버튼, 삭제 버튼]
         : UIMenu(children: [addRecodeMenu, deleteMenu])
+        
         
         
         // ********** 네비게이션 왼쪽 버튼 설정 **********
@@ -457,37 +455,32 @@ extension DetailWritingScreenController {
     private func configureData() {
         // 메인화면 or 일기 목록 화면에서 셀(아이템)을 클릭하여 들어온경우
         if let currentRecode = self.selectedRecord {
+            // ********** 텍스트 **********
             // 텍스트뷰에 텍스트 넣기
             self.diaryTextView.text = currentRecode.context
             self.placeholderLbl.isHidden = true
             
-            // 시간
+            // ********** 시간 **********
             // 날짜뷰에 기록(Record)의 시간 표시
             self.dateView.configureDate(selectedDate: currentRecode.date)
-            // 날짜뷰에 기록(Record)의 시간 표시
-            self.dateLbl.text = Date.dateReturn_Custom(
-                todayFormat: .a_hmm,
-                UTC_Plus9: false,
-                date: currentRecode.date)
-            // 이미지 (콜렉션뷰)
+            // 시간뷰에 기록(Record)의 시간 표시
+            self.dateLbl.text = Date.DateLabelString(date: currentRecode.date)
+            // ********** 이미지 (콜렉션뷰) **********
             
             
             
         // 플러스버튼을 통해 들어온 경우
         } else {
+            // ********** 텍스트 **********
             // esayWriting뷰에서 텍스를 가져왔다면 -> 플레이스 홀더 없애기
             if self.diaryTextView.text != "" {
                 self.placeholderLbl.isHidden = true
             }
-            
-            // 시간
+            // ********** 시간 **********
             // 날짜뷰에 현재 시간 표시
             self.dateView.configureDate()
-            // 날짜뷰에 기록(Record)의 시간 표시
-            self.dateLbl.text = Date.dateReturn_Custom(
-                todayFormat: .a_hmm,
-                UTC_Plus9: false,
-                date: Date())
+            // 시간뷰에 기록(Record)의 시간 표시
+            self.dateLbl.text = Date.DateLabelString(date: Date())
         }
     }
 }
@@ -541,21 +534,21 @@ extension DetailWritingScreenController {
     /// 화면 내리기 + 스택뷰 간격 설정
     private func keyboardStateChanged(keyboard_Up: Bool,
                                       keyboardSize: CGFloat) {
-        // 키보드 올리는 상황
+        // ********** 키보드 올리는 상황 **********
         if keyboard_Up {
             // 화면 올리기
             self.view.frame.origin.y -= keyboardSize
-            // 스택뷰 간격 설정 (뷰를 올리면 키보드에 가려지는 현상 때문)
+            // 화면 올리는 만큼 스택뷰 간격을 넓혀 텍스트뷰가 가려지지 않게 설정
             self.verticalStackView.setCustomSpacing(keyboardSize - 33,
                                                     after: self.dateView)
-            
-        // 키보드 내리는 상황
+        // ********** 키보드 내리는 상황 **********
         } else {
             // 화면 내리기
             self.view.frame.origin.y = 0
             // 스택뷰 간격 설정 (뷰를 올리면 키보드에 가려지는 현상 때문)
             self.verticalStackView.setCustomSpacing(7, after: self.dateView)
         }
+        // ********** 모든 상황 **********
         // 네비게이션 타이틀(String) 설정
         self.setNavTitle(date: self.todayDate ?? Date(),
                          keyboard_Up: keyboard_Up)
@@ -565,12 +558,23 @@ extension DetailWritingScreenController {
     
     
     
-    
-    
-    // MARK: - 네비게이션 메뉴 버튼 액션
+    // MARK: - 기록 추가 버튼
     @objc private func addRecodeBtnTapped() {
-        print(#function)
+        // 업데이트인지 생성인지 확인
+        _ = self.detailViewMode == .record_CellTapped
+        ? self.updateRecord_API()
+        : self.createRecord_API()
+        // 앞으로는 쭉 [생성]이기 때문에 플러스 버튼으로 바꿔줌 (플러스 버튼으로 들어온 상황 == 생성)
+        self.detailViewMode = .record_plusBtn
+        // 화면 초기화
+        self.selectedRecord = nil
+        self.diaryTextView.text = nil
+        self.configureData()
     }
+    
+    
+    
+    // MARK: - 삭제 버튼
     @objc private func deleteBtnTapped() {
         // 얼럿창 띄우기
         self.customAlert(
@@ -605,13 +609,10 @@ extension DetailWritingScreenController {
     /// 기록 확인 버튼을 누르면 오늘 기록을 볼 수 있다.
     @objc private func recodeShowBtnTapped() {
         self.diaryTextView.resignFirstResponder()
-        
-        let recodeCheckVC = RecodeCheckController()
+        let recodeCheckVC = RecodeCheckController(recordArray: self.todayRecords)
             recodeCheckVC.modalPresentationStyle = .overFullScreen
-            recodeCheckVC.todayRecordArray = self.todayRecords
         // 화면 전환
         self.presentPanModal(recodeCheckVC)
-        recodeCheckVC.view.layoutIfNeeded()
     }
     
     
@@ -691,39 +692,25 @@ extension DetailWritingScreenController {
         switch mode {
         // 플러스버튼을 통해 들어온 경우
         case .record_plusBtn:
-            // 텍스트뷰가 빈칸인 경우 저장X
-            guard self.diaryTextView.text != "" else { return }
-            // 나머지 무조건 저장
+            // 생성
             self.createRecord_API()
             break
             
-            
         // 셀을 통해 들어온 경우
         case .record_CellTapped:
-            // textVeiw와 currentRecord의 context를 비교
-            // -> 바뀌지 않은 경우 아무 행동도 하지 않음
-            guard self.selectedRecord?.context != self.diaryTextView.text else { return }
-            // -> 바뀐경우 업데이트
+            // 업데이트
             self.updateRecord_API()
             break
-            
             
         // 일기목록화면을 통해 들어온 경우
         case .diary:
             // 오늘인 경우만 저장
-            // 텍스트뷰가 빈칸인 경우 저장X
-            // 텍스트뷰가 처음 들어왔을 때와 비교해 바뀌지 않으면 저장X
-            guard self.isToday,
-                  self.diaryTextView.text != "",
-                  self.selectedRecord?.context != self.diaryTextView.text
-            else { return }
-            
+            guard self.isToday else { return }
             _ = self.selectedRecord == nil
             // selectedRecord가 없는 경우(셀) -> 생성
             ? self.createRecord_API()
             // selectedRecord가 있는 경우(플러스버튼) -> 업데이트
             : self.updateRecord_API()
-            
             break
         }
     }
@@ -763,7 +750,11 @@ extension DetailWritingScreenController {
     
     // MARK: - 업데이트
     private func updateRecord_API() {
-        guard let selectedRecord = selectedRecord,
+        // 텍스트뷰가 처음 들어왔을 때와 비교해 바뀌지 않으면 저장X
+        // 화면에 들어올 때 데이터를 가지고 들어왔다면
+        // 타입 옵셔널바인딩 (.diary or .record_cellTapped)
+        guard self.selectedRecord?.context != self.diaryTextView.text,
+              let selectedRecord = selectedRecord,
               let writing_Type = self.detailViewMode else { return }
         
         // DB + 셀 업데이트
@@ -774,7 +765,6 @@ extension DetailWritingScreenController {
             switch result {
             case .success(let record):
                 print("데이터 업데이트 성공")
-                // currentIndex를 사용 (셀을 클릭했을 때 해당 셀의 index를 저장한다.)
                 self.delegate?.updateRecord(record: record)
                 break
             case .failure(_):
@@ -787,8 +777,10 @@ extension DetailWritingScreenController {
     
     // MARK: - 생성
     private func createRecord_API() {
-        // 날짜 가져오기
-        guard let date = self.todayDate,
+        // 텍스트뷰가 빈칸인 경우 생성X
+        // 오늘 날짜 및 타입 - 옵셔널바인딩
+        guard self.diaryTextView.text != "",
+              let date = self.todayDate, // 날짜 가져오기
               let writing_Type = self.detailViewMode else { return }
         
         // DB에 데이터 생성

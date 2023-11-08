@@ -12,7 +12,6 @@
 		5F0803462AEC206800A52C3E /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0803452AEC206800A52C3E /* Date+Ext.swift */; };
 		5F26CA4A2AF0E25E0019CDE2 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F26CA492AF0E25E0019CDE2 /* User.swift */; };
 		5F26CA4C2AF0E2640019CDE2 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F26CA4B2AF0E2640019CDE2 /* Record.swift */; };
-		5F26CA4E2AF0E2710019CDE2 /* Diary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F26CA4D2AF0E2710019CDE2 /* Diary.swift */; };
 		5F2F5AE52AE9482400F117FC /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F5AE42AE9482400F117FC /* SettingTableViewCell.swift */; };
 		5F2F5AE72AE99A0600F117FC /* UITextField+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F5AE62AE99A0600F117FC /* UITextField+Ext.swift */; };
 		5F39E0382AE175DA00E5623C /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F39E0372AE175DA00E5623C /* ImageCollectionViewCell.swift */; };
@@ -32,7 +31,6 @@
 		5F6EECE52ADA412D0046E686 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECE42ADA412D0046E686 /* LoginController.swift */; };
 		5F6EECE72ADA41380046E686 /* SignUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECE62ADA41380046E686 /* SignUpController.swift */; };
 		5F6EECE92ADA418F0046E686 /* SelectALoginMethodController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECE82ADA418F0046E686 /* SelectALoginMethodController.swift */; };
-		5F6EECEB2ADA6D700046E686 /* Diary_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECEA2ADA6D700046E686 /* Diary_API.swift */; };
 		5F6EECED2ADA6F290046E686 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5F6EECEC2ADA6F290046E686 /* GoogleService-Info.plist */; };
 		5F6EECF02ADA70470046E686 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 5F6EECEF2ADA70470046E686 /* FirebaseAuth */; };
 		5F6EECF22ADA70470046E686 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 5F6EECF12ADA70470046E686 /* FirebaseDatabase */; };
@@ -68,7 +66,6 @@
 		5F0803452AEC206800A52C3E /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
 		5F26CA492AF0E25E0019CDE2 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		5F26CA4B2AF0E2640019CDE2 /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
-		5F26CA4D2AF0E2710019CDE2 /* Diary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diary.swift; sourceTree = "<group>"; };
 		5F2F5AE42AE9482400F117FC /* SettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
 		5F2F5AE62AE99A0600F117FC /* UITextField+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Ext.swift"; sourceTree = "<group>"; };
 		5F39E0372AE175DA00E5623C /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -90,7 +87,6 @@
 		5F6EECE42ADA412D0046E686 /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 		5F6EECE62ADA41380046E686 /* SignUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpController.swift; sourceTree = "<group>"; };
 		5F6EECE82ADA418F0046E686 /* SelectALoginMethodController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectALoginMethodController.swift; sourceTree = "<group>"; };
-		5F6EECEA2ADA6D700046E686 /* Diary_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diary_API.swift; sourceTree = "<group>"; };
 		5F6EECEC2ADA6F290046E686 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5F785B812ADEA7AF00955C4A /* Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
 		5F785B832ADEA7DF00955C4A /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -182,7 +178,6 @@
 			children = (
 				5F26CA492AF0E25E0019CDE2 /* User.swift */,
 				5F26CA4B2AF0E2640019CDE2 /* Record.swift */,
-				5F26CA4D2AF0E2710019CDE2 /* Diary.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -191,8 +186,8 @@
 			isa = PBXGroup;
 			children = (
 				5FAA763F2ADBA8220024B810 /* RecodeTableViewCell.swift */,
-				5F2F5AE42AE9482400F117FC /* SettingTableViewCell.swift */,
 				5F39E0372AE175DA00E5623C /* ImageCollectionViewCell.swift */,
+				5F2F5AE42AE9482400F117FC /* SettingTableViewCell.swift */,
 				5FE7C69E2ADEDDBE00BF9785 /* ReuseView */,
 			);
 			path = View;
@@ -215,7 +210,6 @@
 				5F9A7D972AF02E9500F9B10A /* Auth_API.swift */,
 				5F9A7D952AF0052F00F9B10A /* User_API.swift */,
 				5F9A7D932AF0052800F9B10A /* Record_API.swift */,
-				5F6EECEA2ADA6D700046E686 /* Diary_API.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -385,7 +379,6 @@
 				5F7A02852ADAD3D700128DC4 /* Color+Ext.swift in Sources */,
 				5F785B882ADEA80300955C4A /* UIButton+Ext.swift in Sources */,
 				5F3E3FD32AF8BD7D00B1F36B /* UIDevice+Ext.swift in Sources */,
-				5F6EECEB2ADA6D700046E686 /* Diary_API.swift in Sources */,
 				5F3E3FD52AF9363D00B1F36B /* NoRecordDataView.swift in Sources */,
 				5F572CF92ADCDF660030EC7B /* EasyWritingScreenController.swift in Sources */,
 				5F6EECE92ADA418F0046E686 /* SelectALoginMethodController.swift in Sources */,
@@ -410,7 +403,6 @@
 				5F4B667E2ADA3452004FE62E /* SceneDelegate.swift in Sources */,
 				5FAA76402ADBA8220024B810 /* RecodeTableViewCell.swift in Sources */,
 				5F39E0382AE175DA00E5623C /* ImageCollectionViewCell.swift in Sources */,
-				5F26CA4E2AF0E2710019CDE2 /* Diary.swift in Sources */,
 				5F9A7D982AF02E9500F9B10A /* Auth_API.swift in Sources */,
 				5F785B822ADEA7AF00955C4A /* Enum.swift in Sources */,
 				5F6EECDD2ADA3F490046E686 /* RecordController.swift in Sources */,

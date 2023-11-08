@@ -24,7 +24,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let vc = TabBarController()
         
         // 네비게이션 컨트롤러 설정
-//        let navVC = UINavigationController(rootViewController: vc)
+//        let vc = UINavigationController(rootViewController: SelectALoginMethodController())
         
         // 뿌리 뷰컨트롤러 설정
         self.window?.rootViewController = vc

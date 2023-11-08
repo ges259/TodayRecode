@@ -8,9 +8,11 @@
 import FirebaseFirestore
 
 
+
+
 // MARK: - Format
-let timeFormat_Static: Int = 0
-let dateFormat_Static: Int = 0
+var timeFormat_Static: Int = 0
+var dateFormat_Static: Int = 0
 
 
 
@@ -36,8 +38,11 @@ enum API_String {
     
     // 쿼리를 통해 user를 판별할 때 사용
     static let user: String = "user"
-    
     static let writing_Type: String = "writing_type"
+    
+    //
+    
+    
 }
 
 

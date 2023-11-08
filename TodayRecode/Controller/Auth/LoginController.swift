@@ -45,10 +45,15 @@ final class LoginController: UIViewController {
     }()
     
     /// 로그인 버튼
-    private lazy var logInBtn: UIButton = UIButton.buttonWithTitle(
-        title: "로그인",
-        font: UIFont.systemFont(ofSize: 20),
-        backgroundColor: UIColor.customblue3)
+    private lazy var logInBtn: UIButton = {
+        let btn = UIButton.buttonWithTitle(
+            title: "로그인",
+            titleColor: UIColor.customBlack5,
+            font: UIFont.systemFont(ofSize: 20),
+            backgroundColor: UIColor.customblue3)
+            btn.isEnabled = false
+        return btn
+    }()
     
     /// 회원가입 화면으로 이동 버튼
     private lazy var goToSignUpViewBtn: UIButton = {
@@ -56,7 +61,6 @@ final class LoginController: UIViewController {
             title: "아이디가 없으신가요?",
             font: UIFont.systemFont(ofSize: 12),
             backgroundColor: UIColor.clear)
-        
         btn.contentHorizontalAlignment = .left
         return btn
     }()
@@ -96,6 +100,7 @@ final class LoginController: UIViewController {
          self.passwordTF].forEach { tf in
             tf.text = nil
         }
+        self.logInBtn.isEnabled = false
     }
 }
 
@@ -190,13 +195,106 @@ extension LoginController {
 
 
 
-// MARK: - 액션
+// MARK: - 셀렉터
 
 extension LoginController {
     
     // MARK: - 로그인 버튼 액션
     @objc private func logInBtnTapped() {
         self.logInBtn.isEnabled = false
+
+        if self.checkEmailFormat()
+            && self.checkpassword6words() {
+            self.login()
+        } else {
+            self.alert_LoginFail(authEnum: .loginFail)
+        }
+    }
+    
+    
+    
+    // MARK: - 텍스트필드 액션
+    @objc private func formValidation() {
+        if self.emailTF.hasText
+            && self.passwordTF.hasText {
+            // 텍스트필드에 빈칸이 있을 때
+            self.logInBtn.isEnabled = true
+            self.logInBtn.backgroundColor = .customblue6
+            self.logInBtn.setTitleColor(.black, for: .normal)
+            return
+        }
+        // 텍스트필드가 모두 채워지면
+        self.logInBtn.isEnabled = false
+        self.logInBtn.backgroundColor = .customblue3
+        self.logInBtn.setTitleColor(UIColor.customBlack5, for: .normal)
+    }
+    
+    
+    
+    // MARK: - 회원가입 화면 이동 액션
+    @objc private func goToSignUpView() {
+        let vc = SignUpController()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// MARK: - 액션
+
+extension LoginController {
+    
+    // MARK: - 로그인 조건
+    private func checkEmailFormat() -> Bool {
+        // 로그인 형식이 맞는지 확인
+        if self.isValidEmail(testStr: self.emailTF.text) {
+            return true
+        }
+        self.alert_LoginFail(authEnum: .emailFormatError)
+        return false
+    }
+    private func checkpassword6words() -> Bool {
+        // 비밀번호가 6자리 이상인지 확인
+        if self.isValidPassword(pw: self.passwordTF.text) {
+            return true
+        }
+        self.alert_LoginFail(authEnum: .password6Error)
+        return false
+    }
+    
+    // MARK: - 얼럿창 띄우기
+    private func alert_LoginFail(authEnum: AuthEnum) {
+        let stringArray = authEnum.alert_StringArray
+        // 커스텀 얼럿창 띄우기
+        self.customAlert(
+            alertStyle: .alert,
+            withTitle: stringArray[0],
+            message: stringArray[1]) { _ in
+                self.logInBtn.isEnabled = true
+                return
+            }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// MARK: - 로그인
+extension LoginController {
+    private func login() {
         
         guard let email = self.emailTF.text,
               let password = self.passwordTF.text
@@ -204,44 +302,18 @@ extension LoginController {
         
         Auth_API.shared.login(
             email: email,
-            password: password) { login in
-                // 로그인에 성공했다면
-                if login {
+            password: password) { result in
+                switch result {
+                    // 로그인에 성공했다면
+                case .success():
                     self.dismiss(animated: true)
                     
-                // 로그인에 실패했다면
-                } else {
+                    // 로그인에 실패했다면
+                case .failure(_):
                     // 커스텀 얼럿창 띄우기
-                    self.customAlert(
-                        alertStyle: .alert,
-                        withTitle: "로그인에 실패하였습니다.",
-                        message: "아이디와 비밀번호를 정확히 입력해 주세요.") { _ in
-                            return
-                        }
+                    self.alert_LoginFail(authEnum: .unknownError)
                 }
         }
-    }
-    
-    // MARK: - 회원가입 화면 이동 액션
-    @objc private func goToSignUpView() {
-        let vc = SignUpController()
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    
-    // MARK: - 텍스트필드 액션
-    @objc private func formValidation() {
-        guard self.emailTF.hasText,
-              self.passwordTF.hasText
-        else {
-            // 텍스트필드에 빈칸이 있을 때
-            self.logInBtn.isEnabled = false
-            self.logInBtn.backgroundColor = .customblue3
-            return
-        }
-        // 텍스트필드가 모두 채워지면
-        self.logInBtn.isEnabled = true
-        self.logInBtn.backgroundColor = .customblue6
     }
 }
 

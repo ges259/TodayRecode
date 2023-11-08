@@ -11,8 +11,8 @@ import Foundation
 
 extension Date {
     
-    // MARK: - A
-    /// 원하는 날짜를 문자열로 리턴하는 메서드
+    // MARK: - 원하는 dateFormt을 문자열로 리턴
+    /// 원하는 dateFormt을 문자열로 리턴하는 메서드
     /// - Parameters:
     ///   - todayFormat: TodayFormatEnum
     ///   - date: 날짜가 없을 경우 오늘 날짜 리턴
@@ -29,6 +29,16 @@ extension Date {
     
     
     
+    static func DateLabelString(date: Date) -> String {
+        let timeFormat: TodayFormatEnum = timeFormat_Static == 0
+        ? .a_hmm // PM 2:00
+        : .HHmm // 14: 00
+        
+        return Date.dateReturn_Custom(
+            todayFormat: timeFormat,
+            UTC_Plus9: false,
+            date: date)
+    }
     
     
     
@@ -36,7 +46,12 @@ extension Date {
     
     
     
-    // MARK: - C
+    
+    
+    
+    
+    
+    // MARK: - 네비게이션 타이틀 날짜 설정
     /// 원하는 날짜가 몇 년도 몇 월인지를 리턴하는 메서드
     /// - Parameter date: 원하는 날짜
     /// - Returns: [String] --- 문자열 배열로 리턴]
@@ -61,29 +76,6 @@ extension Date {
             // 문자열 배열 리턴
             return [year, month, day]
         }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // MARK: - 9시간 더하기 (UTC+9)
-    /// 9시간 더하기
-    /// isAPI라면 -> 시간 / 분 / 초 0으로 만들기
-//    static func UTC_Plus9(date: Date = Date()) -> Date? {
-//        // 현재 시간
-//        let calendar = Calendar.current
-//        // 표현할? 정보들 선택하기
-//        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
-//        // 9시간 더하기
-//            components.hour! += 9
-//        // Date로 변환하여 반환
-//        return calendar.date(from: components)
-//    }
     
     
     

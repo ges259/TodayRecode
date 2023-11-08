@@ -14,7 +14,7 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        self.checkUser()
+        self.checkUser()
         self.configureUI()
         self.configureTabBar()
     }
@@ -73,12 +73,13 @@ final class TabBarController: UITabBarController {
     ///   - unselectedImg: 선택되지 않은 상태의 이미지
     ///   - selectedImg: 선택되었을 때 이미지
     ///   - rootController: 화면
-    private func templateNavContoller(unselectedImg: UIImage?,
-                                      selectedImg: UIImage?,
-                                      rootController: UIViewController) -> UINavigationController {
-        let nav = UINavigationController(rootViewController: rootController)
-        nav.tabBarItem.image = unselectedImg
-        nav.tabBarItem.selectedImage = selectedImg
+    private func templateNavContoller(
+        unselectedImg: UIImage?,
+        selectedImg: UIImage?,
+        rootController: UIViewController) -> UINavigationController {
+            let nav = UINavigationController(rootViewController: rootController)
+            nav.tabBarItem.image = unselectedImg
+            nav.tabBarItem.selectedImage = selectedImg
         return nav
     }
     
@@ -90,18 +91,24 @@ final class TabBarController: UITabBarController {
     
     // MARK: - API
     private func checkUser() {
-        User_API.shared.fetchUser { user in
-            if let user = user {
+        // 유저가 있는지 확인
+        User_API
+            .shared
+            .fetchUser { result in
+            switch result {
                 // 유저가 있다면
+            case .success(let user):
+                print("로그인 성공")
                 dump(user)
                 
-            } else {
-                // 유저가 없을 경우 로그인 선택 화면으로 이동
+            case .failure(_):
+                print("로그인 실패")
+                // 유저가 없다면 -> 로그인 선택 화면으로 이동
                 let vc = UINavigationController(rootViewController: SelectALoginMethodController())
                     vc.modalPresentationStyle = .fullScreen
                 self.present(vc, animated: true)
+                break
             }
-            
         }
     }
 }

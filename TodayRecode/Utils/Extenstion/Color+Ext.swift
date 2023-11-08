@@ -13,7 +13,7 @@ extension UIColor {
     static let customblue3: UIColor = UIColor.systemBlue.withAlphaComponent(0.3)
     static let customblue6: UIColor = UIColor.systemBlue.withAlphaComponent(0.6)
     static let btnGrayColor: UIColor = UIColor.systemGray3
-    
+    static let customBlack5: UIColor = UIColor.black.withAlphaComponent(0.5)
     
     
     static let cancelGray: UIColor = UIColor(displayP3Red: 174/255, green: 174/255, blue: 174/255, alpha: 1)

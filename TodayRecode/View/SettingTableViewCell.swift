@@ -12,7 +12,7 @@ final class SettingTableViewCell: UITableViewCell {
     /// 시스템 이미지
     private lazy var systemImg: UIImageView = {
         let img = UIImageView()
-        img.tintColor = UIColor.black
+            img.tintColor = UIColor.black
         return img
     }()
     
@@ -28,14 +28,9 @@ final class SettingTableViewCell: UITableViewCell {
     
     // MARK: - 프로퍼티
     var settingTableEnum: SettingTableEnum? {
-        didSet {
-            self.systemImg.image = self.settingTableEnum?.image
-            self.mainLabel.text = self.settingTableEnum?.text
-            // MARK: - Fix
-            self.subLabel.text = "일요일 시작"
-        }
+        didSet { self.configureData() }
     }
-
+    
     
     
     // MARK: - 라이프사이클
@@ -94,5 +89,17 @@ extension SettingTableViewCell {
             make.trailing.equalTo(self.contentView.snp.trailing).offset(-20)
             make.centerY.equalToSuperview()
         }
+    }
+    
+    
+    
+    // MARK: - 데이터 설정
+    private func configureData() {
+        self.systemImg.image = self.settingTableEnum?.image
+        self.mainLabel.text = self.settingTableEnum?.text
+        
+        self.subLabel.text = settingTableEnum?.rawValue == 0
+        ? self.settingTableEnum?.dateOption
+        : self.settingTableEnum?.timeOption
     }
 }

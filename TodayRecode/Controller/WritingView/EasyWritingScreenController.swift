@@ -127,17 +127,15 @@ final class EasyWritingScreenController: UIViewController {
         // 배경 색 설정
         self.view.backgroundColor = .darkGray.withAlphaComponent(0.4)
         // 코너 둥글게
-        self.containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        self.containerView.layer.maskedCorners = [.layerMinXMinYCorner,
+                                                  .layerMaxXMinYCorner]
         [self.containerView,
          self.sendBtn].forEach { view in
             view.layer.cornerRadius = 10
             view.clipsToBounds = true
         }
         // 데이트뷰에 날짜 설정
-        self.dateLbl.text = Date.dateReturn_Custom(
-            todayFormat: .a_hmm,
-            UTC_Plus9: false,
-            date: Date())
+        self.dateLbl.text = Date.DateLabelString(date: Date())
     }
     
     

@@ -10,7 +10,7 @@ import UIKit
 enum TodayFormatEnum {
     // 시간
     case a_hmm // PM 2:00
-    case Hmm // 14:00
+    case HHmm // 14:00
     // 날짜
     case h // 1시
     case d // 4일
@@ -31,7 +31,7 @@ enum TodayFormatEnum {
         switch self {
         // 시간
         case .a_hmm: return "a h:mm"
-        case .Hmm: return "H:mm"
+        case .HHmm: return "HH:mm"
         // 날짜
         case .h: return "h"
         case .d: return "d"
@@ -122,39 +122,79 @@ enum CollectionViewEnum {
 enum SettingTableEnum: Int {
     case dateFormat = 0
     case timeFormat = 1
-    /// 시스템이미지
-    var image: UIImage? {
-        switch self {
-        case .dateFormat: return UIImage.calendar
-        case .timeFormat: return UIImage.clock
-        }
-    }
-    /// 셀을 눌렀을 때 얼럿창 타이틀
-    var alertTitle: String {
-        switch self {
-        case .dateFormat: return "일주일 시작일을 선택해주세요"
-        case .timeFormat: return "날짜 형식을 선택해주세요"
-        }
-    }
-    /// 얼럿창의 설명창
+    
+    /// 셀에 표시될 텍스트
     var text: String {
         switch self {
         case .dateFormat: return "일주일 시작일"
         case .timeFormat: return "시간 형식"
         }
     }
-    /// 첫 번째 옵션
-    var firstOption: String {
+    /// 셀에 표시될 시스템이미지
+    var image: UIImage? {
         switch self {
-        case .dateFormat: return "일요일 시작"
-        case .timeFormat: return "12시간 형식: PM 2:00"
+        case .dateFormat: return UIImage.calendar
+        case .timeFormat: return UIImage.clock
         }
     }
-    /// 두 번째 옵션
-    var secondOption: String {
+    
+    /// 얼럿창을 띄우면 나올 텍스트 배열
+    var alertStringArray: [String] {
         switch self {
-        case .dateFormat: return "월요일 시작"
-        case .timeFormat: return "24시간 형식: 14:00"
+        case .dateFormat:
+            return ["일주일 시작일을 선택해주세요",
+                    "일요일 시작",
+                    "월요일 시작"]
+        case .timeFormat:
+            return ["날짜 형식을 선택해주세요",
+                    "12시간 형식: PM 2:00",
+                    "24시간 형식: 14:00"]
+        }
+    }
+    
+    var timeOption: String {
+        switch timeFormat_Static {
+        case 0: return "12시간 형식: PM 2:00"
+        case 1: return "24시간 형식: 14:00"
+        default: return ""
+        }
+    }
+    
+    var dateOption: String {
+        switch dateFormat_Static {
+        case 0: return "일요일 시작"
+        case 1: return "월요일 시작"
+        default: return ""
+        }
+    }
+}
+
+
+
+
+
+enum AuthEnum {
+    case emailFormatError
+    case password6Error
+    case passwordIsNotSameError
+    case unknownError
+    case loginFail
+    case signupFail
+    
+    var alert_StringArray: [String] {
+        switch self {
+        case .emailFormatError: return ["이메일 형식이 올바르지 않습니다.",
+                                        "이메일을 다시 입력해 주세요"]
+        case .password6Error: return ["비밀번호는 6자리 이상 입력해 주세요.",
+                                      "비밀번호를 다시 입력해 주세요"]
+        case .passwordIsNotSameError: return ["비밀번호가 일치하지 않습니다.",
+                                         "비밀번호를 정확히 입력해 주세요."]
+        case .unknownError: return ["알 수 없는 에러",
+                                    "다시 시도해 주세요"]
+        case .loginFail: return ["로그인에 실패하였습니다.",
+                                 "아이디와 비밀번호를 정확히 입력해 주세요."]
+        case .signupFail: return ["회원가입에 실패하였습니다.",
+                                  "아이디와 비밀번호를 정확히 입력해 주세요."]
         }
     }
 }

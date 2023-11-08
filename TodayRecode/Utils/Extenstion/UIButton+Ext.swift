@@ -24,9 +24,9 @@ extension UIButton {
     
     /// 글자가 들어간 버튼 설정
     static func buttonWithTitle(title: String,
-                                      titleColor: UIColor = UIColor.black,
-                                      font: UIFont,
-                                      backgroundColor: UIColor)
+                                titleColor: UIColor = UIColor.black,
+                                font: UIFont,
+                                backgroundColor: UIColor)
     -> UIButton {
         let btn = UIButton(type: .system)
             btn.setTitle(title, for: .normal)

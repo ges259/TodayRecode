@@ -22,7 +22,7 @@ final class CalendarView: UIView {
         // 월요일 시작
         //        calendar.firstWeekday = 2
         // 일요일 시작
-        calendar.firstWeekday = 1
+//        calendar.firstWeekday = 1
         
         // ----- 주(월/화/수/~~) -----
         // 한글로 표시
@@ -109,6 +109,10 @@ extension CalendarView {
     
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
+        self.calendar.firstWeekday = dateFormat_Static == 0
+        ? 1 // 일요일 시작
+        : 2 // 월요일 시작
+        
         // ********** addSubview 설정 **********
         self.addSubview(self.calendar)
         // ********** 오토레이아웃 설정 **********

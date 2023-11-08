@@ -24,8 +24,6 @@ final class RecodeCheckController: UIViewController {
     /// 테이블뷰
     private lazy var tableView: RecodeTableView = {
         let tableView = RecodeTableView()
-            tableView.register(RecodeTableViewCell.self,
-                               forCellReuseIdentifier: Identifier.recodeTableCell)
             tableView.dataSource = self
             tableView.delegate = self
         return tableView
@@ -57,14 +55,7 @@ final class RecodeCheckController: UIViewController {
     
     
     // MARK: - 프로퍼티
-    
-    var todayRecordArray = [Record]() {
-        didSet {
-            if let todayRecodes = self.todayRecordArray.first {
-                self.dateView.configureDate(selectedDate: todayRecodes.date)
-            }
-        }
-    }
+    var todayRecordArray = [Record]()
     
     
     
@@ -79,7 +70,14 @@ final class RecodeCheckController: UIViewController {
         
         self.configureUI()
         self.configureAutoLayout()
-        self.configureDevice()
+    }
+    init(recordArray: [Record]) {
+        super.init(nibName: nil, bundle: nil)
+        
+        self.todayRecordArray = recordArray
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
     
@@ -98,9 +96,13 @@ extension RecodeCheckController {
     
     // MARK: - UI설정
     private func configureUI(){
-        self.view.backgroundColor = .clear
+        // 배열의 첫번째 날짜가 있다면
+        if let todayRecodes = self.todayRecordArray.first {
+            //  -> 날짜 레이블에 표시
+            self.dateView.configureDate(selectedDate: todayRecodes.date)
+        }
         
-        
+        // cornerRadius
         self.containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         self.containerView.clipsToBounds = true
         self.containerView.layer.cornerRadius = 15
@@ -113,9 +115,24 @@ extension RecodeCheckController {
         // ********** addSubview 설정 **********
         self.view.addSubview(self.containerView)
         self.containerView.addSubview(self.stackView)
-        self.containerView.addSubview(self.noDataView)
+        
         
         // ********** 오토레이아웃 설정 **********
+        // 오늘 기록이 없다면 -> NoDataView를 띄워야 함
+        // 오늘 기록이 있다면 -> 모든 셀의 높이만큼 테이블뷰 높이 설정
+        if self.todayRecordArray.count == 0 {
+            // 테이블뷰
+            self.tableView.snp.makeConstraints { make in
+                make.height.greaterThanOrEqualTo(300)
+            }
+            // 데이터가 없을 때 나오는 레이블
+            self.containerView.addSubview(self.noDataView)
+            self.noDataView.snp.makeConstraints { make in
+                make.top.leading.trailing.equalTo(self.tableView)
+                make.height.equalTo(300)
+            }
+        }
+        
         // 날짜뷰
         self.dateView.snp.makeConstraints { make in
             make.height.equalTo(50)
@@ -123,36 +140,30 @@ extension RecodeCheckController {
         self.separatorView.snp.makeConstraints { make in
             make.height.equalTo(0.5)
         }
-        // 테이블뷰
-        self.tableView.snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(300)
-        }
         // 스택뷰
         self.stackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
             make.leading.trailing.equalToSuperview()
         }
+        // 스택뷰 바텀앵커 분기처리
+        self.configureStackViewBottomAchor()
         // 컨테이너뷰
         self.containerView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
-            make.bottom.lessThanOrEqualToSuperview()
+            make.bottom.lessThanOrEqualTo(self.view.snp.bottom)
         }
-        // 데이터가 없을 때 나오는 레이블
-        self.noDataView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalTo(self.tableView)
-            make.height.equalTo(300)
-        }
+        
     }
     
     
-    private func configureDevice() {
+    private func configureStackViewBottomAchor() {
         // 아이폰 종류 확인
         if UIDevice.current.isiPhoneSE {
-            //se or 8
+            // se or 8
             self.stackView.bottomAnchor.constraint(equalTo: self.containerView.bottomAnchor).isActive = true
         } else {
             // 10이상
-            self.stackView.bottomAnchor.constraint(equalTo: self.containerView.bottomAnchor, constant: -40).isActive = true
+            self.stackView.bottomAnchor.constraint(equalTo: self.containerView.bottomAnchor, constant: -20).isActive = true
         }
     }
 }
@@ -183,29 +194,8 @@ extension RecodeCheckController: UITableViewDataSource, UITableViewDelegate {
             withIdentifier: Identifier.recodeTableCell,
             for: indexPath) as! RecodeTableViewCell
         
-        
-        cell.cellRecord = self.todayRecordArray[indexPath.row]
-        
+            cell.cellRecord = self.todayRecordArray[indexPath.row]
         return cell
-    }
-}
-
-
-
-
-
-
-
-
-
-
-// MARK: - 스크롤뷰
-extension RecodeCheckController {
-    // 스크롤이 끝났을 때
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if scrollView.contentOffset.y == 0 {
-            self.dismiss(animated: true)
-        }
     }
 }
 
@@ -222,10 +212,12 @@ extension RecodeCheckController {
 extension RecodeCheckController: PanModalPresentable {
     /// 스크롤뷰
     var panScrollable: UIScrollView? {
-        return nil
+        return self.tableView
     }
     /// 최대 사이즈
     var longFormHeight: PanModalHeight {
+        self.view.layoutIfNeeded()
+        
         // 아이폰 종류 확인
         return UIDevice.current.isiPhoneSE
         ? .contentHeight(self.containerView.frame.height) //se or 8
@@ -233,6 +225,7 @@ extension RecodeCheckController: PanModalPresentable {
     }
     /// 최소 사이즈
     var shortFormHeight: PanModalHeight {
+        self.view.layoutIfNeeded()
         // 아이폰 종류 확인
         return UIDevice.current.isiPhoneSE
         ? .contentHeight(self.containerView.frame.height) //se or 8

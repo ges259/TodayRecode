@@ -194,43 +194,56 @@ extension SettingController {
             firstBtnName: "로그아웃",
             firstBtnColor: UIColor.red) { _ in
                 // 로그아웃
-                Auth_API.shared.logout { bool in
+                Auth_API.shared.logout { result in
+                    switch result {
                     // 로그아웃에 성공했다면
-                    if bool {
+                    case .success():
                         let vc = UINavigationController(rootViewController: SelectALoginMethodController())
                             vc.modalPresentationStyle = .fullScreen
                         self.present(vc, animated: true)
                         
                     // 로그아웃에 실패했다면
-                    } else {
-                        
+                    case .failure(_):
+                        break
                     }
                 }
             }
     }
     
     
-    // MARK: - 날짜 형식 설정
-    func dateFormatTapped(index: Int) {
-        if index == 0 {
-            print("date - 0")
-            // 0 (+ 1)
-            // 1이면 일요일 시작
-        } else {
-            print("date - 1")
-            // 1 (+ 1)
-            // 2면 월요일 시작
-        }
-    }
     
-    // MARK: - 시간 형식 설정
-    func timeFormatTapped(index: Int) {
-        if index == 0 {
-            print("time - 0")
-            // 12시간 형식: PM 2:00
-        } else {
-            print("time - 1")
-            // 24시간 형식: 14:00
+    // 0 (+ 1)
+    // 1이면 일요일 시작
+    // 1 (+ 1)
+    // 2면 월요일 시작
+    // MARK: - 날짜 형식 설정
+    private func formatChange(_ settingTableEnum: SettingTableEnum,
+                      index: Int) {
+        // 형식 업데이트
+        User_API
+            .shared
+            .updateDateFormat(settingTableEnum,
+                              selectedIndex: index) { result in
+            switch result {
+            case .success(_):
+                // 변수 업데이트
+                if settingTableEnum.rawValue == 0 {
+                    dateFormat_Static = index
+                } else {
+                    timeFormat_Static = index
+                }
+                
+                // 테이블뷰 리로드
+                self.tableView.reloadRows(
+                    at: [IndexPath(row: settingTableEnum.rawValue,
+                                   section: 0)],
+                    with: .automatic)
+                break
+                
+            case .failure(_):
+                // MARK: - Fix
+                break
+            }
         }
     }
 }
@@ -247,7 +260,8 @@ extension SettingController {
 // MARK: - 테이블뷰
 extension SettingController: UITableViewDelegate, UITableViewDataSource {
     // 셀의 개수
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
         return 2
     }
     
@@ -256,7 +270,8 @@ extension SettingController: UITableViewDelegate, UITableViewDataSource {
     }
     
     //
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: Identifier.settingTableCell,
             for: indexPath) as! SettingTableViewCell
@@ -266,23 +281,26 @@ extension SettingController: UITableViewDelegate, UITableViewDataSource {
     }
     
     // 테이블 높이
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView,
+                   heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 58
     }
     
     // 테이블뷰를 선택하면 호출 됨
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView,
+                   didSelectRowAt indexPath: IndexPath) {
         
-        let settingTableEnum = SettingTableEnum(rawValue: indexPath.row)
+        guard let settingTableEnum = SettingTableEnum(rawValue: indexPath.row) else { return }
+        // 얼럿창에 표시될 선택된 셀에 맞는 문자열 배열 가져오기
+        let alertStringArray = settingTableEnum.alertStringArray
+        
         // 얼럿창 띄우기
         self.customAlert(
-            withTitle: settingTableEnum!.alertTitle,
-            firstBtnName: settingTableEnum!.firstOption,
-            secondBtnName: settingTableEnum!.secondOption) { index in
-                // 선택된 결과
-                settingTableEnum == .dateFormat
-                ? self.dateFormatTapped(index: index)
-                : self.timeFormatTapped(index: index)
+            withTitle: alertStringArray[0],
+            firstBtnName: alertStringArray[1],
+            secondBtnName: alertStringArray[2]) { index in
+                // 선택된 결과 DB저장
+                self.formatChange(settingTableEnum, index: index)
             }
     }
 }
