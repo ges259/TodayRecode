@@ -87,9 +87,10 @@ final class SignUpController: UIViewController {
     
     
     
-    
-    
-    
+    // MARK: - 프로퍼티
+    /// 델리게이트
+    weak var delegate: AuthenticationDelegate?
+    /// 모든 텍스트필드에 텍스트가 있는지 확인
     private var textfieldHasText: Bool {
         return self.userNameTF.hasText
         && self.emailTF.hasText
@@ -330,7 +331,8 @@ extension SignUpController {
                 switch result {
                 case .success(_):
                     // 뒤로가기
-                    self.dismiss(animated: true)
+//                    self.dismiss(animated: true)
+                    self.delegate?.authenticationComplete()
                     
                 case .failure(_):
                     self.alert_SignupFail(signupEnum: .unknownError)

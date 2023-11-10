@@ -80,6 +80,18 @@ final class LoginController: UIViewController {
     
     
     
+    
+    // MARK: - 프로퍼티
+    weak var delegate: AuthenticationDelegate? 
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -234,6 +246,7 @@ extension LoginController {
     // MARK: - 회원가입 화면 이동 액션
     @objc private func goToSignUpView() {
         let vc = SignUpController()
+        vc.delegate = self.delegate
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
@@ -306,7 +319,9 @@ extension LoginController {
                 switch result {
                     // 로그인에 성공했다면
                 case .success():
-                    self.dismiss(animated: true)
+                    self.delegate?.authenticationComplete()
+                    
+//                    self.dismiss(animated: true)
                     
                     // 로그인에 실패했다면
                 case .failure(_):

@@ -98,6 +98,14 @@ final class DiaryListController: UIViewController {
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // 날짜 형식이 바뀌었다면 -> 캘린더 리로드
+        if dateFormat_Diary_Date {
+            self.calendar.configureDateFormat()
+            dateFormat_Diary_Date = false
+        }
+    }
 }
 
 

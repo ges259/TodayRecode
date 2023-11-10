@@ -136,23 +136,24 @@ final class RecordController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-//        self.fetchRecords_API()         // 데이터 가져오기
+        self.fetchRecords_API()         // 데이터 가져오기
         self.configureUI()          // UI 설정
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        
-        
-        print(#function)
+        // 시간 형식이 바뀌었다면 -> 테이블뷰 리로드
+        if dateFormat_Record_Time {
+            self.tableView.reloadData()
+            dateFormat_Record_Time = false
+        }
+        // 날짜 형식이 바뀌었다면 -> 캘린더 리로드
+        if dateFormat_Record_Date {
+            self.calendar.configureDateFormat()
+            dateFormat_Record_Date = false
+        }
     }
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        print(#function)
-    }
-    
 }
     
     
@@ -190,8 +191,7 @@ extension RecordController {
         self.calendar.calendar.select(Date())
         
         // 코너 둥글게 설정
-        [self.tableView,
-         self.noDataView].forEach { view in
+        [self.tableView].forEach { view in
             view.clipsToBounds = true
             view.layer.cornerRadius = 10
         }
@@ -720,7 +720,6 @@ extension RecordController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: Identifier.recodeTableCell,
             for: indexPath) as! RecodeTableViewCell
-        
         
         // 오늘인지 아닌지 판단
         cell.cellRecord = self.currentArray[indexPath.row]

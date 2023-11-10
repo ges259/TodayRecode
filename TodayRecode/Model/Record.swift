@@ -12,7 +12,7 @@ import FirebaseFirestore
 struct Record {
     let context: String
     var date: Date
-    let imageUrl: String
+    let imageUrl: [String]
     
     let documentID: String
     
@@ -21,7 +21,8 @@ struct Record {
         self.documentID = documentID
         
         self.context = dictionary[API_String.context] as? String ?? ""
-        self.imageUrl = dictionary[API_String.image_url] as? String ?? ""
+        self.imageUrl = dictionary[API_String.image_url] as? [String] ?? [""]
+        
         
         // 타임스탬프로 받음
         let timeStamp = dictionary[API_String.created_at] as? Timestamp

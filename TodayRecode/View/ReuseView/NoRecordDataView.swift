@@ -11,14 +11,12 @@ import SnapKit
 final class NoRecordDataView: UIView {
     
     
-    private lazy var noDataLbl: UILabel = {
-        let lbl = UILabel.navTitleLbl(font: .systemFont(ofSize: 15))
-            lbl.text = "아직 작성한 기록이 없어요\n +버튼을 눌러 오늘을 기록해보세요!"
-        return lbl
-    }()
+    // MARK: - 레이아웃
+    private lazy var noDataLbl: UILabel = UILabel.navTitleLbl(
+        font: .systemFont(ofSize: 15))
     
     private lazy var plusBtn: UIImageView = {
-        let img = UIImageView(image: UIImage(systemName: "list.bullet.clipboard"))
+        let img = UIImageView()
         img.tintColor = .customblue3
         return img
     }()
@@ -44,7 +42,7 @@ final class NoRecordDataView: UIView {
     init(frame: CGRect, nodataEnum: NoDataEnum) {
         super.init(frame: frame)
         
-        self.configureAutoLayout() // 오토레이아웃 설정
+        self.configureAutoLayout(nodataEnum: nodataEnum) // 오토레이아웃 설정
         self.configureUI(nodataEnum: nodataEnum) // 레이블의 텍스트 설정
     }
     required init?(coder: NSCoder) {
@@ -60,20 +58,36 @@ final class NoRecordDataView: UIView {
     /// NodataEnum에 따라 레이블의 텍스트를 바꿈
     private func configureUI(nodataEnum: NoDataEnum) {
         self.noDataLbl.text = nodataEnum.lblString
+        self.plusBtn.image = nodataEnum.systemImg
+        
+        self.clipsToBounds = true
+        self.layer.cornerRadius = 10
     }
     
     
     
+    
+    
     // MARK: - 오토레이아웃 설정
-    private func configureAutoLayout() {
+    private func configureAutoLayout(nodataEnum: NoDataEnum) {
+        
         // ********** addSubview 설정 **********
         self.addSubview(self.stackView)
         
         // ********** 오토레이아웃 설정 **********
-        self.plusBtn.snp.makeConstraints { make in
-            make.width.equalTo(80)
-            make.height.equalTo(100)
+        // 이미지 -> 상황에 따라 다르게 설정
+        if nodataEnum == .diary {
+            self.plusBtn.snp.makeConstraints { make in
+                make.width.equalTo(120)
+                make.height.equalTo(100)
+            }
+        } else {
+            self.plusBtn.snp.makeConstraints { make in
+                make.width.equalTo(80)
+                make.height.equalTo(100)
+            }
         }
+        // 스택뷰
         self.stackView.snp.makeConstraints { make in
             make.centerX.centerY.equalToSuperview()
         }

@@ -173,5 +173,8 @@ extension RecodeTableViewCell {
         // 시간 레이블 설정
         self.timeLabel.text = Date.DateLabelString(date: record.date)
         
+        if !record.imageUrl.isEmpty {
+            self.recodeImage.sd_setImage(with: URL(string: record.imageUrl.first!))
+        }
     }
 }

@@ -23,6 +23,8 @@
 		5F4B66852ADA3455004FE62E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F4B66842ADA3455004FE62E /* Assets.xcassets */; };
 		5F4B66882ADA3455004FE62E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F4B66862ADA3455004FE62E /* LaunchScreen.storyboard */; };
 		5F572CF92ADCDF660030EC7B /* EasyWritingScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F572CF82ADCDF660030EC7B /* EasyWritingScreenController.swift */; };
+		5F5A3AC92AFD41A200BDA7D6 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 5F5A3AC82AFD41A200BDA7D6 /* SDWebImage */; };
+		5F5A3ACB2AFD420E00BDA7D6 /* ImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5A3ACA2AFD420E00BDA7D6 /* ImageUploader.swift */; };
 		5F6CBA312AE02A1E00960F7B /* ImageCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */; };
 		5F6EECDD2ADA3F490046E686 /* RecordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECDC2ADA3F490046E686 /* RecordController.swift */; };
 		5F6EECDF2ADA40170046E686 /* DetailWritingScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECDE2ADA40170046E686 /* DetailWritingScreenController.swift */; };
@@ -58,6 +60,7 @@
 		5FAF543D2ADA907100BD849C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAF543C2ADA907100BD849C /* Constants.swift */; };
 		5FCA1F372AE5700D00A9DB5B /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */; };
 		5FD436922AE2DB9B00CA79AD /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */; };
+		5FF24B702AFE21AC003E2497 /* JGProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 5FF24B6F2AFE21AC003E2497 /* JGProgressHUD */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +82,7 @@
 		5F4B66872ADA3455004FE62E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5F4B66892ADA3455004FE62E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F572CF82ADCDF660030EC7B /* EasyWritingScreenController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EasyWritingScreenController.swift; sourceTree = "<group>"; };
+		5F5A3ACA2AFD420E00BDA7D6 /* ImageUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUploader.swift; sourceTree = "<group>"; };
 		5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionView.swift; sourceTree = "<group>"; };
 		5F6EECDC2ADA3F490046E686 /* RecordController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordController.swift; sourceTree = "<group>"; };
 		5F6EECDE2ADA40170046E686 /* DetailWritingScreenController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailWritingScreenController.swift; sourceTree = "<group>"; };
@@ -117,8 +121,10 @@
 				5F7A027D2ADAD02B00128DC4 /* FSCalendar in Frameworks */,
 				5F6EECF62ADA70470046E686 /* FirebaseStorage in Frameworks */,
 				5F7A02832ADAD06D00128DC4 /* BSImagePicker in Frameworks */,
+				5FF24B702AFE21AC003E2497 /* JGProgressHUD in Frameworks */,
 				5F6EECF02ADA70470046E686 /* FirebaseAuth in Frameworks */,
 				5F6EECF42ADA70470046E686 /* FirebaseFirestore in Frameworks */,
+				5F5A3AC92AFD41A200BDA7D6 /* SDWebImage in Frameworks */,
 				5F7A027A2ADAD00A00128DC4 /* SnapKit in Frameworks */,
 				5F7A02802ADAD04700128DC4 /* PanModal in Frameworks */,
 			);
@@ -210,6 +216,7 @@
 				5F9A7D972AF02E9500F9B10A /* Auth_API.swift */,
 				5F9A7D952AF0052F00F9B10A /* User_API.swift */,
 				5F9A7D932AF0052800F9B10A /* Record_API.swift */,
+				5F5A3ACA2AFD420E00BDA7D6 /* ImageUploader.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -307,6 +314,8 @@
 				5F7A027C2ADAD02B00128DC4 /* FSCalendar */,
 				5F7A027F2ADAD04700128DC4 /* PanModal */,
 				5F7A02822ADAD06D00128DC4 /* BSImagePicker */,
+				5F5A3AC82AFD41A200BDA7D6 /* SDWebImage */,
+				5FF24B6F2AFE21AC003E2497 /* JGProgressHUD */,
 			);
 			productName = TodayRecode;
 			productReference = 5F4B66782ADA3452004FE62E /* TodayRecode.app */;
@@ -342,6 +351,8 @@
 				5F7A027B2ADAD02B00128DC4 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				5F7A027E2ADAD04700128DC4 /* XCRemoteSwiftPackageReference "PanModal" */,
 				5F7A02812ADAD06D00128DC4 /* XCRemoteSwiftPackageReference "BSImagePicker" */,
+				5F5A3AC72AFD41A200BDA7D6 /* XCRemoteSwiftPackageReference "SDWebImage" */,
+				5FF24B6E2AFE21AC003E2497 /* XCRemoteSwiftPackageReference "JGProgressHUD" */,
 			);
 			productRefGroup = 5F4B66792ADA3452004FE62E /* Products */;
 			projectDirPath = "";
@@ -401,6 +412,7 @@
 				5F26CA4A2AF0E25E0019CDE2 /* User.swift in Sources */,
 				5F6CBA312AE02A1E00960F7B /* ImageCollectionView.swift in Sources */,
 				5F4B667E2ADA3452004FE62E /* SceneDelegate.swift in Sources */,
+				5F5A3ACB2AFD420E00BDA7D6 /* ImageUploader.swift in Sources */,
 				5FAA76402ADBA8220024B810 /* RecodeTableViewCell.swift in Sources */,
 				5F39E0382AE175DA00E5623C /* ImageCollectionViewCell.swift in Sources */,
 				5F9A7D982AF02E9500F9B10A /* Auth_API.swift in Sources */,
@@ -617,6 +629,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5F5A3AC72AFD41A200BDA7D6 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		5F6EECEE2ADA70470046E686 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -657,9 +677,22 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		5FF24B6E2AFE21AC003E2497 /* XCRemoteSwiftPackageReference "JGProgressHUD" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/JonasGessner/JGProgressHUD.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5F5A3AC82AFD41A200BDA7D6 /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5F5A3AC72AFD41A200BDA7D6 /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
 		5F6EECEF2ADA70470046E686 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5F6EECEE2ADA70470046E686 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -699,6 +732,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5F7A02812ADAD06D00128DC4 /* XCRemoteSwiftPackageReference "BSImagePicker" */;
 			productName = BSImagePicker;
+		};
+		5FF24B6F2AFE21AC003E2497 /* JGProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5FF24B6E2AFE21AC003E2497 /* XCRemoteSwiftPackageReference "JGProgressHUD" */;
+			productName = JGProgressHUD;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -48,4 +48,6 @@ extension UIImage {
     static let calendar: UIImage? = UIImage(systemName: "calendar")
     /// 뒤로가기 이미지
     static let back: UIImage? = UIImage(systemName: "chevron.backward")
+    
+    static let noDataList: UIImage? = UIImage(systemName: "list.bullet.clipboard")
 }

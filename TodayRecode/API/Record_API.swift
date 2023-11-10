@@ -109,7 +109,7 @@ struct Record_API {
     func createRecord(writing_Type: DetailViewMode,
                       date: Date?,
                       context: String,
-                      image: [UIImage]?,
+                      image: [String]?,
                       completion: @escaping RecordCompletion) {
         // uid가져오기
         guard let uid = Auth.auth().currentUser?.uid,
@@ -125,6 +125,12 @@ struct Record_API {
             API_String.created_at: current,
             API_String.user: uid]
         
+        // 이미지 배열 옵셔널 바인딩
+        if let image = image {
+            // 딕셔너리에 추가
+            value[API_String.image_url] = image       // 이미지_url
+        }
+        print(value)
         // DB에 저장
         API_String
             .recodeDB
@@ -157,7 +163,7 @@ struct Record_API {
     func updateRecord(writing_Type: DetailViewMode,
                       record: Record,
                       context: String,
-                      image: [UIImage]?,
+                      image: [String]?,
                       completion: @escaping RecordCompletion) {
         
         // uid가져오기
@@ -172,7 +178,14 @@ struct Record_API {
             API_String.context: context,                // context
             API_String.created_at: current,             // record의 날짜
             API_String.user: uid]                       // uid
-                                                        // 이미지_url
+                            
+        
+        // 이미지 배열 옵셔널 바인딩
+        if let image = image {
+            // 딕셔너리에 추가
+            value[API_String.image_url] = image       // 이미지_url
+        }
+        
         // DB에 저장
         API_String
             .recodeDB

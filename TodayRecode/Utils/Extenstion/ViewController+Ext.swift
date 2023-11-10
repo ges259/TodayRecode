@@ -189,7 +189,7 @@ extension UIViewController {
     
     
     
-    // MARK: - 이메일 형식
+    // MARK: - 이메일 및 비밀번호 형식
     func isValidEmail(testStr: String?) -> Bool {
         
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
@@ -205,4 +205,11 @@ extension UIViewController {
         }
         return true
     }
+    
+    
+    
+    
+    
+    
+    
 }

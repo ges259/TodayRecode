@@ -15,8 +15,8 @@ final class TabBarController: UITabBarController {
         super.viewDidLoad()
         
         self.checkUser()
-        self.configureUI()
-        self.configureTabBar()
+//        self.configureUI()
+//        self.configureTabBar()
     }
     
     
@@ -37,13 +37,23 @@ final class TabBarController: UITabBarController {
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // MARK: - 탭바 설정
     /// 탭바 설정
-    private func configureTabBar() {
+    private func configureTabBar(user: User) {
+        // 탭바 컨틀롤러 설정
         // 오늘 날짜 가져오기
         let today = Date.dateReturn_Custom(todayFormat: .d,
                                            UTC_Plus9: true)
-        
         // 기록 화면
         let recode = self.templateNavContoller(
             unselectedImg: UIImage.recode,
@@ -59,7 +69,7 @@ final class TabBarController: UITabBarController {
         let setting = self.templateNavContoller(
             unselectedImg: UIImage.setup,
             selectedImg: UIImage.setup_fill,
-            rootController: SettingController())
+            rootController: SettingController(user: user))
         
         // 탭바 추가
         self.viewControllers = [recode, diaryList, setting]
@@ -89,8 +99,36 @@ final class TabBarController: UITabBarController {
     
     
     
-    // MARK: - API
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - 유저가 있는지 확인
     private func checkUser() {
+        // user가 있다면
+        if User_API.shared.checkUser() {
+            // user정보 가져오기
+            self.fetchUser_API()
+        
+        // user가 없다면
+        } else {
+            // 로그인 선택 창으로 이동
+            self.goToSelectALoginController()
+        }
+    }
+    
+    
+    
+    // MARK: - 유저정보 가져오기 _ API
+    private func fetchUser_API(auth: Bool = false) {
         // 유저가 있는지 확인
         User_API
             .shared
@@ -99,16 +137,48 @@ final class TabBarController: UITabBarController {
                 // 유저가 있다면
             case .success(let user):
                 print("로그인 성공")
-                dump(user)
+                // 탭바 UI설정
+                self.configureUI()
+                // 탭바 컨트롤러 설정
+                self.configureTabBar(user: user)
+                
+                if auth { self.dismiss(animated: true) }
+                
+                break
                 
             case .failure(_):
                 print("로그인 실패")
-                // 유저가 없다면 -> 로그인 선택 화면으로 이동
-                let vc = UINavigationController(rootViewController: SelectALoginMethodController())
-                    vc.modalPresentationStyle = .fullScreen
-                self.present(vc, animated: true)
+                // 로그인 선택 창으로 이동
+                self.goToSelectALoginController()
                 break
             }
         }
+    }
+    
+    
+    
+    // MARK: - 로그인 선택창 이동
+    private func goToSelectALoginController() {
+        DispatchQueue.main.async {
+            // 유저가 없다면 -> 로그인 선택 화면으로 이동
+            let controller = SelectALoginMethodController()
+            controller.delegate = self
+            let vc = UINavigationController(rootViewController: controller)
+                vc.modalPresentationStyle = .fullScreen
+            
+            self.present(vc, animated: true)
+        }
+    }
+}
+
+
+
+
+
+
+extension TabBarController: AuthenticationDelegate {
+    func authenticationComplete() {
+        self.fetchUser_API(auth: true)
+        
     }
 }

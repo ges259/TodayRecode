@@ -182,7 +182,15 @@ final class DetailWritingScreenController: UIViewController {
         return selectedDate == today
     }
     
-    
+//    private var urlString: [String]? = nil
+//
+//    private var createOrUpdate: () {
+//        return self.selectedRecord == nil
+//        // selectedRecord가 없는 경우(셀) -> 생성
+//        ? self.createRecord_API()
+//        // selectedRecord가 있는 경우(플러스버튼) -> 업데이트
+//        : self.updateRecord_API()
+//    }
     
     
     
@@ -466,6 +474,14 @@ extension DetailWritingScreenController {
             // 시간뷰에 기록(Record)의 시간 표시
             self.dateLbl.text = Date.DateLabelString(date: currentRecode.date)
             // ********** 이미지 (콜렉션뷰) **********
+            let img: [UIImage] =  []
+            
+            
+            currentRecode.imageUrl.forEach { string in
+                
+            }
+            
+            
             
             
             
@@ -699,20 +715,31 @@ extension DetailWritingScreenController {
         // 셀을 통해 들어온 경우
         case .record_CellTapped:
             // 업데이트
-            self.updateRecord_API()
+            _ = self.selectedImages.isEmpty
+            ? self.updateRecord_API()
+            : self.imageUpload()
             break
             
         // 일기목록화면을 통해 들어온 경우
         case .diary:
             // 오늘인 경우만 저장
             guard self.isToday else { return }
-            _ = self.selectedRecord == nil
-            // selectedRecord가 없는 경우(셀) -> 생성
-            ? self.createRecord_API()
-            // selectedRecord가 있는 경우(플러스버튼) -> 업데이트
-            : self.updateRecord_API()
+            
+            _ = self.selectedImages.isEmpty
+            ? self.createOrUpdate()
+            : self.imageUpload()
             break
         }
+    }
+    
+    
+    private func createOrUpdate(urlString: [String]? = nil) {
+        // 뒤로가기
+        return self.selectedRecord == nil
+        // selectedRecord가 없는 경우(셀) -> 생성
+        ? self.createRecord_API(urlString: urlString)
+        // selectedRecord가 있는 경우(플러스버튼) -> 업데이트
+        : self.updateRecord_API(urlString: urlString)
     }
 }
 
@@ -749,22 +776,22 @@ extension DetailWritingScreenController {
     }
     
     // MARK: - 업데이트
-    private func updateRecord_API() {
+    private func updateRecord_API(urlString: [String]? = nil) {
         // 텍스트뷰가 처음 들어왔을 때와 비교해 바뀌지 않으면 저장X
         // 화면에 들어올 때 데이터를 가지고 들어왔다면
         // 타입 옵셔널바인딩 (.diary or .record_cellTapped)
         guard self.selectedRecord?.context != self.diaryTextView.text,
               let selectedRecord = selectedRecord,
               let writing_Type = self.detailViewMode else { return }
-        
         // DB + 셀 업데이트
         Record_API.shared.updateRecord(writing_Type: writing_Type,
                                        record: selectedRecord,
                                        context: self.diaryTextView.text,
-                                       image: nil) { result in
+                                       image: urlString) { result in
             switch result {
             case .success(let record):
                 print("데이터 업데이트 성공")
+                
                 self.delegate?.updateRecord(record: record)
                 break
             case .failure(_):
@@ -776,21 +803,21 @@ extension DetailWritingScreenController {
     }
     
     // MARK: - 생성
-    private func createRecord_API() {
+    private func createRecord_API(urlString: [String]? = nil) {
         // 텍스트뷰가 빈칸인 경우 생성X
         // 오늘 날짜 및 타입 - 옵셔널바인딩
         guard self.diaryTextView.text != "",
               let date = self.todayDate, // 날짜 가져오기
               let writing_Type = self.detailViewMode else { return }
-        
         // DB에 데이터 생성
         Record_API.shared.createRecord(writing_Type: writing_Type,
                                        date: date,
                                        context: self.diaryTextView.text,
-                                       image: nil) { result in
+                                       image: urlString) { result in
             switch result {
             case .success(let record):
                 print("데이터 생성 성공")
+                
                 // 셀 업데이트
                 self.delegate?.createRocord(record: record)
                 break
@@ -799,6 +826,16 @@ extension DetailWritingScreenController {
                 self.delegate?.createRocord(record: nil)
                 break
             }
+        }
+    }
+    
+    
+    // MARK: - 이미지 업로드
+    private func imageUpload(update: Bool = true) {
+        // 이미지 업로드
+        ImageUploader.uploadImage(image: self.selectedImages) { urlStrings in
+            print(#function)
+            self.createOrUpdate(urlString: urlStrings)
         }
     }
 }

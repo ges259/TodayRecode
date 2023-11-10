@@ -33,7 +33,14 @@ final class ImageCollectionView: UIView {
         return collectionView
     }()
     
-    
+    /// Record데이터가 없을 때 보이는 뷰
+    private lazy var noDataView: NoRecordDataView = {
+        let view = NoRecordDataView(
+            frame: .zero,
+            nodataEnum: .diary)
+            view.backgroundColor = .customWhite5
+        return view
+    }()
     
     
     
@@ -109,10 +116,15 @@ extension ImageCollectionView {
     private func configureAutoLayout() {
         // ********** addSubview 설정 **********
         self.addSubview(self.collectionView)
+        self.addSubview(self.noDataView)
         
         // ********** 오토레이아웃 설정 **********
         self.collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+        // 데이터가 없을 때 나오는 레이블
+        self.noDataView.snp.makeConstraints { make in
+            make.edges.equalTo(self.collectionView)
         }
     }
 }
@@ -187,10 +199,16 @@ extension ImageCollectionView: UICollectionViewDataSource {
     /// 콜렉션뷰 아이템 개수 설정
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        return self.collectionViewEnum == .photoList
-        ? self.currentImage.count
-        : self.currentDiary.count
-        
+        if self.collectionViewEnum == .photoList {
+            self.noDataView.isHidden = true
+            return self.currentImage.count
+            
+        } else {
+            self.noDataView.isHidden = self.currentDiary.count == 0
+            ? false
+            : true
+            return self.currentDiary.count
+        }
     }
     /// 콜렉션뷰 설정
     func collectionView(_ collectionView: UICollectionView,
@@ -325,4 +343,47 @@ extension ImageCollectionView: ImageCollectionViewDelegate {
     func deleteBtnTapped() {
         self.delegate?.itemDeleteBtnTapped(index: Int(self.currentPage))
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+final class CustomCollectionView: UICollectionView {
+    
+    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+        let flowLayout = UICollectionViewFlowLayout()
+            flowLayout.scrollDirection = .horizontal
+        super.init(frame: .zero, collectionViewLayout: flowLayout)
+        
+        self.configureUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    private func configureUI() {
+//        self.dataSource = self
+//        self.delegate = self
+        // 배경 설정
+        self.backgroundColor = UIColor.clear
+        // 콜렉션뷰 옆으로 넘길 때 속도 설정
+        self.decelerationRate = UIScrollView.DecelerationRate.fast
+        // 인디케이터 없애기
+        self.showsHorizontalScrollIndicator = false
+        // 콜렉션뷰가 바운스되지 않도록 설정
+        self.bounces = false
+    }
+    
+    
 }

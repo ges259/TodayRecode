@@ -78,13 +78,24 @@ enum NavTitleSetEnum {
 enum NoDataEnum {
     case record_Main
     case record_Check
+    case diary
     
     var lblString: String {
         switch self {
         case .record_Main: return "아직 작성한 기록이 없어요.\n +버튼을 눌러 오늘을 기록해보세요!"
         case .record_Check: return "오늘 작성한 기록이 없어요."
+        case .diary: return "이번 달에 작성한 일기가 없어요"
         }
     }
+    
+    var systemImg: UIImage? {
+        switch self {
+        case .record_Main: return UIImage.noDataList
+        case .record_Check: return UIImage.noDataList
+        case .diary: return UIImage.calendar
+        }
+    }
+    
 }
 
 

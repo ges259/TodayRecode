@@ -46,6 +46,18 @@ final class SelectALoginMethodController: UIViewController {
     
     
     
+    
+    
+    // MARK: - 프로퍼티
+    weak var delegate: AuthenticationDelegate?
+    
+    
+    
+    
+    
+    
+    
+    
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -109,7 +121,7 @@ extension SelectALoginMethodController {
         self.emailLogin.addTarget(self, action: #selector(self.emailLoginTapped), for: .touchUpInside)
     }
 }
-
+ 
 
 
 
@@ -129,6 +141,7 @@ extension SelectALoginMethodController {
     }
     @objc private func emailLoginTapped() {
         let vc = LoginController()
+        vc.delegate = self.delegate
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

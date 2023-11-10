@@ -109,10 +109,6 @@ extension CalendarView {
     
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
-        self.calendar.firstWeekday = dateFormat_Static == 0
-        ? 1 // 일요일 시작
-        : 2 // 월요일 시작
-        
         // ********** addSubview 설정 **********
         self.addSubview(self.calendar)
         // ********** 오토레이아웃 설정 **********
@@ -146,6 +142,13 @@ extension CalendarView {
     // MARK: - 현재 달력의 상태 리턴
     func currentCalendarScope() -> FSCalendarScope {
         return self.calendar.scope
+    }
+    
+    
+    func configureDateFormat() {
+        self.calendar.firstWeekday = dateFormat_Static == 0
+        ? 1 // 일요일 시작
+        : 2 // 월요일 시작
     }
 }
 
@@ -190,9 +193,6 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDele
          4. self.currentDiary.firstIndex(of: Date)로 몇 번째 인덱스인지 찾기
             -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
          */
-        
-        print(#function)
-        
         // dateLabel에 선택된 날짜 띄우기
          self.delegate?.selectDate(date: date)
     }

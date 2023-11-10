@@ -7,7 +7,9 @@
 
 import UIKit
 
-
+protocol AuthenticationDelegate: AnyObject {
+    func authenticationComplete()
+}
 
 protocol AccessoryViewDelegate: AnyObject {
     func cameraBtnTapped()
