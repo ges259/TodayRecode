@@ -7,7 +7,7 @@
 
 import UIKit
 import Firebase
-import SDWebImage
+
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

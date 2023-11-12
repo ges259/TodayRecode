@@ -116,6 +116,16 @@ extension UIViewController {
     }
     
     
+    // MARK: - API 실패 시 얼럿창 띄우기
+    func apiFail_Alert() {
+        self.customAlert(
+            alertStyle: .alert,
+            withTitle: "오류",
+            message: "다시 시도해 주세요.") { _ in }
+    }
+    
+    
+    
     
     
     

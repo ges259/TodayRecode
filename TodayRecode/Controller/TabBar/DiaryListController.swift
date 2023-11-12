@@ -51,7 +51,14 @@ final class DiaryListController: UIViewController {
         backgroundColor: UIColor.white)
     
     
-    
+    /// Record데이터가 없을 때 보이는 뷰
+    private lazy var noDataView: NoRecordDataView = {
+        let view = NoRecordDataView(
+            frame: .zero,
+            nodataEnum: .diary)
+            view.backgroundColor = .customWhite5
+        return view
+    }()
     
     
     
@@ -150,6 +157,7 @@ extension DiaryListController {
     private func configureAutoLayout() {
         // ********** addSubview 설정 **********
         [self.backgroundImg,
+         self.noDataView,
          self.collectionView,
          self.stackView,
          self.plusBtn].forEach { view in
@@ -189,6 +197,10 @@ extension DiaryListController {
         // 네비게이션 타이틀
         self.navTitle.snp.makeConstraints { make in
             make.width.lessThanOrEqualTo(100)
+        }
+        self.noDataView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalTo(self.collectionView)
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-10)
         }
     }
     
@@ -277,9 +289,15 @@ extension DiaryListController {
             // 상세 작성 화면의 탭바 없애기
             vc.hidesBottomBarWhenPushed = true
         
+        
         // 아이템(셀) 선택을 했을 경우 -> 데이터 보내기
         if let index = index {
             vc.selectedRecord = self.diaryArray[index]
+            // 셀에 적힌 날짜의 기록 가져오기
+            vc.fetchRecords_API(date: self.calendar.returnSelectedDate ?? Date())
+        } else {
+            // 오늘 기록 가져오기
+            vc.fetchRecords_API(date: Date())
         }
         // 화면 이동
         self.navigationController?.pushViewController(vc, animated: true)
@@ -289,20 +307,22 @@ extension DiaryListController {
     
     // MARK: - 오늘 일기를 썼는지 확인
     private func checkTodayDiary() {
-        // 오늘 일기를 쓴 데이터가 있다면
-        if !self.diaryArray.isEmpty {
-            // 배열의 마지막 날
-            let arrayLast = self.diaryArray.last?.date.reset_time()
-            // 오늘
-            let today = Date().reset_time()
-            // 서로 비교
-                // -> 같다면 일기를 썼다는 표시 -> 플러스버튼 숨기기
-                // -> 다르다면 일기를 쓰지 않았다는 표시 -> 플러스버튼 보이게 하기
-            self.plusBtn.isHidden = arrayLast == today
-        } else {
-            // 이번달에 일기를 쓴 기록이 없다면 -> 플러스버튼 보이게 하기
-            self.plusBtn.isHidden = false
-        }
+        // 오늘 일기를 쓴 데이터가
+        self.noDataView.isHidden = self.diaryArray.count == 0
+        ? false // 있다면 -> 숨기기
+        : true // 없다면 -> 이번 달에 작성한 일기가 없다고 띄우기
+        
+        
+        // 배열의 마지막 날
+        let arrayLast = self.diaryArray.last?.date.reset_time()
+        // 오늘
+        let today = Date().reset_time()
+        // 서로 비교
+        // -> 같다면 일기를 썼다는 표시 -> 플러스버튼 숨기기
+        // -> 다르다면 일기를 쓰지 않았다는 표시 -> 플러스버튼 보이게 하기
+        self.plusBtn.isHidden = arrayLast == today
+        ? true
+        : false // 이번달에 일기를 쓴 기록이 없다면 -> 플러스버튼 보이게 하기
     }
 }
 
@@ -338,7 +358,7 @@ extension DiaryListController {
                 }
                 break
             case .failure(_):
-                // Fix
+                self.apiFail_Alert()
                 break
             }
         }
@@ -492,6 +512,7 @@ extension DiaryListController: UICollectionViewDataSource,
     /// 아이템 개수
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
+        
         return self.diaryArray.count
     }
     

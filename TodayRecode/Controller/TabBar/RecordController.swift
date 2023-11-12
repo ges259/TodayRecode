@@ -136,7 +136,7 @@ final class RecordController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-//        self.fetchRecords_API()         // 데이터 가져오기
+        self.fetchRecords_API()         // 데이터 가져오기
         self.configureUI()          // UI 설정
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
@@ -268,7 +268,6 @@ extension RecordController {
         self.noDataView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(self.tableView)
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-10)
-//            make.height.equalTo(300)
         }
     }
     
@@ -325,7 +324,7 @@ extension RecordController {
             case .success(let recordArray):
                 self.fetchCell(recordArray: recordArray)
             case .failure(_):
-                // Fix
+                self.apiFail_Alert()
                 break
             }
         }
@@ -341,7 +340,7 @@ extension RecordController {
                 // 셀 삭제
                 self.deleteCell()
             case .failure(_):
-                // Fix
+                self.apiFail_Alert()
                 break
             }
         }
@@ -372,8 +371,6 @@ extension RecordController {
             with: .none)
     }
     
-    
-    
     // MARK: - 셀 업데이트
     private func updateCell(record: Record) {
         // 오늘이라면 -> 오늘 배열에 저장
@@ -389,7 +386,6 @@ extension RecordController {
                                   with: .automatic)
     }
     
-    
     // MARK: - 셀 삭제
     private func deleteCell() {
         // 배열에서 해당 데이터 삭제
@@ -402,7 +398,6 @@ extension RecordController {
                                                  section: 0)],
                                   with: .automatic)
     }
-    
     
     // MARK: - 셀 가져오기
     private func fetchCell(recordArray: [Record]) {
@@ -588,20 +583,17 @@ extension RecordController: CalendarDelegate {
         
         // 선택된 날짜가 오늘이라면
         if todayDate == selectedDate {
-            print("1")
             self.isToday = true
             self.tableView.reloadData()
 
         // 선택된 날짜가 오늘이 아니라면
             // 1. 가장 최근에 선택되었던 날이라면
         } else if self.anotherDay_Date == selectedDate {
-            print("2")
             self.isToday = false
             self.tableView.reloadData()
             
             // 2. 가장 최근에 선택된 날이 아니라면
         } else {
-            print("3")
             self.isToday = false
             // 선택한 날짜의 데이터 가져오기
             self.fetchRecords_API(date: date)
@@ -754,7 +746,7 @@ extension RecordController: EasyWritingScreenDelegate {
         if let record = record {
             self.addRecord(record: record)
         } else {
-            // Fix
+            self.apiFail_Alert()
             print("create_Error")
         }
     }
@@ -769,7 +761,7 @@ extension RecordController: DetailWritingScreenDelegate {
         if let record = record {
             self.addRecord(record: record)
         } else {
-            // Fix
+            self.apiFail_Alert()
             print("create_Error")
         }
     }
@@ -778,7 +770,7 @@ extension RecordController: DetailWritingScreenDelegate {
         if let record = record {
             self.updateCell(record: record)
         } else {
-            // Fix
+            self.apiFail_Alert()
             print("update_Error")
         }
     }
@@ -787,7 +779,7 @@ extension RecordController: DetailWritingScreenDelegate {
         if success {
             self.deleteCell()
         } else {
-            // Fix
+            self.apiFail_Alert()
             print("delete_Error")
         }
     }

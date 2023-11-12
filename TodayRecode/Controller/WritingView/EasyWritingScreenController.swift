@@ -25,7 +25,7 @@ final class EasyWritingScreenController: UIViewController {
     /// 텍스트뷰
     private lazy var recodeTextView: UITextView = {
         let tv = UITextView.configureTV(fontSize: 14)
-            tv.delegate = self
+        tv.delegate = self
         return tv
     }()
     /// 확장 버튼
@@ -105,13 +105,13 @@ final class EasyWritingScreenController: UIViewController {
             name: UIResponder.keyboardWillHideNotification,
             object: nil)
     }
-    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.containerView.isHidden = true
         // 노티피케이션 삭제
         NotificationCenter.default.removeObserver(self)
     }
+}
     
     
     
@@ -119,10 +119,14 @@ final class EasyWritingScreenController: UIViewController {
     
     
     
+
+
+
+// MARK: - 화면 설정
     
+extension EasyWritingScreenController {
     
-    
-    // MARK: - 화면 설정
+    // MARK: - UI 설정
     private func configureUI() {
         // 배경 색 설정
         self.view.backgroundColor = .darkGray.withAlphaComponent(0.4)
@@ -137,9 +141,6 @@ final class EasyWritingScreenController: UIViewController {
         // 데이트뷰에 날짜 설정
         self.dateLbl.text = Date.DateLabelString(date: Date())
     }
-    
-    
-    
     
     // MARK: - 오토레이아웃 설정
     private func configureAotoLayout() {
@@ -193,19 +194,17 @@ final class EasyWritingScreenController: UIViewController {
         }
     }
     
-    
-    
     // MARK: - 액션 설정
     /// 제스쳐, 버튼 액션, 노티피케이션 설정
     private func configureAction() {
         /// 제스쳐
         let gesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissView))
-            gesture.numberOfTapsRequired = 1
+        gesture.numberOfTapsRequired = 1
         self.view.addGestureRecognizer(gesture)
         
         /// 아무 행동도 하지 않기
         let gesture2 = UITapGestureRecognizer(target: self, action: #selector(self.nothingHappened))
-            gesture2.numberOfTapsRequired = 1
+        gesture2.numberOfTapsRequired = 1
         self.containerView.addGestureRecognizer(gesture2)
         
         self.expansionBtn.addTarget(self, action: #selector(self.expansionBtnTapped), for: .touchUpInside)
@@ -214,6 +213,7 @@ final class EasyWritingScreenController: UIViewController {
         // 액션
         self.sendBtn.addTarget(self, action: #selector(self.sendBtnTapped), for: .touchUpInside)
     }
+}
     
     
     
@@ -224,15 +224,9 @@ final class EasyWritingScreenController: UIViewController {
     
     
     
+// MARK: - 셀렉터
     
-    
-    
-    
-    
-    
-    
-    
-    
+extension EasyWritingScreenController {
     
     // MARK: - 노티피케이션 액션
     /// 키보드가 올라갈 때 호출 됨
@@ -251,15 +245,6 @@ final class EasyWritingScreenController: UIViewController {
         self.view.frame.origin.y = 0
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
     // MARK: - 확장 버튼 액션
     /// 확장 버튼을 누르면 호출 됨
     @objc private func expansionBtnTapped() {
@@ -269,24 +254,14 @@ final class EasyWritingScreenController: UIViewController {
         self.delegate?.expansionBtnTapped(context: self.recodeTextView.text)
     }
     
-    
-    
     // MARK: - 저장 버튼 액션
     @objc private func sendBtnTapped() {
         self.dismissView()
     }
     
-    
-    
-    
-    
-    
-    
     /// 컨테이너뷰를 클릭했을 때 viewTapped가 불려 뒤로 가는 현상으로 인해 해당 메서드를 만들었음
     @objc private func nothingHappened() {
     }
-    
-    
     
     // MARK: - 뒤로가기 액션 + API
     /// 화면을 누르면 + 보내기 버튼 누르면 뒤로 가기
@@ -306,6 +281,13 @@ final class EasyWritingScreenController: UIViewController {
 
 
 
+
+
+
+
+
+
+
 // MARK: - API
 extension EasyWritingScreenController {
     private func createRecord_API() {
@@ -319,15 +301,16 @@ extension EasyWritingScreenController {
                 print("데이터 생성 성공")
                 // DB 생성
                 self.delegate?.createRecord(record: record)
-
                 break
             case .failure(_):
-                // Fix
+                self.delegate?.createRecord(record: nil)
                 break
             }
         }
     }
 }
+
+
 
 
 
