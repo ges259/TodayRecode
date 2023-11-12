@@ -20,12 +20,11 @@ final class DetailWritingScreenController: UIViewController {
     /// 네비게이션 타이틀 레이블
     private lazy var navTitle: UILabel = UILabel.navTitleLbl()
     /// 콜렉션뷰
-    private lazy var collectionView: ImageCollectionView = {
-        let collectionView = ImageCollectionView(
-            frame: .zero,
-            collectionViewEnum: .photoList)
-            collectionView.delegate = self
-            collectionView.isHidden = true
+    private lazy var collectionView: CustomCollectionView = {
+        let collectionView = CustomCollectionView()
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.isHidden = true
         return collectionView
     }()
     
@@ -159,20 +158,15 @@ final class DetailWritingScreenController: UIViewController {
     /// 셀을 클릭하여 상세작성 화면에 들어온 경우
     var selectedRecord: Record? {
         didSet {
-            // 데이터가 있다면 -> 해당 데이터의 날짜를 저장
             if let selectedRecord = selectedRecord {
-                self.todayDate = selectedRecord.date
+                dump(selectedRecord)
             }
         }
     }
+    
+    
     /// DB에 저장할 날짜를 표시
     lazy var todayDate: Date? = Date()
-    
-    
-    /// 키보드가 올라와있는지 확인하는 변수
-    private var keyboardShow: Bool = false
-    
-    
     // 오늘인지 아닌지를 판단하는 변수
     private var isToday: Bool {
         // 일기 목록 화면의 달력에 선택된 날짜
@@ -181,41 +175,51 @@ final class DetailWritingScreenController: UIViewController {
         let today = Date().reset_time()
         return selectedDate == today
     }
+    /// 현재 콜렉션뷰의 페이지를 보여주는 변수
+    private var currentPage: CGFloat = 0
+    /// 키보드가 올라와있는지 확인하는 변수
+    private var keyboardShow: Bool = false
     
-//    private var urlString: [String]? = nil
-//
-//    private var createOrUpdate: () {
-//        return self.selectedRecord == nil
-//        // selectedRecord가 없는 경우(셀) -> 생성
-//        ? self.createRecord_API()
-//        // selectedRecord가 있는 경우(플러스버튼) -> 업데이트
-//        : self.updateRecord_API()
-//    }
     
+    /// 콜렉션뷰의 넓이 (콜렉션뷰의 CGSize를 설정할 때 사용)
+    private lazy var collectionViewWidth = self.collectionView.frame.width
     
     
     
     
     // 이미지 관련 배열
-    private lazy var selectedAssets: [PHAsset] = [] {
-        didSet {
-            print(self.selectedAssets)
-        }
-    }
+    private lazy var selectedAssets: [PHAsset] = []
     
+    /// 모든 이미지
     private lazy var selectedImages: [UIImage] = [] {
         didSet {
-            self.collectionView.currentImage = self.selectedImages
-            
+            self.collectionView.reloadData()
+            // MARK: - Fix
             self.collectionView.isHidden = self.selectedImages.count == 0
             ? true
             : false
         }
     }
+    /// 추가된 이미지
+    private lazy var addedImages: [UIImage] = []
+    /// url_String을 저장하는 배열
+    private var urlString: [String] = [] {
+        didSet {
+            dump(urlString)
+        }
+    }
+    lazy var imageIsChanged: Bool = false
     
     
     
-    
+    private var createOrUpdate: () {
+        // 뒤로가기
+        return self.selectedRecord == nil
+        // selectedRecord가 없는 경우(셀) -> 생성
+        ? self.createRecord_API()
+        // selectedRecord가 있는 경우(플러스버튼) -> 업데이트
+        : self.updateRecord_API()
+    }
     
     
     
@@ -469,19 +473,18 @@ extension DetailWritingScreenController {
             self.placeholderLbl.isHidden = true
             
             // ********** 시간 **********
+            // 해당 데이터의 날짜를 저장
+            self.todayDate = currentRecode.date
             // 날짜뷰에 기록(Record)의 시간 표시
             self.dateView.configureDate(selectedDate: currentRecode.date)
             // 시간뷰에 기록(Record)의 시간 표시
             self.dateLbl.text = Date.DateLabelString(date: currentRecode.date)
             // ********** 이미지 (콜렉션뷰) **********
-            let img: [UIImage] =  []
-            
-            
-            currentRecode.imageUrl.forEach { string in
-                
-            }
-            
-            
+            // 가져온 이미지 url저장
+            self.urlString = currentRecode.imageUrl
+            // url -> 이미지로 변환
+            self.loadImage(imageUrl: currentRecode.imageUrl)
+
             
             
             
@@ -591,7 +594,7 @@ extension DetailWritingScreenController {
     
     
     // MARK: - 삭제 버튼
-    @objc private func deleteBtnTapped() {
+    @objc internal func deleteBtnTapped() {
         // 얼럿창 띄우기
         self.customAlert(
             withTitle: "정말 삭제 하시겠습니까?",
@@ -677,30 +680,47 @@ extension DetailWritingScreenController {
             (assets) in
                 // Done 버튼 누르면 실행되는 내용
             print("done")
-                self.selectedAssets.removeAll()
-
-                for i in assets {
-                    self.selectedAssets.append(i)
-                }
-            // PHAsset을 UIImage로 변환 후 저장
-            let images = self.convertAssetToImage(selectedAssets: self.selectedAssets)
             
-            // 이미지 저장
-            // -> 콜렉션뷰에 전달
-            // -> 콜렉션뷰 리로드
-            // 0개라면 콜렉션뷰 숨기기
-            self.selectedImages.append(contentsOf: images)
+            _ = self.selectedImages.count + assets.count >= 6
+            ? self.goAlert()
+            : self.imagePlus(assets: assets)
         })
     }
     
+    private func goAlert() {
+        DispatchQueue.main.async {
+            self.customAlert(
+                alertStyle: .alert,
+                withTitle: "이미지는 5개를 넘을 수 없습니다.") { _ in }
+        }
+    }
+    
+    private func imagePlus(assets: [PHAsset]) {
+        // assets
+        self.selectedAssets.removeAll()
+        
+        for i in assets {
+            self.selectedAssets.append(i)
+        }
+        // PHAsset을 UIImage로 변환 후 저장
+        let images = self.convertAssetToImage(selectedAssets: self.selectedAssets)
+        
+        self.imageIsChanged = true
+        // 이미지 저장
+        // -> 콜렉션뷰에 전달
+        // -> 콜렉션뷰 리로드
+        // 0개라면 콜렉션뷰 숨기기
+        self.selectedImages.append(contentsOf: images)
+        self.addedImages.append(contentsOf: images)
+    }
     
     
     // MARK: - 화면 나가기 (+ API)
     @objc private func leftNavBtnTapped() {
-        // 뒤로가기
-        self.navigationController?.popViewController(animated: true)
         // 노티피케이션 삭제
         NotificationCenter.default.removeObserver(self)
+        // 뒤로가기
+        self.navigationController?.popViewController(animated: true)
         
         // 현재 모드 확인
         guard let mode = self.detailViewMode else { return }
@@ -709,13 +729,15 @@ extension DetailWritingScreenController {
         // 플러스버튼을 통해 들어온 경우
         case .record_plusBtn:
             // 생성
-            self.createRecord_API()
+            _ = self.addedImages.isEmpty
+            ? self.createRecord_API()
+            : self.imageUpload()
             break
             
         // 셀을 통해 들어온 경우
         case .record_CellTapped:
             // 업데이트
-            _ = self.selectedImages.isEmpty
+            _ = self.addedImages.isEmpty
             ? self.updateRecord_API()
             : self.imageUpload()
             break
@@ -724,22 +746,32 @@ extension DetailWritingScreenController {
         case .diary:
             // 오늘인 경우만 저장
             guard self.isToday else { return }
-            
-            _ = self.selectedImages.isEmpty
-            ? self.createOrUpdate()
+            // 생성 or 업데이트
+            _ = self.addedImages.isEmpty
+            ? self.createOrUpdate
             : self.imageUpload()
             break
         }
     }
     
     
-    private func createOrUpdate(urlString: [String]? = nil) {
-        // 뒤로가기
-        return self.selectedRecord == nil
-        // selectedRecord가 없는 경우(셀) -> 생성
-        ? self.createRecord_API(urlString: urlString)
-        // selectedRecord가 있는 경우(플러스버튼) -> 업데이트
-        : self.updateRecord_API(urlString: urlString)
+    
+    private func deleteImage(page: Int) {
+        if self.urlString.count > page {
+            // url삭제
+            self.urlString.remove(at: page)
+            self.selectedImages.remove(at: page)
+            
+        // urlString이 존재
+        } else if urlString.count != 0 {
+            self.selectedImages.remove(at: page)
+            let index = page - (self.urlString.count)
+            self.addedImages.remove(at: index)
+        // urlString이 존재X
+        } else {
+            self.selectedImages.remove(at: page)
+            self.addedImages.remove(at: page)
+        }
     }
 }
 
@@ -761,7 +793,8 @@ extension DetailWritingScreenController {
         // 문서ID 가져오기
         guard let documentID = self.selectedRecord?.documentID else { return }
         // DB - 삭제
-        Record_API.shared.deleteRecord(documentID: documentID) { result in
+        Record_API.shared.deleteRecord(documentID: documentID,
+                                       imageUrl: self.urlString) { result in
             switch result {
             case .success(_):
                 print("데이터 삭제 성공")
@@ -775,19 +808,24 @@ extension DetailWritingScreenController {
         }
     }
     
+    
+    
     // MARK: - 업데이트
-    private func updateRecord_API(urlString: [String]? = nil) {
+    private func updateRecord_API() {
         // 텍스트뷰가 처음 들어왔을 때와 비교해 바뀌지 않으면 저장X
         // 화면에 들어올 때 데이터를 가지고 들어왔다면
         // 타입 옵셔널바인딩 (.diary or .record_cellTapped)
-        guard self.selectedRecord?.context != self.diaryTextView.text,
+        guard self.selectedRecord?.context != self.diaryTextView.text
+              || self.imageIsChanged,
               let selectedRecord = selectedRecord,
               let writing_Type = self.detailViewMode else { return }
+        
+        
         // DB + 셀 업데이트
         Record_API.shared.updateRecord(writing_Type: writing_Type,
                                        record: selectedRecord,
                                        context: self.diaryTextView.text,
-                                       image: urlString) { result in
+                                       image: self.urlString) { result in
             switch result {
             case .success(let record):
                 print("데이터 업데이트 성공")
@@ -803,21 +841,21 @@ extension DetailWritingScreenController {
     }
     
     // MARK: - 생성
-    private func createRecord_API(urlString: [String]? = nil) {
+    private func createRecord_API() {
         // 텍스트뷰가 빈칸인 경우 생성X
         // 오늘 날짜 및 타입 - 옵셔널바인딩
-        guard self.diaryTextView.text != "",
+        guard self.diaryTextView.text != ""
+                || !self.addedImages.isEmpty,
               let date = self.todayDate, // 날짜 가져오기
               let writing_Type = self.detailViewMode else { return }
         // DB에 데이터 생성
         Record_API.shared.createRecord(writing_Type: writing_Type,
                                        date: date,
                                        context: self.diaryTextView.text,
-                                       image: urlString) { result in
+                                       image: self.urlString) { result in
             switch result {
             case .success(let record):
                 print("데이터 생성 성공")
-                
                 // 셀 업데이트
                 self.delegate?.createRocord(record: record)
                 break
@@ -831,11 +869,23 @@ extension DetailWritingScreenController {
     
     
     // MARK: - 이미지 업로드
-    private func imageUpload(update: Bool = true) {
+    private func imageUpload() {
         // 이미지 업로드
-        ImageUploader.uploadImage(image: self.selectedImages) { urlStrings in
-            print(#function)
-            self.createOrUpdate(urlString: urlStrings)
+        ImageUploader.shared.uploadImage(image: self.addedImages) { urlStrings in
+            // url_String 추가
+            self.urlString.append(contentsOf: urlStrings)
+            // 생성 or 업데이트
+            self.createOrUpdate
+        }
+    }
+    
+    // MARK: - 이미지 로드
+    private func loadImage(imageUrl: [String]) {
+        ImageUploader.shared.loadImageView(with: imageUrl) { imgString in
+            DispatchQueue.main.async {
+                guard let imgString = imgString else { return }
+                self.selectedImages = imgString
+            }
         }
     }
 }
@@ -879,14 +929,116 @@ extension DetailWritingScreenController: UITextViewDelegate {
 
 
 // MARK: - 콜렉션뷰 델리게이트
-extension DetailWritingScreenController: CollectionViewDelegate {
-    func itemDeleteBtnTapped(index: Int) {
-        self.selectedImages.remove(at: index)
+extension DetailWritingScreenController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    /// 아이템 개수
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.selectedImages.count
     }
-    func itemTapped(index: Int) {
-        print(#function)
+    
+    /// 아이템 표현?
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: Identifier.imageListCollectionViewCell,
+            for: indexPath) as! ImageCollectionViewCell
+        
+            cell.delegate = self
+            // 상세 작성 화면
+            cell.collectionViewEnum = .photoList
+            // 이미지 넣기
+            cell.imageView.image = self.selectedImages[indexPath.row]
+        
+        return cell
     }
-    func collectionViewScrolled(index: Int) {
-        print(index)
+    
+    /// 아이템간 좌우 간격
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 20
+    }
+    
+    /// 아이템 크기 설정
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: self.collectionViewWidth,
+                      height: self.collectionViewWidth)
+    }
+}
+
+
+
+extension DetailWritingScreenController: ImageCollectionViewDelegate {
+    ///
+    func cellDeleteBtnTapped() {
+        
+        self.imageIsChanged = true
+        
+        // 현재 페이지 타입캐스팅
+        let page = Int(self.currentPage)
+        self.deleteImage(page: page)
+        // 배열의 마지막이라면, 첫번째 페이지가 아니라면
+        if page == self.selectedImages.count
+            && page != 0 {
+            // -> 현재 페이지 -1
+            self.currentPage -= 1
+        }
+    }
+}
+
+
+
+
+
+
+
+
+// MARK: - 콜렉션뷰 스클로뷰
+extension DetailWritingScreenController {
+    /// 콜렉션뷰에서 스크롤이 끝났을 때
+    func scrollViewWillEndDragging(
+        _ scrollView: UIScrollView, // 스크롤뷰(컬렉션뷰)
+        withVelocity velocity: CGPoint, // 스크롤하다 터치 해제 시 속도
+        targetContentOffset: UnsafeMutablePointer<CGPoint>) // 스크롤 속도가 줄어들어 정지될 때 예상되는 위치
+    {
+        // 현재 x의 offset위치
+        let scrolledOffsetX = targetContentOffset.pointee.x + scrollView.contentInset.left
+        // 스크롤뷰의 크기 + 왼쪽 insets값
+        let cellWidth = self.collectionViewWidth + 20
+        
+        // 스크롤한 위치값
+        var index = scrolledOffsetX / cellWidth
+        
+        // 이동하는 위치 가져오기
+        let scrolledX = scrollView.contentOffset.x
+        let pointeeX = targetContentOffset.pointee.x
+        
+        // 어디서 어디로 스크롤하는지 확인
+        if scrolledX > pointeeX {
+            // 왼쪽 -> 오른쪽으로 갈 때 자연스럽게
+            index = floor(index)
+        } else if scrolledX < pointeeX {
+            // 오른쪽 -> 왼쪽으로 갈 때 자연스럽게
+            index = ceil(index)
+        } else {
+            index = round(index)
+        }
+        
+        
+        // 한 페이지씩 움직일 수 있도록 설정
+        // 페이지 이동 (+델리게이트)
+        if self.currentPage > index {
+            self.currentPage -= 1
+        } else if currentPage < index {
+            self.currentPage += 1
+        }
+        
+        // 현재 페이지 저장
+        index = self.currentPage
+        // 스크롤 속도가 줄어들어 정지될 때 예상되는 위치 설정
+        // 즉, 멈출 페이지
+        targetContentOffset.pointee = CGPoint(
+            x: index * cellWidth - scrollView.contentInset.left,
+            y: scrollView.contentInset.top)
     }
 }

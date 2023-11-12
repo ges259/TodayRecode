@@ -42,7 +42,8 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     /// 삭제 버튼
     private lazy var deleteBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.deleteBtn,
-        tintColor: UIColor.white)
+        tintColor: UIColor.lightGray)
+    
     
     
     
@@ -95,10 +96,6 @@ extension ImageCollectionViewCell {
     private func configureUI() {
         self.clipsToBounds = true
         self.layer.cornerRadius = 10
-        
-        // MARK: - Fix
-        self.dateLbl.text = "10일"
-        self.imageView.image = UIImage(named: "cat")
     }
     
     
@@ -159,6 +156,6 @@ extension ImageCollectionViewCell {
     
     // MARK: - 삭제 버튼 액션
     @objc private func deleteBtnTapped() {
-        self.delegate?.deleteBtnTapped()
+        self.delegate?.cellDeleteBtnTapped()
     }
 }

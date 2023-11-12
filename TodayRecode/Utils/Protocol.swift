@@ -43,7 +43,7 @@ protocol CalendarDelegate: AnyObject {
 
 
 protocol ImageCollectionViewDelegate: AnyObject {
-    func deleteBtnTapped()
+    func cellDeleteBtnTapped()
 }
 
 protocol CollectionViewDelegate: AnyObject {

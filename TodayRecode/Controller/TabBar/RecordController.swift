@@ -136,7 +136,7 @@ final class RecordController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.fetchRecords_API()         // 데이터 가져오기
+//        self.fetchRecords_API()         // 데이터 가져오기
         self.configureUI()          // UI 설정
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
@@ -267,7 +267,8 @@ extension RecordController {
         // 데이터가 없을 때 나오는 레이블
         self.noDataView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(self.tableView)
-            make.height.equalTo(300)
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-10)
+//            make.height.equalTo(300)
         }
     }
     
@@ -329,9 +330,11 @@ extension RecordController {
             }
         }
     }
-    private func deleteRecord_API(documentID: String?) {
+    private func deleteRecord_API(documentID: String?,
+                                  imageUrl: [String]?) {
         // DB - 삭제
-        Record_API.shared.deleteRecord(documentID: documentID) { result in
+        Record_API.shared.deleteRecord(documentID: documentID,
+                                       imageUrl: imageUrl) { result in
             switch result {
             case .success(_):
                 print("데이터 삭제 성공")
@@ -678,7 +681,8 @@ extension RecordController: UITableViewDelegate {
             let record: Record = self.currentArray[indexPath.row]
             
             // DB삭제 + 셀 삭제
-            self.deleteRecord_API(documentID: record.documentID)
+            self.deleteRecord_API(documentID: record.documentID,
+                                  imageUrl: record.imageUrl)
             success(true)
         }
         // 이미지 및 색상 설정

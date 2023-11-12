@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 
 
 struct Record_API {
@@ -124,13 +125,12 @@ struct Record_API {
             API_String.context: context,
             API_String.created_at: current,
             API_String.user: uid]
-        
+        //
         // 이미지 배열 옵셔널 바인딩
-        if let image = image {
+        if let image = image, !image.isEmpty {
             // 딕셔너리에 추가
             value[API_String.image_url] = image       // 이미지_url
         }
-        print(value)
         // DB에 저장
         API_String
             .recodeDB
@@ -177,14 +177,8 @@ struct Record_API {
             API_String.writing_Type: writing_Type.api,  // writing_Type
             API_String.context: context,                // context
             API_String.created_at: current,             // record의 날짜
+            API_String.image_url: image ?? [],       // 이미지_url
             API_String.user: uid]                       // uid
-                            
-        
-        // 이미지 배열 옵셔널 바인딩
-        if let image = image {
-            // 딕셔너리에 추가
-            value[API_String.image_url] = image       // 이미지_url
-        }
         
         // DB에 저장
         API_String
@@ -212,6 +206,7 @@ struct Record_API {
     
     // MARK: - 기록 삭제
     func deleteRecord(documentID: String?,
+                      imageUrl: [String]?,
                       completion: @escaping (Result<Void, Error>) -> Void) {
         // 문서ID 옵셔널 바인딩
         guard let documentID = documentID else { return }
@@ -222,6 +217,36 @@ struct Record_API {
                 completion(.failure(error))
                 return
             }
+            
+            if let imageUrl = imageUrl {
+//                var images: [UIImage]?
+//                ImageUploader.shared.loadImageView(with: imageUrl) { image in
+//                    images = image
+//                }
+//                guard let images = images else { return }
+                
+                // DC01B082-68D2-472F-B300-2423A5BD6026/images_0
+                imageUrl.forEach({ url_String in
+                    let ref = Storage.storage().reference().child(url_String)
+                    
+                    print(url_String)
+                    ref.delete { error in
+                        // 에러가 있다면
+                        if let error = error {
+                            completion(.failure(error))
+                            return
+                        }
+                        print("이미지 삭제 성공")
+                    }
+                })
+            }
+            
+            
+            
+            
+            
+            
+            print("기록 삭제 성공")
             // 삭제에 성공한다면
             completion(.success(()))
         }

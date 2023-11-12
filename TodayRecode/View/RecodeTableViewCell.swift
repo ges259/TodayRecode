@@ -28,7 +28,7 @@ final class RecodeTableViewCell: UITableViewCell {
     
     /// 기록 이미지
     private lazy var recodeImage: UIImageView = {
-        let img = UIImageView(image: UIImage(named: "blueSky"))
+        let img = UIImageView()
             img.clipsToBounds = true
             img.contentMode = .scaleAspectFill
         return img
@@ -173,8 +173,21 @@ extension RecodeTableViewCell {
         // 시간 레이블 설정
         self.timeLabel.text = Date.DateLabelString(date: record.date)
         
+        
+        // 이미지가 있다면
         if !record.imageUrl.isEmpty {
-            self.recodeImage.sd_setImage(with: URL(string: record.imageUrl.first!))
+            self.recodeImage.isHidden = false
+            guard let url = record.imageUrl.first else { return }
+            
+            ImageUploader.shared.loadImageView(
+                with: [url]) { image in
+                    guard let image = image else { return }
+                    DispatchQueue.main.async {
+                        self.recodeImage.image = image.first
+                    }
+                }
+        } else {
+            self.recodeImage.isHidden = true
         }
     }
 }

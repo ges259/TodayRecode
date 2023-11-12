@@ -340,7 +340,7 @@ extension ImageCollectionView {
 // MARK: - 이미지 콜렉션뷰 델리게이트
 extension ImageCollectionView: ImageCollectionViewDelegate {
     /// 셀에서 삭제 버튼이 눌렸을 때, 다시 delegate를 통해서 보냄
-    func deleteBtnTapped() {
+    func cellDeleteBtnTapped() {
         self.delegate?.itemDeleteBtnTapped(index: Int(self.currentPage))
     }
 }
@@ -373,6 +373,9 @@ final class CustomCollectionView: UICollectionView {
     
     
     private func configureUI() {
+        self.register(ImageCollectionViewCell.self,
+                      forCellWithReuseIdentifier: Identifier.imageListCollectionViewCell)
+        
 //        self.dataSource = self
 //        self.delegate = self
         // 배경 설정
@@ -384,6 +387,4 @@ final class CustomCollectionView: UICollectionView {
         // 콜렉션뷰가 바운스되지 않도록 설정
         self.bounces = false
     }
-    
-    
 }
