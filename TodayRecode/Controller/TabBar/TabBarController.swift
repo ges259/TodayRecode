@@ -7,17 +7,42 @@
 
 import UIKit
 
-
 final class TabBarController: UITabBarController {
+    
+    // MARK: - 유저가 있는지 확인
+    private var checkUser: () {
+        // user가 있는지 없는지 확인
+        return User_API.shared.checkUser
+        // 있다면 -> 탭바 설정
+        ? self.configureTabBar()
+        // 없다면 -> 로그인 선택 창으로 이동
+        : self.goToSelectALoginController()
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.checkUser()
-//        self.configureUI()
-//        self.configureTabBar()
+        // 로그인이 되어있는 상태인지 확인
+        self.checkUser
+        // 탭바 설정
+        self.configureUI()
     }
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -28,32 +53,12 @@ final class TabBarController: UITabBarController {
         self.tabBar.backgroundColor = UIColor.white
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     // MARK: - 탭바 설정
     /// 탭바 설정
-    private func configureTabBar(user: User) {
+    private func configureTabBar(user: User? = nil) {
         // 탭바 컨틀롤러 설정
         // 오늘 날짜 가져오기
-        let today = Date.dateReturn_Custom(todayFormat: .d,
-                                           UTC_Plus9: true)
+        let today = Date.dateReturn_Custom(todayFormat: .d)
         // 기록 화면
         let recode = self.templateNavContoller(
             unselectedImg: UIImage.recode,
@@ -69,15 +74,21 @@ final class TabBarController: UITabBarController {
         let setting = self.templateNavContoller(
             unselectedImg: UIImage.setup,
             selectedImg: UIImage.setup_fill,
-            rootController: SettingController(user: user))
-        
+            rootController: SettingController())
         // 탭바 추가
         self.viewControllers = [recode, diaryList, setting]
     }
     
     
     
-    // MARK: - 탭바 이미지 설정
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - 탭바 이미지 설정 액션
     /// 탭바의 이미지 및
     /// - Parameters:
     ///   - unselectedImg: 선택되지 않은 상태의 이미지
@@ -86,10 +97,11 @@ final class TabBarController: UITabBarController {
     private func templateNavContoller(
         unselectedImg: UIImage?,
         selectedImg: UIImage?,
-        rootController: UIViewController) -> UINavigationController {
-            let nav = UINavigationController(rootViewController: rootController)
-            nav.tabBarItem.image = unselectedImg
-            nav.tabBarItem.selectedImage = selectedImg
+        rootController: UIViewController)
+    -> UINavigationController {
+        let nav = UINavigationController(rootViewController: rootController)
+        nav.tabBarItem.image = unselectedImg
+        nav.tabBarItem.selectedImage = selectedImg
         return nav
     }
     
@@ -98,66 +110,11 @@ final class TabBarController: UITabBarController {
     
     
     
+
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // MARK: - 유저가 있는지 확인
-    private func checkUser() {
-        // user가 있다면
-        if User_API.shared.checkUser() {
-            // user정보 가져오기
-            self.fetchUser_API()
-        
-        // user가 없다면
-        } else {
-            // 로그인 선택 창으로 이동
-            self.goToSelectALoginController()
-        }
-    }
-    
-    
-    
-    // MARK: - 유저정보 가져오기 _ API
-    private func fetchUser_API(auth: Bool = false) {
-        // 유저가 있는지 확인
-        User_API
-            .shared
-            .fetchUser { result in
-            switch result {
-                // 유저가 있다면
-            case .success(let user):
-                print("로그인 성공")
-                // 탭바 UI설정
-                self.configureUI()
-                // 탭바 컨트롤러 설정
-                self.configureTabBar(user: user)
-                
-                if auth { self.dismiss(animated: true) }
-                
-                break
-                
-            case .failure(_):
-                print("로그인 실패")
-                // 로그인 선택 창으로 이동
-                self.goToSelectALoginController()
-                break
-            }
-        }
-    }
-    
-    
-    
-    // MARK: - 로그인 선택창 이동
+    // MARK: - 로그인 선택창 이동 액션
     private func goToSelectALoginController() {
         DispatchQueue.main.async {
             // 유저가 없다면 -> 로그인 선택 화면으로 이동
@@ -176,9 +133,12 @@ final class TabBarController: UITabBarController {
 
 
 
+
+
+
+
 extension TabBarController: AuthenticationDelegate {
     func authenticationComplete() {
-        self.fetchUser_API(auth: true)
-        
+        self.dismiss(animated: true)
     }
 }

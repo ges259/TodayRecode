@@ -450,6 +450,7 @@ extension DiaryListController: DetailWritingScreenDelegate {
             
         } else {
             print("create_Error")
+            self.apiFail_Alert()
         }
     }
     
@@ -462,6 +463,7 @@ extension DiaryListController: DetailWritingScreenDelegate {
             
         } else {
             print("update_Error")
+            self.apiFail_Alert()
         }
     }
     
@@ -483,6 +485,7 @@ extension DiaryListController: DetailWritingScreenDelegate {
             }
         } else {
             print("delete_Error")
+            self.apiFail_Alert()
         }
     }
 }
@@ -528,7 +531,6 @@ extension DiaryListController: UICollectionViewDataSource,
         // 이미지 넣기
         cell.dateLbl.text = Date.dateReturn_Custom(
             todayFormat: .d일,
-            UTC_Plus9: false,
             date: self.diaryArray[indexPath.row].date)
         
         if !diaryArray.isEmpty {
@@ -537,9 +539,6 @@ extension DiaryListController: UICollectionViewDataSource,
                     cell.imageView.image = image?.first
                 })
         }
-        
-        
-        
         return cell
     }
     

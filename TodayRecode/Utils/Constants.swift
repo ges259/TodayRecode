@@ -23,7 +23,8 @@ var dateFormat_Record_Time: Bool = false
 /// 일기 목록 화면, 달력의 형식이 바뀌었다는 것을 알려주는 전역 변수
 var dateFormat_Diary_Date: Bool = false
 
-
+// ********** 이미지 캐시 전역 변수 **********
+var imageCache = [String: UIImage]()
 
 
 

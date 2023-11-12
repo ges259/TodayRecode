@@ -18,7 +18,6 @@ extension Date {
     ///   - date: 날짜가 없을 경우 오늘 날짜 리턴
     /// - Returns: String 타입
     static func dateReturn_Custom(todayFormat: TodayFormatEnum,
-                                  UTC_Plus9: Bool,
                                   date: Date = Date()) -> String {
         let formatter = DateFormatter()
             formatter.dateFormat = todayFormat.today
@@ -36,7 +35,6 @@ extension Date {
         
         return Date.dateReturn_Custom(
             todayFormat: timeFormat,
-            UTC_Plus9: false,
             date: date)
     }
     

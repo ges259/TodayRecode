@@ -38,8 +38,8 @@ final class SettingController: UIViewController {
         distribution: .fill)
     
     /// 테이블뷰
-    private lazy var tableView: RecodeTableView = {
-        let tableView = RecodeTableView()
+    private lazy var tableView: RecordTableView = {
+        let tableView = RecordTableView()
         tableView.delegate = self
         tableView.dataSource = self
         return tableView
@@ -73,12 +73,14 @@ final class SettingController: UIViewController {
     
     
     // MARK: - 프로퍼티
-    private var user: User?
+    private var user: User? {
+        didSet { self.configureData() }
+    }
     
     
     
     
-    
+
     
     
     
@@ -87,18 +89,11 @@ final class SettingController: UIViewController {
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.fetchUser_API()
         self.configureUI()
         self.configureAutoLayout()
         self.configureAction()
-        self.configureData()
-    }
-    init(user: User) {
-        super.init(nibName: nil, bundle: nil)
-        self.user = user
-    }
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        
     }
 }
 
@@ -222,12 +217,11 @@ extension SettingController {
                 break
             // 로그아웃에 실패했다면
             case .failure(_):
+                self.apiFail_Alert()
                 break
             }
         }
     }
-    
-    
     
     // MARK: - 날짜 / 시간 형식 변경
     private func foramtChanged_API(_ settingTableEnum: SettingTableEnum,
@@ -243,6 +237,29 @@ extension SettingController {
                 
             case .failure(_):
                 // MARK: - Fix
+                self.apiFail_Alert()
+                break
+            }
+        }
+    }
+    
+    // MARK: - 유저정보 가져오기 _ API
+    private func fetchUser_API() {
+        // 유저가 있는지 확인
+        User_API
+            .shared
+            .fetchUser { result in
+            switch result {
+                // 유저가 있다면
+            case .success(let user):
+                print("로그인 성공")
+                self.user = user
+                break
+                
+            case .failure(_):
+                print("로그인 실패")
+                // 로그인 선택 창으로 이동
+                self.goToSelectALoginController()
                 break
             }
         }

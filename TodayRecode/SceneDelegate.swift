@@ -12,26 +12,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    func scene(_ scene: UIScene,
+               willConnectTo session: UISceneSession,
+               options connectionOptions: UIScene.ConnectionOptions) {
         
         // 윈도우 씬 가져오기
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
         // 윈도우 크기 설정
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        
         // 뷰 컨트롤러 인스턴스 가져오기
         let vc = TabBarController()
-        
-        // 네비게이션 컨트롤러 설정
-//        let vc = UINavigationController(rootViewController: SelectALoginMethodController())
-        
         // 뿌리 뷰컨트롤러 설정
         self.window?.rootViewController = vc
-        
         // 설정한 윈도우를 보이게 설정
         self.window?.makeKeyAndVisible()
-        
         // 윈도우 씬 설정
         self.window?.windowScene = windowScene
     }

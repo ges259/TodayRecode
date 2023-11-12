@@ -22,8 +22,8 @@ final class RecodeCheckController: UIViewController {
         color: UIColor.lightGray)
     
     /// 테이블뷰
-    private lazy var tableView: RecodeTableView = {
-        let tableView = RecodeTableView()
+    private lazy var tableView: RecordTableView = {
+        let tableView = RecordTableView()
             tableView.dataSource = self
             tableView.delegate = self
         return tableView
@@ -72,9 +72,8 @@ final class RecodeCheckController: UIViewController {
         self.configureAutoLayout()
     }
     init(recordArray: [Record]) {
-        super.init(nibName: nil, bundle: nil)
-        
         self.todayRecordArray = recordArray
+        super.init(nibName: nil, bundle: nil)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -121,10 +120,6 @@ extension RecodeCheckController {
         // 오늘 기록이 없다면 -> NoDataView를 띄워야 함
         // 오늘 기록이 있다면 -> 모든 셀의 높이만큼 테이블뷰 높이 설정
         if self.todayRecordArray.count == 0 {
-            // 테이블뷰
-            self.tableView.snp.makeConstraints { make in
-                make.height.greaterThanOrEqualTo(300)
-            }
             // 데이터가 없을 때 나오는 레이블
             self.containerView.addSubview(self.noDataView)
             self.noDataView.snp.makeConstraints { make in
@@ -132,7 +127,10 @@ extension RecodeCheckController {
                 make.height.equalTo(300)
             }
         }
-        
+        // 테이블뷰
+        self.tableView.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(300)
+        }
         // 날짜뷰
         self.dateView.snp.makeConstraints { make in
             make.height.equalTo(50)
@@ -152,10 +150,10 @@ extension RecodeCheckController {
             make.top.leading.trailing.equalToSuperview()
             make.bottom.lessThanOrEqualTo(self.view.snp.bottom)
         }
-        
     }
     
     
+    // MARK: - 오토레이아웃 분기처리
     private func configureStackViewBottomAchor() {
         // 아이폰 종류 확인
         if UIDevice.current.isiPhoneSE {
@@ -189,10 +187,11 @@ extension RecodeCheckController: UITableViewDataSource, UITableViewDelegate {
         return self.todayRecordArray.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: Identifier.recodeTableCell,
-            for: indexPath) as! RecodeTableViewCell
+            for: indexPath) as! RecordTableViewCell
         
             cell.cellRecord = self.todayRecordArray[indexPath.row]
         return cell

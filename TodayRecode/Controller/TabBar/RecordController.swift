@@ -40,8 +40,8 @@ final class RecordController: UIViewController {
     private lazy var contentView: UIView = UIView()
     
     /// 테이블뷰
-    private lazy var tableView: RecodeTableView = {
-        let tableView = RecodeTableView()
+    private lazy var tableView: RecordTableView = {
+        let tableView = RecordTableView()
             tableView.delegate = self
             tableView.dataSource = self
             tableView.isScrollEnabled = false
@@ -103,7 +103,7 @@ final class RecordController: UIViewController {
     /// 다른 날의 기록
     private var anotherDayRecords_Array: [Record] = [Record]()
     
-    var currentArray: [Record] {
+    private var currentArray: [Record] {
         return self.isToday
         // 오늘 배열에서 문서ID 가져오기
         ? self.todayRecords_Array
@@ -125,7 +125,6 @@ final class RecordController: UIViewController {
     
     
 
-    
     
     
     
@@ -715,7 +714,7 @@ extension RecordController: UITableViewDataSource {
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: Identifier.recodeTableCell,
-            for: indexPath) as! RecodeTableViewCell
+            for: indexPath) as! RecordTableViewCell
         
         // 오늘인지 아닌지 판단
         cell.cellRecord = self.currentArray[indexPath.row]

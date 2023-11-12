@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class RecodeTableViewCell: UITableViewCell {
+final class RecordTableViewCell: UITableViewCell {
     
     // MARK: - 레이아웃
     /// 기록 내용 레이블
@@ -62,13 +62,6 @@ final class RecodeTableViewCell: UITableViewCell {
     
     
     
-
-    
-    
-    
-    
-    
-    
     
     
     
@@ -76,7 +69,6 @@ final class RecodeTableViewCell: UITableViewCell {
     // MARK: - 라이프사이클
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         
         self.configureUI()
         self.configureLayout()
@@ -97,7 +89,7 @@ final class RecodeTableViewCell: UITableViewCell {
 
 // MARK: - 화면 설정
 
-extension RecodeTableViewCell {
+extension RecordTableViewCell {
     
     // MARK: - UI 설정
     private func configureUI() {
@@ -140,10 +132,10 @@ extension RecodeTableViewCell {
     }
 }
 
-
-
-
-
+    
+    
+    
+    
 
 
 
@@ -151,14 +143,11 @@ extension RecodeTableViewCell {
 
 // MARK: - 액션
 
-extension RecodeTableViewCell {
+extension RecordTableViewCell {
     
-    // MARK: - 기록 내용 설정
-    func settingContext(record: Record?) {
-        // 옵셔널 바인딩
-        guard let record = record else { return }
-        // 본문 내용 설정
-        let attrString = NSMutableAttributedString(string: record.context)
+    // MARK: - 본문 내용 설정
+    private func setContext(context: String) -> NSMutableAttributedString {
+        let attrString = NSMutableAttributedString(string: context)
 
         let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 3
@@ -167,13 +156,12 @@ extension RecodeTableViewCell {
                 NSAttributedString.Key.paragraphStyle,
                 value: paragraphStyle,
                 range: NSMakeRange(0, attrString.length))
-        self.contextTextLbl.attributedText = attrString
         
-        
-        // 시간 레이블 설정
-        self.timeLabel.text = Date.DateLabelString(date: record.date)
-        
-        
+        return attrString
+    }
+    
+    // MARK: - 이미지 설정
+    private func loadImage(record: Record) {
         // 이미지가 있다면
         if !record.imageUrl.isEmpty {
             self.recodeImage.isHidden = false
@@ -189,5 +177,31 @@ extension RecodeTableViewCell {
         } else {
             self.recodeImage.isHidden = true
         }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// MARK: - 액션
+
+extension RecordTableViewCell {
+    
+    // MARK: - 기록 내용 설정
+    func settingContext(record: Record?) {
+        // 옵셔널 바인딩
+        guard let record = record else { return }
+        // 본문 내용 설정
+        self.contextTextLbl.attributedText = self.setContext(context: record.context)
+        // 시간 레이블 설정
+        self.timeLabel.text = Date.DateLabelString(date: record.date)
+        // 이미지가 설정
+        self.loadImage(record: record)
     }
 }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class RecodeTableView: UITableView {
+final class RecordTableView: UITableView {
     
     // MARK: - 라이프사이클
     override init(frame: CGRect, style: UITableView.Style) {
@@ -42,7 +42,7 @@ final class RecodeTableView: UITableView {
     
     // MARK: - 화면 설정
     private func configureUI() {
-        self.register(RecodeTableViewCell.self,
+        self.register(RecordTableViewCell.self,
                       forCellReuseIdentifier: Identifier.recodeTableCell)
         // 배경 색상 설정
         self.backgroundColor = UIColor.clear

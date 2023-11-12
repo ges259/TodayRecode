@@ -49,7 +49,7 @@ extension UITextField {
         return tf
     }
     /// 텍스트필드 왼쪽/오른쪽에 공간을 만드는 메서드
-    func addPadding() {
+    private func addPadding() {
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.frame.height))
         
         self.leftView = paddingView

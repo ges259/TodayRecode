@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5F07BF0B2AE0F1C800C471B4 /* UIScrollView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F07BF0A2AE0F1C800C471B4 /* UIScrollView+Ext.swift */; };
 		5F07BF0D2AE11B7A00C471B4 /* UIStackView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F07BF0C2AE11B7A00C471B4 /* UIStackView+Ext.swift */; };
 		5F0803462AEC206800A52C3E /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0803452AEC206800A52C3E /* Date+Ext.swift */; };
 		5F26CA4A2AF0E25E0019CDE2 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F26CA492AF0E25E0019CDE2 /* User.swift */; };
@@ -23,9 +22,8 @@
 		5F4B66852ADA3455004FE62E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F4B66842ADA3455004FE62E /* Assets.xcassets */; };
 		5F4B66882ADA3455004FE62E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F4B66862ADA3455004FE62E /* LaunchScreen.storyboard */; };
 		5F572CF92ADCDF660030EC7B /* EasyWritingScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F572CF82ADCDF660030EC7B /* EasyWritingScreenController.swift */; };
-		5F5A3AC92AFD41A200BDA7D6 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 5F5A3AC82AFD41A200BDA7D6 /* SDWebImage */; };
 		5F5A3ACB2AFD420E00BDA7D6 /* ImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5A3ACA2AFD420E00BDA7D6 /* ImageUploader.swift */; };
-		5F6CBA312AE02A1E00960F7B /* ImageCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */; };
+		5F6CBA312AE02A1E00960F7B /* CustomCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6CBA302AE02A1E00960F7B /* CustomCollectionView.swift */; };
 		5F6EECDD2ADA3F490046E686 /* RecordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECDC2ADA3F490046E686 /* RecordController.swift */; };
 		5F6EECDF2ADA40170046E686 /* DetailWritingScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECDE2ADA40170046E686 /* DetailWritingScreenController.swift */; };
 		5F6EECE12ADA40200046E686 /* SettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6EECE02ADA40200046E686 /* SettingController.swift */; };
@@ -55,8 +53,8 @@
 		5F9A7D942AF0052800F9B10A /* Record_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D932AF0052800F9B10A /* Record_API.swift */; };
 		5F9A7D962AF0052F00F9B10A /* User_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D952AF0052F00F9B10A /* User_API.swift */; };
 		5F9A7D982AF02E9500F9B10A /* Auth_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D972AF02E9500F9B10A /* Auth_API.swift */; };
-		5FAA76402ADBA8220024B810 /* RecodeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA763F2ADBA8220024B810 /* RecodeTableViewCell.swift */; };
-		5FAA76422ADC13340024B810 /* RecodeTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA76412ADC13340024B810 /* RecodeTableView.swift */; };
+		5FAA76402ADBA8220024B810 /* RecordTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA763F2ADBA8220024B810 /* RecordTableViewCell.swift */; };
+		5FAA76422ADC13340024B810 /* RecordTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA76412ADC13340024B810 /* RecordTableView.swift */; };
 		5FAF543D2ADA907100BD849C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAF543C2ADA907100BD849C /* Constants.swift */; };
 		5FCA1F372AE5700D00A9DB5B /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */; };
 		5FD436922AE2DB9B00CA79AD /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */; };
@@ -64,7 +62,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5F07BF0A2AE0F1C800C471B4 /* UIScrollView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Ext.swift"; sourceTree = "<group>"; };
 		5F07BF0C2AE11B7A00C471B4 /* UIStackView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Ext.swift"; sourceTree = "<group>"; };
 		5F0803452AEC206800A52C3E /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
 		5F26CA492AF0E25E0019CDE2 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -83,7 +80,7 @@
 		5F4B66892ADA3455004FE62E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F572CF82ADCDF660030EC7B /* EasyWritingScreenController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EasyWritingScreenController.swift; sourceTree = "<group>"; };
 		5F5A3ACA2AFD420E00BDA7D6 /* ImageUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUploader.swift; sourceTree = "<group>"; };
-		5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionView.swift; sourceTree = "<group>"; };
+		5F6CBA302AE02A1E00960F7B /* CustomCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionView.swift; sourceTree = "<group>"; };
 		5F6EECDC2ADA3F490046E686 /* RecordController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordController.swift; sourceTree = "<group>"; };
 		5F6EECDE2ADA40170046E686 /* DetailWritingScreenController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailWritingScreenController.swift; sourceTree = "<group>"; };
 		5F6EECE02ADA40200046E686 /* SettingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingController.swift; sourceTree = "<group>"; };
@@ -105,8 +102,8 @@
 		5F9A7D932AF0052800F9B10A /* Record_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record_API.swift; sourceTree = "<group>"; };
 		5F9A7D952AF0052F00F9B10A /* User_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User_API.swift; sourceTree = "<group>"; };
 		5F9A7D972AF02E9500F9B10A /* Auth_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth_API.swift; sourceTree = "<group>"; };
-		5FAA763F2ADBA8220024B810 /* RecodeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeTableViewCell.swift; sourceTree = "<group>"; };
-		5FAA76412ADC13340024B810 /* RecodeTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeTableView.swift; sourceTree = "<group>"; };
+		5FAA763F2ADBA8220024B810 /* RecordTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordTableViewCell.swift; sourceTree = "<group>"; };
+		5FAA76412ADC13340024B810 /* RecordTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordTableView.swift; sourceTree = "<group>"; };
 		5FAF543C2ADA907100BD849C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
@@ -124,7 +121,6 @@
 				5FF24B702AFE21AC003E2497 /* JGProgressHUD in Frameworks */,
 				5F6EECF02ADA70470046E686 /* FirebaseAuth in Frameworks */,
 				5F6EECF42ADA70470046E686 /* FirebaseFirestore in Frameworks */,
-				5F5A3AC92AFD41A200BDA7D6 /* SDWebImage in Frameworks */,
 				5F7A027A2ADAD00A00128DC4 /* SnapKit in Frameworks */,
 				5F7A02802ADAD04700128DC4 /* PanModal in Frameworks */,
 			);
@@ -191,7 +187,7 @@
 		5F6EECD92ADA3E330046E686 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				5FAA763F2ADBA8220024B810 /* RecodeTableViewCell.swift */,
+				5FAA763F2ADBA8220024B810 /* RecordTableViewCell.swift */,
 				5F39E0372AE175DA00E5623C /* ImageCollectionViewCell.swift */,
 				5F2F5AE42AE9482400F117FC /* SettingTableViewCell.swift */,
 				5FE7C69E2ADEDDBE00BF9785 /* ReuseView */,
@@ -230,7 +226,6 @@
 				5F2F5AE62AE99A0600F117FC /* UITextField+Ext.swift */,
 				5F785B872ADEA80300955C4A /* UIButton+Ext.swift */,
 				5F785B892ADEA81100955C4A /* UILabel+Ext.swift */,
-				5F07BF0A2AE0F1C800C471B4 /* UIScrollView+Ext.swift */,
 				5F07BF0C2AE11B7A00C471B4 /* UIStackView+Ext.swift */,
 				5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */,
 				5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */,
@@ -243,7 +238,8 @@
 		5F8295BF2AEEC71700D43A27 /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
-				5FAA76412ADC13340024B810 /* RecodeTableView.swift */,
+				5FAA76412ADC13340024B810 /* RecordTableView.swift */,
+				5F6CBA302AE02A1E00960F7B /* CustomCollectionView.swift */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -253,7 +249,6 @@
 			children = (
 				5F785B8F2ADED33A00955C4A /* DateView.swift */,
 				5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */,
-				5F6CBA302AE02A1E00960F7B /* ImageCollectionView.swift */,
 				5F3E3FD42AF9363D00B1F36B /* NoRecordDataView.swift */,
 			);
 			path = ReuseView;
@@ -314,7 +309,6 @@
 				5F7A027C2ADAD02B00128DC4 /* FSCalendar */,
 				5F7A027F2ADAD04700128DC4 /* PanModal */,
 				5F7A02822ADAD06D00128DC4 /* BSImagePicker */,
-				5F5A3AC82AFD41A200BDA7D6 /* SDWebImage */,
 				5FF24B6F2AFE21AC003E2497 /* JGProgressHUD */,
 			);
 			productName = TodayRecode;
@@ -351,7 +345,6 @@
 				5F7A027B2ADAD02B00128DC4 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				5F7A027E2ADAD04700128DC4 /* XCRemoteSwiftPackageReference "PanModal" */,
 				5F7A02812ADAD06D00128DC4 /* XCRemoteSwiftPackageReference "BSImagePicker" */,
-				5F5A3AC72AFD41A200BDA7D6 /* XCRemoteSwiftPackageReference "SDWebImage" */,
 				5FF24B6E2AFE21AC003E2497 /* XCRemoteSwiftPackageReference "JGProgressHUD" */,
 			);
 			productRefGroup = 5F4B66792ADA3452004FE62E /* Products */;
@@ -384,7 +377,6 @@
 				5F2F5AE52AE9482400F117FC /* SettingTableViewCell.swift in Sources */,
 				5F26CA4C2AF0E2640019CDE2 /* Record.swift in Sources */,
 				5F785B902ADED33A00955C4A /* DateView.swift in Sources */,
-				5F07BF0B2AE0F1C800C471B4 /* UIScrollView+Ext.swift in Sources */,
 				5FCA1F372AE5700D00A9DB5B /* CalendarView.swift in Sources */,
 				5F7A02772ADAC8F100128DC4 /* ViewController+Ext.swift in Sources */,
 				5F7A02852ADAD3D700128DC4 /* Color+Ext.swift in Sources */,
@@ -410,16 +402,16 @@
 				5F4B667C2ADA3452004FE62E /* AppDelegate.swift in Sources */,
 				5F6EECE52ADA412D0046E686 /* LoginController.swift in Sources */,
 				5F26CA4A2AF0E25E0019CDE2 /* User.swift in Sources */,
-				5F6CBA312AE02A1E00960F7B /* ImageCollectionView.swift in Sources */,
+				5F6CBA312AE02A1E00960F7B /* CustomCollectionView.swift in Sources */,
 				5F4B667E2ADA3452004FE62E /* SceneDelegate.swift in Sources */,
 				5F5A3ACB2AFD420E00BDA7D6 /* ImageUploader.swift in Sources */,
-				5FAA76402ADBA8220024B810 /* RecodeTableViewCell.swift in Sources */,
+				5FAA76402ADBA8220024B810 /* RecordTableViewCell.swift in Sources */,
 				5F39E0382AE175DA00E5623C /* ImageCollectionViewCell.swift in Sources */,
 				5F9A7D982AF02E9500F9B10A /* Auth_API.swift in Sources */,
 				5F785B822ADEA7AF00955C4A /* Enum.swift in Sources */,
 				5F6EECDD2ADA3F490046E686 /* RecordController.swift in Sources */,
 				5FD436922AE2DB9B00CA79AD /* UIImage+Ext.swift in Sources */,
-				5FAA76422ADC13340024B810 /* RecodeTableView.swift in Sources */,
+				5FAA76422ADC13340024B810 /* RecordTableView.swift in Sources */,
 				5F9A7D942AF0052800F9B10A /* Record_API.swift in Sources */,
 				5FAF543D2ADA907100BD849C /* Constants.swift in Sources */,
 			);
@@ -629,14 +621,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		5F5A3AC72AFD41A200BDA7D6 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SDWebImage/SDWebImage";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
 		5F6EECEE2ADA70470046E686 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -688,11 +672,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		5F5A3AC82AFD41A200BDA7D6 /* SDWebImage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5F5A3AC72AFD41A200BDA7D6 /* XCRemoteSwiftPackageReference "SDWebImage" */;
-			productName = SDWebImage;
-		};
 		5F6EECEF2ADA70470046E686 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5F6EECEE2ADA70470046E686 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

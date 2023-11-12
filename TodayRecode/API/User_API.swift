@@ -15,13 +15,11 @@ struct User_API {
     
     
     // MARK: - 유저가 있는지 확인
-    func checkUser() -> Bool {
-        // user가 없다면
-        if Auth.auth().currentUser?.uid == nil{
-            return false
-        }
-        // user가 있다면
-        return true
+    var checkUser: Bool {
+        // user가 있는지 없는지 체크
+        return Auth.auth().currentUser?.uid == nil
+        ? false // 없다면
+        : true // 있다면
     }
     
     

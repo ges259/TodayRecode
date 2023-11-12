@@ -10,7 +10,6 @@ import SnapKit
 
 final class NoRecordDataView: UIView {
     
-    
     // MARK: - 레이아웃
     private lazy var noDataLbl: UILabel = UILabel.navTitleLbl(
         font: .systemFont(ofSize: 15))
@@ -62,6 +61,8 @@ final class NoRecordDataView: UIView {
         
         self.clipsToBounds = true
         self.layer.cornerRadius = 10
+        
+        self.isHidden = true
     }
     
     

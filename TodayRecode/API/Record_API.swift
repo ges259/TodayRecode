@@ -219,12 +219,6 @@ struct Record_API {
             }
             
             if let imageUrl = imageUrl {
-//                var images: [UIImage]?
-//                ImageUploader.shared.loadImageView(with: imageUrl) { image in
-//                    images = image
-//                }
-//                guard let images = images else { return }
-                
                 // DC01B082-68D2-472F-B300-2423A5BD6026/images_0
                 imageUrl.forEach({ url_String in
                     let ref = Storage.storage().reference().child(url_String)
@@ -240,11 +234,6 @@ struct Record_API {
                     }
                 })
             }
-            
-            
-            
-            
-            
             
             print("기록 삭제 성공")
             // 삭제에 성공한다면

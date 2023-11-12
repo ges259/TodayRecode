@@ -8,10 +8,6 @@
 import UIKit
 import FirebaseStorage
 
-
-
-var imageCache = [String: UIImage]()
-
 struct ImageUploader {
     
     static let shared: ImageUploader = ImageUploader()

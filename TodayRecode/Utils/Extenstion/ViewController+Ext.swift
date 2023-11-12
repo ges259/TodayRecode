@@ -18,8 +18,7 @@ extension UIViewController {
         // 달력의 날짜 가져오기 (년,월,일)
         let selectedDate = Date.dateArray_yyyy_M_d(date: date)
         // 올해 년도 가져오기
-        let currentYear = Date.dateReturn_Custom(todayFormat: .yyyy년,
-                                                 UTC_Plus9: false)
+        let currentYear = Date.dateReturn_Custom(todayFormat: .yyyy년)
         // 날짜 문자열 (ex - 11월 / 2023년 11월 / 2023년 11월 5일)
         var dateString: String = ""
         
@@ -135,7 +134,7 @@ extension UIViewController {
             string: title,
             attributes: [ //타이틀 폰트사이즈랑 글씨
                 NSAttributedString.Key.font : UIFont.systemFont(ofSize: 13),
-                NSAttributedString.Key.foregroundColor : UIColor.cancelGray2222222])
+                NSAttributedString.Key.foregroundColor : UIColor.alertCancelGray])
     }
     
     
@@ -215,11 +214,4 @@ extension UIViewController {
         }
         return true
     }
-    
-    
-    
-    
-    
-    
-    
 }
