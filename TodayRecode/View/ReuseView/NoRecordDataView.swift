@@ -59,6 +59,8 @@ final class NoRecordDataView: UIView {
         self.noDataLbl.text = nodataEnum.lblString
         self.plusBtn.image = nodataEnum.systemImg
         
+        self.backgroundColor = .customWhite5
+        
         self.clipsToBounds = true
         self.layer.cornerRadius = 10
         

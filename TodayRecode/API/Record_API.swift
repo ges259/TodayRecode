@@ -218,22 +218,22 @@ struct Record_API {
                 return
             }
             
-            if let imageUrl = imageUrl {
-                // DC01B082-68D2-472F-B300-2423A5BD6026/images_0
-                imageUrl.forEach({ url_String in
-                    let ref = Storage.storage().reference().child(url_String)
-                    
-                    print(url_String)
-                    ref.delete { error in
-                        // 에러가 있다면
-                        if let error = error {
-                            completion(.failure(error))
-                            return
-                        }
-                        print("이미지 삭제 성공")
-                    }
-                })
-            }
+//            if let imageUrl = imageUrl {
+//                // DC01B082-68D2-472F-B300-2423A5BD6026/images_0
+//                imageUrl.forEach({ url_String in
+//                    let ref = Storage.storage().reference().child(url_String)
+//                    
+//                    print(url_String)
+//                    ref.delete { error in
+//                        // 에러가 있다면
+//                        if let error = error {
+//                            completion(.failure(error))
+//                            return
+//                        }
+//                        print("이미지 삭제 성공")
+//                    }
+//                })
+//            }
             
             print("기록 삭제 성공")
             // 삭제에 성공한다면

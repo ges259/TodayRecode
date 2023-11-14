@@ -14,9 +14,6 @@ import Photos
 final class DetailWritingScreenController: UIViewController {
     
     // MARK: - 레이아웃
-    /// 배경 뷰
-    private lazy var backgroundImg: UIImageView = UIImageView(
-        image: UIImage.blueSky)
     /// 네비게이션 타이틀 레이블
     private lazy var navTitle: UILabel = UILabel.navTitleLbl()
     /// 콜렉션뷰
@@ -72,8 +69,8 @@ final class DetailWritingScreenController: UIViewController {
     /// 기록 확인 버튼
     private let recodeShowBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.recodeShow,
-        tintColor: UIColor.black,
-        backgroundColor: UIColor.white)
+        tintColor: UIColor.white,
+        backgroundColor: UIColor.blue_tab)
     
     // 악세서리 뷰
     /// 카메라 버튼
@@ -298,6 +295,7 @@ extension DetailWritingScreenController {
     
     // MARK: - UI 설정
     private func configreUI() {
+        self.view.backgroundColor = UIColor.blue_base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         // 네비게이션 타이틀(String) 설정
@@ -310,7 +308,7 @@ extension DetailWritingScreenController {
             view.layer.cornerRadius = 10
         }
         self.recodeShowBtn.clipsToBounds = true
-        self.recodeShowBtn.layer.cornerRadius = 50 / 2
+        self.recodeShowBtn.layer.cornerRadius = 65 / 2
     }
     
     
@@ -318,8 +316,7 @@ extension DetailWritingScreenController {
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         // ********** addSubViews 설정 **********
-        [self.backgroundImg,
-         self.scrollView,
+        [self.scrollView,
          self.recodeShowBtn].forEach { view in
             self.view.addSubview(view)
         }
@@ -333,10 +330,6 @@ extension DetailWritingScreenController {
         
         
         // ********** 오토레이아웃 설정 **********
-        // 배경화면
-        self.backgroundImg.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         // 날짜 뷰
         self.dateView.snp.makeConstraints { make in
             make.height.equalTo(35)
@@ -400,7 +393,7 @@ extension DetailWritingScreenController {
         self.recodeShowBtn.snp.makeConstraints { make in
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-17)
             make.trailing.equalToSuperview().offset(-17)
-            make.width.height.equalTo(58)
+            make.width.height.equalTo(65)
         }
         // 네비게이션 타이틀
         self.navTitle.snp.makeConstraints { make in
@@ -643,8 +636,8 @@ extension DetailWritingScreenController {
     
     
     
-    
-    
+
+
     
 
 
@@ -660,13 +653,17 @@ extension DetailWritingScreenController {
                                       keyboardSize: CGFloat) {
         // ********** 키보드 올리는 상황 **********
         if keyboard_Up {
+            
+            self.dateView.alpha = 0
             // 화면 올리기
             self.view.frame.origin.y -= keyboardSize
             // 화면 올리는 만큼 스택뷰 간격을 넓혀 텍스트뷰가 가려지지 않게 설정
             self.verticalStackView.setCustomSpacing(keyboardSize - 33,
                                                     after: self.dateView)
+            
         // ********** 키보드 내리는 상황 **********
         } else {
+            self.dateView.alpha = 1
             // 화면 내리기
             self.view.frame.origin.y = 0
             // 스택뷰 간격 설정 (뷰를 올리면 키보드에 가려지는 현상 때문)
@@ -791,6 +788,7 @@ extension DetailWritingScreenController {
     private func deleteRecord_API() {
         // 문서ID 가져오기
         guard let documentID = self.selectedRecord?.documentID else { return }
+        
         // DB - 삭제
         Record_API.shared.deleteRecord(documentID: documentID,
                                        imageUrl: self.urlString) { result in

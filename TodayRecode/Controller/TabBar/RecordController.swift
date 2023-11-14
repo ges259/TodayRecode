@@ -12,10 +12,6 @@ import FSCalendar
 final class RecordController: UIViewController {
     
     // MARK: - 레이아웃
-    /// 배경 이미지
-    private lazy var backgroundImg: UIImageView = UIImageView(
-        image: UIImage.blueSky)
-    
     /// 네비게이션 타이틀 레이블
     private lazy var navTitle: UILabel = UILabel.navTitleLbl()
     
@@ -25,8 +21,8 @@ final class RecordController: UIViewController {
     /// +버튼
     private lazy var plusBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.plus,
-        tintColor: UIColor.black,
-        backgroundColor: UIColor.white)
+        tintColor: UIColor.white,
+        backgroundColor: UIColor.blue_tab)
     
     /// 스크롤뷰
     private lazy var scrollView: UIScrollView = {
@@ -53,7 +49,7 @@ final class RecordController: UIViewController {
         let calendar = CalendarView()
             calendar.delegate = self
             calendar.calendar.scope = .week
-            calendar.isHidden = true
+//            calendar.isHidden = true
         return calendar
     }()
     /// 달력의 높이 제약
@@ -68,13 +64,11 @@ final class RecordController: UIViewController {
         alignment: .fill,
         distribution: .fill)
     
-    
     /// Record데이터가 없을 때 보이는 뷰
     private lazy var noDataView: NoRecordDataView = {
         let view = NoRecordDataView(
             frame: .zero,
             nodataEnum: .record_Main)
-            view.backgroundColor = .customWhite5
         return view
     }()
     
@@ -135,7 +129,7 @@ final class RecordController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.fetchRecords_API()         // 데이터 가져오기
+//        self.fetchRecords_API()         // 데이터 가져오기
         self.configureUI()          // UI 설정
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
@@ -177,9 +171,11 @@ final class RecordController: UIViewController {
 // MARK: - 화면 설정
 
 extension RecordController {
-    
     // MARK: - UI 설정
     private func configureUI() {
+        self.view.backgroundColor = UIColor.blue_base
+        
+        
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         // 네비게이션 타이틀(String) 설정
@@ -196,7 +192,7 @@ extension RecordController {
         }
         
         self.plusBtn.clipsToBounds = true
-        self.plusBtn.layer.cornerRadius = 58 / 2
+        self.plusBtn.layer.cornerRadius = 65 / 2
     }
     
     
@@ -204,8 +200,7 @@ extension RecordController {
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         // ********** addSubview 설정 **********
-        [self.backgroundImg,
-         self.stackView,
+        [self.stackView,
          self.scrollView,
          self.plusBtn].forEach { view in
             self.view.addSubview(view)
@@ -217,10 +212,6 @@ extension RecordController {
         
         
         // ********** 오토레이아웃 설정 **********
-        // 배경화면
-        self.backgroundImg.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         // 달력
         self.calendar.translatesAutoresizingMaskIntoConstraints = false
         self.calendarHeight = self.calendar.heightAnchor.constraint(equalToConstant: 280)
@@ -257,7 +248,7 @@ extension RecordController {
         self.plusBtn.snp.makeConstraints { make in
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-17)
             make.trailing.equalToSuperview().offset(-17)
-            make.width.height.equalTo(58)
+            make.width.height.equalTo(65)
         }
         // 네비게이션 타이틀
         self.navTitle.snp.makeConstraints { make in
@@ -291,11 +282,11 @@ extension RecordController {
         self.plusBtn.addTarget(self, action: #selector(self.plusBtnTapped), for: .touchUpInside)
         
         /// 오른쪽 버튼(달력) 설정
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage.calendar,
-            style: .done,
-            target: self,
-            action: #selector(self.navCalendarBtnTapped))
+//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
+//            image: UIImage.calendar,
+//            style: .done,
+//            target: self,
+//            action: #selector(self.navCalendarBtnTapped))
     }
 }
 
@@ -448,18 +439,17 @@ extension RecordController {
     
     // MARK: - 네비게이션 버튼 액션
     /// 네비게이션 오른쪽 버튼, 달력 이미지누르면 달력을 숨기거나 보이게할 수 있다.
-    @objc private func navCalendarBtnTapped() {
-        UIView.animate(withDuration: 0.5) {
-            // 캘린더 숨기기 / 보이게 하기
-            self.calendar.isHidden.toggle()
-            self.stackView.layoutIfNeeded()
-            // calendar(달력)에서 현재 선택된 날짜를 받아옴
-            guard let date = self.calendar.returnSelectedDate else { return }
-            // 네비게이션 타이틀 재설정
-            self.setNavTitle(date: date)
-        }
-    }
-    
+//    @objc private func navCalendarBtnTapped() {
+//        UIView.animate(withDuration: 0.5) {
+//            // 캘린더 숨기기 / 보이게 하기
+//            self.calendar.isHidden.toggle()
+//            self.stackView.layoutIfNeeded()
+//            // calendar(달력)에서 현재 선택된 날짜를 받아옴
+//            guard let date = self.calendar.returnSelectedDate else { return }
+//            // 네비게이션 타이틀 재설정
+//            self.setNavTitle(date: date)
+//        }
+//    }
     
     
     // MARK: - 간편 작성 화면 이동 (플러스 버튼)

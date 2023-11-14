@@ -131,7 +131,7 @@ extension ImageCollectionViewCell {
             self.addSubview(self.deleteBtn)
             self.deleteBtn.snp.makeConstraints { make in
                 make.top.trailing.equalTo(self.imageView)
-                make.width.height.equalTo(35)
+                make.width.height.equalTo(40)
             }
         }
     }

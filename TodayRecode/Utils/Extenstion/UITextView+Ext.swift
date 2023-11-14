@@ -23,7 +23,7 @@ extension UITextView {
         tv.returnKeyType = .done
         
         tv.sizeToFit()
-        
+        tv.textColor = UIColor.black
         // 폰트 크기
         tv.font = UIFont.systemFont(ofSize: fontSize)
         return tv

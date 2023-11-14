@@ -50,4 +50,6 @@ extension UIImage {
     static let back: UIImage? = UIImage(systemName: "chevron.backward")
     
     static let noDataList: UIImage? = UIImage(systemName: "list.bullet.clipboard")
+    
+    static let person_Img: UIImage? = UIImage(systemName: "person")
 }

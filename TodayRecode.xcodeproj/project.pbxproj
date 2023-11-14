@@ -45,7 +45,6 @@
 		5F785B902ADED33A00955C4A /* DateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F785B8F2ADED33A00955C4A /* DateView.swift */; };
 		5F7A02772ADAC8F100128DC4 /* ViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */; };
 		5F7A027A2ADAD00A00128DC4 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5F7A02792ADAD00A00128DC4 /* SnapKit */; };
-		5F7A027D2ADAD02B00128DC4 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 5F7A027C2ADAD02B00128DC4 /* FSCalendar */; };
 		5F7A02802ADAD04700128DC4 /* PanModal in Frameworks */ = {isa = PBXBuildFile; productRef = 5F7A027F2ADAD04700128DC4 /* PanModal */; };
 		5F7A02832ADAD06D00128DC4 /* BSImagePicker in Frameworks */ = {isa = PBXBuildFile; productRef = 5F7A02822ADAD06D00128DC4 /* BSImagePicker */; };
 		5F7A02852ADAD3D700128DC4 /* Color+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */; };
@@ -53,6 +52,7 @@
 		5F9A7D942AF0052800F9B10A /* Record_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D932AF0052800F9B10A /* Record_API.swift */; };
 		5F9A7D962AF0052F00F9B10A /* User_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D952AF0052F00F9B10A /* User_API.swift */; };
 		5F9A7D982AF02E9500F9B10A /* Auth_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D972AF02E9500F9B10A /* Auth_API.swift */; };
+		5F9DBAC72B027F6C004B0916 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 5F9DBAC62B027F6C004B0916 /* FSCalendar */; };
 		5FAA76402ADBA8220024B810 /* RecordTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA763F2ADBA8220024B810 /* RecordTableViewCell.swift */; };
 		5FAA76422ADC13340024B810 /* RecordTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA76412ADC13340024B810 /* RecordTableView.swift */; };
 		5FAF543D2ADA907100BD849C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAF543C2ADA907100BD849C /* Constants.swift */; };
@@ -115,10 +115,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F6EECF22ADA70470046E686 /* FirebaseDatabase in Frameworks */,
-				5F7A027D2ADAD02B00128DC4 /* FSCalendar in Frameworks */,
 				5F6EECF62ADA70470046E686 /* FirebaseStorage in Frameworks */,
 				5F7A02832ADAD06D00128DC4 /* BSImagePicker in Frameworks */,
 				5FF24B702AFE21AC003E2497 /* JGProgressHUD in Frameworks */,
+				5F9DBAC72B027F6C004B0916 /* FSCalendar in Frameworks */,
 				5F6EECF02ADA70470046E686 /* FirebaseAuth in Frameworks */,
 				5F6EECF42ADA70470046E686 /* FirebaseFirestore in Frameworks */,
 				5F7A027A2ADAD00A00128DC4 /* SnapKit in Frameworks */,
@@ -306,10 +306,10 @@
 				5F6EECF32ADA70470046E686 /* FirebaseFirestore */,
 				5F6EECF52ADA70470046E686 /* FirebaseStorage */,
 				5F7A02792ADAD00A00128DC4 /* SnapKit */,
-				5F7A027C2ADAD02B00128DC4 /* FSCalendar */,
 				5F7A027F2ADAD04700128DC4 /* PanModal */,
 				5F7A02822ADAD06D00128DC4 /* BSImagePicker */,
 				5FF24B6F2AFE21AC003E2497 /* JGProgressHUD */,
+				5F9DBAC62B027F6C004B0916 /* FSCalendar */,
 			);
 			productName = TodayRecode;
 			productReference = 5F4B66782ADA3452004FE62E /* TodayRecode.app */;
@@ -342,10 +342,10 @@
 			packageReferences = (
 				5F6EECEE2ADA70470046E686 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				5F7A02782ADAD00A00128DC4 /* XCRemoteSwiftPackageReference "SnapKit" */,
-				5F7A027B2ADAD02B00128DC4 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				5F7A027E2ADAD04700128DC4 /* XCRemoteSwiftPackageReference "PanModal" */,
 				5F7A02812ADAD06D00128DC4 /* XCRemoteSwiftPackageReference "BSImagePicker" */,
 				5FF24B6E2AFE21AC003E2497 /* XCRemoteSwiftPackageReference "JGProgressHUD" */,
+				5F9DBAC52B027F6C004B0916 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 			);
 			productRefGroup = 5F4B66792ADA3452004FE62E /* Products */;
 			projectDirPath = "";
@@ -552,10 +552,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 63D86GVH6K;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayRecode/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "앨범 접근 권한을 허용해주세요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -580,8 +583,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayRecode/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "앨범 접근 권한을 허용해주세요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -637,14 +642,6 @@
 				minimumVersion = 5.0.0;
 			};
 		};
-		5F7A027B2ADAD02B00128DC4 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/WenchaoD/FSCalendar";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
 		5F7A027E2ADAD04700128DC4 /* XCRemoteSwiftPackageReference "PanModal" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/slackhq/PanModal";
@@ -659,6 +656,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 3.0.0;
+			};
+		};
+		5F9DBAC52B027F6C004B0916 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WenchaoD/FSCalendar";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
 			};
 		};
 		5FF24B6E2AFE21AC003E2497 /* XCRemoteSwiftPackageReference "JGProgressHUD" */ = {
@@ -697,11 +702,6 @@
 			package = 5F7A02782ADAD00A00128DC4 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
-		5F7A027C2ADAD02B00128DC4 /* FSCalendar */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5F7A027B2ADAD02B00128DC4 /* XCRemoteSwiftPackageReference "FSCalendar" */;
-			productName = FSCalendar;
-		};
 		5F7A027F2ADAD04700128DC4 /* PanModal */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5F7A027E2ADAD04700128DC4 /* XCRemoteSwiftPackageReference "PanModal" */;
@@ -711,6 +711,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5F7A02812ADAD06D00128DC4 /* XCRemoteSwiftPackageReference "BSImagePicker" */;
 			productName = BSImagePicker;
+		};
+		5F9DBAC62B027F6C004B0916 /* FSCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5F9DBAC52B027F6C004B0916 /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			productName = FSCalendar;
 		};
 		5FF24B6F2AFE21AC003E2497 /* JGProgressHUD */ = {
 			isa = XCSwiftPackageProductDependency;

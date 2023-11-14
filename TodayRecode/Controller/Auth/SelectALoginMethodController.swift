@@ -11,10 +11,6 @@ import SnapKit
 final class SelectALoginMethodController: UIViewController {
     
     // MARK: - 레이아웃
-    /// 배경뷰
-    private lazy var backgroundImg: UIImageView = UIImageView(
-        image: UIImage.blueSky)
-    
     /// 애플 로그인 버튼
     private lazy var appleLogin: UIButton = UIButton.buttonWithTitle(
         title: "Apple로 로그인",
@@ -86,16 +82,13 @@ final class SelectALoginMethodController: UIViewController {
 extension SelectALoginMethodController {
     
     private func configureUIAndAutoLayout() {
+        self.view.backgroundColor = UIColor.blue_base
         self.navigationItem.title = "로그인 선택"
         
         // ********** addSubview 설정 **********
-        self.view.addSubview(self.backgroundImg)
         self.view.addSubview(self.stackView)
         
         // ********** 오토레이아웃 설정 **********
-        self.backgroundImg.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         self.stackView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)

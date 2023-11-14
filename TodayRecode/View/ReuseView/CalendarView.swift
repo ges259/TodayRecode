@@ -19,10 +19,6 @@ final class CalendarView: UIView {
         calendar.dataSource = self
         // 배경 색상 설정
         calendar.backgroundColor = .customWhite5
-        // 월요일 시작
-        //        calendar.firstWeekday = 2
-        // 일요일 시작
-//        calendar.firstWeekday = 1
         
         // ----- 주(월/화/수/~~) -----
         // 한글로 표시
@@ -40,14 +36,19 @@ final class CalendarView: UIView {
         // 이벤트 - 점 위치
         calendar.appearance.eventOffset.y -= 5
         // 이벤트 - 선택되지 않은 날짜 색깔
-        calendar.appearance.eventDefaultColor = UIColor.customblue6
+        calendar.appearance.eventDefaultColor = UIColor.blue_tab
         // 이벤트 - 선택된 날짜 색깔
-        calendar.appearance.eventSelectionColor = UIColor.customblue6
+        calendar.appearance.eventSelectionColor = UIColor.clear
+        
+        
         
         // 찾았다
         calendar.appearance.borderRadius = .zero
+        
+        // 선택된 날짜의 색상
+        calendar.appearance.selectionColor = UIColor.blue_tab
         // 오늘 날짜 생상
-        calendar.appearance.todayColor = UIColor.clear
+        calendar.appearance.todayColor = UIColor.customblue1
         // 오늘 날짜 타이틀 생상
         calendar.appearance.titleTodayColor = .black
         

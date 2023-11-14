@@ -11,16 +11,12 @@ import SnapKit
 final class LoginController: UIViewController {
     
     // MARK: - 레이아웃
-    /// 배경뷰
-    private lazy var backgroundImg: UIImageView = UIImageView(
-        image: UIImage.blueSky)
-    
     private lazy var containerView: UIView = UIView.backgroundView(
         color: UIColor.customWhite5)
     
     /// "로그인" 레이블
     private lazy var loginLbl: UILabel = UILabel.configureLbl(
-        text: "로그인",
+        text: "이메일 로그인",
         font: UIFont.boldSystemFont(ofSize: 25))
     
     /// 이메일 텍스트필드
@@ -48,8 +44,8 @@ final class LoginController: UIViewController {
     private lazy var logInBtn: UIButton = {
         let btn = UIButton.buttonWithTitle(
             title: "로그인",
-            titleColor: UIColor.customBlack5,
-            font: UIFont.systemFont(ofSize: 20),
+            titleColor: UIColor.white,
+            font: UIFont.boldSystemFont(ofSize: 20),
             backgroundColor: UIColor.customblue3)
             btn.isEnabled = false
         return btn
@@ -59,7 +55,7 @@ final class LoginController: UIViewController {
     private lazy var goToSignUpViewBtn: UIButton = {
         let btn = UIButton.buttonWithTitle(
             title: "아이디가 없으신가요?",
-            font: UIFont.systemFont(ofSize: 12),
+            font: UIFont.systemFont(ofSize: 13),
             backgroundColor: UIColor.clear)
         btn.contentHorizontalAlignment = .left
         return btn
@@ -77,7 +73,8 @@ final class LoginController: UIViewController {
         distribution: .fill)
     
     
-    
+    /// 네비게이션 타이틀 레이블
+    private lazy var navTitle: UILabel = UILabel.navTitleLbl()
     
     
     
@@ -112,7 +109,7 @@ final class LoginController: UIViewController {
          self.passwordTF].forEach { tf in
             tf.text = nil
         }
-        self.logInBtn.isEnabled = false
+        self.formValidation()
     }
 }
 
@@ -131,7 +128,12 @@ extension LoginController {
     
     // MARK: - UI 설정
     private func configureUI() {
-        self.navigationItem.title = "로그인"
+        self.view.backgroundColor = UIColor.blue_base
+//        self.navigationItem.title = "로그인"
+        // 네비게이션 타이틀뷰(View) 설정
+        self.navigationItem.titleView = self.navTitle
+        self.navTitle.text = "설정"
+        
         self.stackView.setCustomSpacing(15, after: self.loginLbl)
         
         [self.containerView,
@@ -146,16 +148,11 @@ extension LoginController {
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         // ********** addSubview 설정 **********
-        self.view.addSubview(self.backgroundImg)
         self.view.addSubview(self.containerView)
         self.containerView.addSubview(self.stackView)
         self.containerView.addSubview(self.goToSignUpViewBtn)
         
         // ********** 오토레이아웃 설정 **********
-        // 배경뷰
-        self.backgroundImg.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         // 컨테이너뷰
         self.containerView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(50)
@@ -232,13 +229,11 @@ extension LoginController {
             // 텍스트필드에 빈칸이 있을 때
             self.logInBtn.isEnabled = true
             self.logInBtn.backgroundColor = .customblue6
-            self.logInBtn.setTitleColor(.black, for: .normal)
             return
         }
         // 텍스트필드가 모두 채워지면
         self.logInBtn.isEnabled = false
         self.logInBtn.backgroundColor = .customblue3
-        self.logInBtn.setTitleColor(UIColor.customBlack5, for: .normal)
     }
     
     
@@ -320,8 +315,6 @@ extension LoginController {
                     // 로그인에 성공했다면
                 case .success():
                     self.delegate?.authenticationComplete()
-                    
-//                    self.dismiss(animated: true)
                     
                     // 로그인에 실패했다면
                 case .failure(_):

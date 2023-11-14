@@ -18,20 +18,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // 파이어베이스
         FirebaseApp.configure()
         
-        
         // 네비게이션 바 설정
         let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.backgroundColor = UIColor.customWhite7.withAlphaComponent(0.1)
-        
+            navigationBarAppearance.backgroundColor = UIColor.blue_base
+//
         let navBar = UINavigationBar.appearance()
-            navBar.isTranslucent = true
-            
-            navBar.standardAppearance = navigationBarAppearance
-            navBar.scrollEdgeAppearance = navigationBarAppearance
-            navBar.compactAppearance = navigationBarAppearance
-            
-            navBar.tintColor = UIColor.black
+//        // 상태바_불투명하게 설정
+        navBar.standardAppearance = navigationBarAppearance
+        navBar.scrollEdgeAppearance = navigationBarAppearance
+        navBar.compactAppearance = navigationBarAppearance
         
+        UINavigationBar.appearance().tintColor = UIColor.black
+        UIApplication.shared.statusBarStyle = .darkContent
         
         return true
     }

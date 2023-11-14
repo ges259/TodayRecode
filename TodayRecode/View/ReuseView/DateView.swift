@@ -12,7 +12,7 @@ final class DateView: UIView {
     
     // MARK: - 레이아웃
     private lazy var dateLabel: UILabel = UILabel.configureLbl(
-        font: UIFont.systemFont(ofSize: 13))
+        font: UIFont.boldSystemFont(ofSize: 12))
     
     
     

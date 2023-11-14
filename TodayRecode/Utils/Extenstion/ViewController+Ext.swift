@@ -41,7 +41,7 @@ extension UIViewController {
         // Mutable_Attributed_String 설정
         let attributedTitle = NSMutableAttributedString(
             string: "\(currentController)\n",
-            attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)]
+            attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13)]
         )
         attributedTitle.append(NSAttributedString(
             string: "\(dateString)",
@@ -77,7 +77,7 @@ extension UIViewController {
         let cancelAction = self.customAlertAction(
             style: .cancel,
             title: "취소",
-            color: UIColor.cancelGray)
+            color: UIColor.black.withAlphaComponent(0.7))
         alertController.addAction(cancelAction)
         
         // ********** 첫번째 버튼 **********
@@ -99,8 +99,9 @@ extension UIViewController {
         }
         
         // ********** 타이틀 **********
-        let titleString = self.alertTitleAndFont(title: title,
-                                                 font: .systemFont(ofSize: 13))
+        let titleString = self.alertTitleAndFont(
+            title: title,
+            font: .systemFont(ofSize: 14))
         alertController.setValue(titleString, forKey: "attributedTitle")
         
         // ********** 메시지 **********
@@ -133,7 +134,7 @@ extension UIViewController {
         return NSAttributedString(
             string: title,
             attributes: [ //타이틀 폰트사이즈랑 글씨
-                NSAttributedString.Key.font : UIFont.systemFont(ofSize: 13),
+                NSAttributedString.Key.font : font,
                 NSAttributedString.Key.foregroundColor : UIColor.alertCancelGray])
     }
     

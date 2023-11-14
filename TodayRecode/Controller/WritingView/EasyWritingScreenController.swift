@@ -23,18 +23,21 @@ final class EasyWritingScreenController: UIViewController {
     
     // 상단 스택뷰
     /// 텍스트뷰
-    private lazy var recodeTextView: UITextView = {
+    private lazy var recordTextView: UITextView = {
         let tv = UITextView.configureTV(fontSize: 14)
         tv.delegate = self
+        tv.backgroundColor = UIColor.clear
         return tv
     }()
+    /// 텍스트뷰의 높이 제약
+    private var textViewHeight: NSLayoutConstraint?
     /// 확장 버튼
     private let expansionBtn: UIButton = UIButton.buttonWithImage(
         image: .expansion,
-        tintColor: UIColor.btnGrayColor)
+        tintColor: UIColor.lightGray)
     /// 스택뷰
     private lazy var topStackView: UIStackView = UIStackView.configureStackView(
-        arrangedSubviews: [self.recodeTextView,
+        arrangedSubviews: [self.recordTextView,
                            self.expansionBtn],
         axis: .horizontal,
         spacing: 12,
@@ -51,7 +54,8 @@ final class EasyWritingScreenController: UIViewController {
     private let sendBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.check,
         tintColor: UIColor.white,
-        backgroundColor: UIColor.btnGrayColor)
+        backgroundColor: UIColor.lightGray)
+    
     /// 스택뷰
     private lazy var bottomStackView: UIStackView = UIStackView.configureStackView(
         arrangedSubviews: [self.dateLbl,
@@ -61,6 +65,10 @@ final class EasyWritingScreenController: UIViewController {
         alignment: .center,
         distribution: .fill)
     
+    private lazy var touchGestureView: UIView = UIView.backgroundView(
+        color: UIColor.clear)
+    
+    
     
     
     
@@ -68,7 +76,7 @@ final class EasyWritingScreenController: UIViewController {
     
     
     // MARK: - 프로퍼티
-    private lazy var size = CGSize(width: self.recodeTextView.frame.width,
+    private lazy var size = CGSize(width: self.recordTextView.frame.width,
                                    height: .infinity)
     
     // 델리게이트
@@ -76,6 +84,8 @@ final class EasyWritingScreenController: UIViewController {
     
     
     var todayDate: Date?
+    
+    lazy var textViewHeightAnchor = self.recordTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 60)
     
     
     
@@ -91,7 +101,7 @@ final class EasyWritingScreenController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.containerView.isHidden = false
-        self.recodeTextView.becomeFirstResponder()
+        self.recordTextView.becomeFirstResponder()
         
         // 노티피케이션
         NotificationCenter.default.addObserver(
@@ -148,6 +158,7 @@ extension EasyWritingScreenController {
         self.containerView.addSubview(self.topStackView)
         self.containerView.addSubview(self.bottomStackView)
         self.containerView.addSubview(self.placeholderLbl)
+        self.view.addSubview(self.touchGestureView)
         self.view.addSubview(self.containerView)
         
         
@@ -170,10 +181,9 @@ extension EasyWritingScreenController {
             make.height.width.equalTo(20)
         }
         // 텍스트뷰
-        self.recodeTextView.snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(60)
-            make.height.lessThanOrEqualTo(160)
-        }
+        self.recordTextView.translatesAutoresizingMaskIntoConstraints = false
+        self.textViewHeight = self.textViewHeightAnchor
+        self.textViewHeight?.isActive = true
         // 상단 스택뷰
         self.topStackView.snp.makeConstraints { make in
             make.top.leading.equalToSuperview().offset(10)
@@ -192,6 +202,10 @@ extension EasyWritingScreenController {
             make.height.greaterThanOrEqualTo(50)
             make.height.lessThanOrEqualTo(500)
         }
+        self.touchGestureView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(self.containerView.snp.top)
+        }
     }
     
     // MARK: - 액션 설정
@@ -200,21 +214,16 @@ extension EasyWritingScreenController {
         /// 제스쳐
         let gesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissView))
         gesture.numberOfTapsRequired = 1
-        self.view.addGestureRecognizer(gesture)
+        self.touchGestureView.addGestureRecognizer(gesture)
         
-        /// 아무 행동도 하지 않기
-        let gesture2 = UITapGestureRecognizer(target: self, action: #selector(self.nothingHappened))
-        gesture2.numberOfTapsRequired = 1
-        self.containerView.addGestureRecognizer(gesture2)
-        
-        self.expansionBtn.addTarget(self, action: #selector(self.expansionBtnTapped), for: .touchUpInside)
         
         
         // 액션
+        self.expansionBtn.addTarget(self, action: #selector(self.expansionBtnTapped), for: .touchUpInside)
         self.sendBtn.addTarget(self, action: #selector(self.sendBtnTapped), for: .touchUpInside)
     }
 }
-    
+
     
     
     
@@ -251,7 +260,7 @@ extension EasyWritingScreenController {
         // 뒤로가기
         self.dismiss(animated: false)
         // DetailWritingScreen으로 진입
-        self.delegate?.expansionBtnTapped(context: self.recodeTextView.text)
+        self.delegate?.expansionBtnTapped(context: self.recordTextView.text)
     }
     
     // MARK: - 저장 버튼 액션
@@ -259,20 +268,17 @@ extension EasyWritingScreenController {
         self.dismissView()
     }
     
-    /// 컨테이너뷰를 클릭했을 때 viewTapped가 불려 뒤로 가는 현상으로 인해 해당 메서드를 만들었음
-    @objc private func nothingHappened() {
-    }
-    
     // MARK: - 뒤로가기 액션 + API
     /// 화면을 누르면 + 보내기 버튼 누르면 뒤로 가기
     /// 키보드 닫기 + 뒤로가기 재사용
     @objc private func dismissView() {
+        print(#function)
         // 텍스트뷰에 텍스트가 있다면 -> 저장
-        if self.recodeTextView.hasText {
+        if self.recordTextView.hasText {
             // DB에 데이터 생성
             self.createRecord_API()
             // 뒤로갈 때 키보드 내리기
-            self.recodeTextView.resignFirstResponder()
+            self.recordTextView.resignFirstResponder()
         }
         // 뒤로가기
         self.dismiss(animated: false)
@@ -294,7 +300,7 @@ extension EasyWritingScreenController {
         // DB에 데이터 생성
         Record_API.shared.createRecord(writing_Type: .record_plusBtn,
                                        date: self.todayDate,
-                                       context: self.recodeTextView.text,
+                                       context: self.recordTextView.text,
                                        image: nil) { result in
             switch result {
             case .success(let record):
@@ -327,7 +333,7 @@ extension EasyWritingScreenController: UITextViewDelegate {
             // 플레이스홀더 띄우기
             self.placeholderLbl.isHidden = false
             self.sendBtn.isEnabled = false
-            self.sendBtn.backgroundColor = UIColor.btnGrayColor
+            self.sendBtn.backgroundColor = UIColor.lightGray
         // 텍스트뷰에 텍스트가 있다면
         } else {
             // 플레이스홀더 없애기
@@ -337,13 +343,26 @@ extension EasyWritingScreenController: UITextViewDelegate {
         }
         
         // 현재 테이블의 높이 가져오기
-        let textViewHeight = self.recodeTextView.sizeThatFits(self.size).height
+        let textViewHeight = self.recordTextView.sizeThatFits(self.size).height
         
+        
+        if textViewHeight >= 200 {
+            self.textViewHeight?.constant = textViewHeight
+            self.view.layoutIfNeeded()
+            self.recordTextView.isScrollEnabled = true
+        } else {
+            self.textViewHeight = self.textViewHeightAnchor
+            self.view.layoutIfNeeded()
+            self.recordTextView.isScrollEnabled = false
+        }
         // 테이블의 최대 높이인 150을 넘으면
             // 더이상 텍스트뷰가 커지지 않고 스크롤이 가능하도록 설정
-        self.recodeTextView.isScrollEnabled = textViewHeight > 150
-        ? true
-        : false
+//        self.recodeTextView.isScrollEnabled = textViewHeight >= 200
+//        ? true
+//        : false
+        
+        
+        
     }
     
     

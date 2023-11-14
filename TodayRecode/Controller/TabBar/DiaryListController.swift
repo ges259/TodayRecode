@@ -10,10 +10,6 @@ import UIKit
 final class DiaryListController: UIViewController {
     
     // MARK: - 레이아웃
-    /// 배경 뷰
-    private lazy var backgroundImg: UIImageView = UIImageView(
-        image: UIImage.blueSky)
-    
     /// 네비게이션 타이틀 레이블
     private lazy var navTitle: UILabel = UILabel.navTitleLbl()
     
@@ -47,8 +43,8 @@ final class DiaryListController: UIViewController {
     /// +버튼
     private lazy var plusBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.plus,
-        tintColor: UIColor.black,
-        backgroundColor: UIColor.white)
+        tintColor: UIColor.white,
+        backgroundColor: UIColor.blue_tab)
     
     
     /// Record데이터가 없을 때 보이는 뷰
@@ -56,7 +52,6 @@ final class DiaryListController: UIViewController {
         let view = NoRecordDataView(
             frame: .zero,
             nodataEnum: .diary)
-            view.backgroundColor = .customWhite5
         return view
     }()
     
@@ -142,6 +137,7 @@ extension DiaryListController {
     
     // MARK: - UI 설정
     private func configureUI() {
+        self.view.backgroundColor = UIColor.blue_base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         
@@ -150,24 +146,19 @@ extension DiaryListController {
         
         // 코너 둥글게 설정
         self.plusBtn.clipsToBounds = true
-        self.plusBtn.layer.cornerRadius = 58 / 2
+        self.plusBtn.layer.cornerRadius = 65 / 2
     }
     
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         // ********** addSubview 설정 **********
-        [self.backgroundImg,
-         self.noDataView,
+        [self.noDataView,
          self.collectionView,
          self.stackView,
          self.plusBtn].forEach { view in
             self.view.addSubview(view)
         }
         // ********** 오토레이아웃 설정 **********
-        // 배경화면
-        self.backgroundImg.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         // 날짜 뷰
         self.dateView.snp.makeConstraints { make in
             make.height.equalTo(35)
@@ -192,7 +183,7 @@ extension DiaryListController {
         self.plusBtn.snp.makeConstraints { make in
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-17)
             make.trailing.equalToSuperview().offset(-17)
-            make.width.height.equalTo(58)
+            make.width.height.equalTo(65)
         }
         // 네비게이션 타이틀
         self.navTitle.snp.makeConstraints { make in
@@ -250,7 +241,7 @@ extension DiaryListController {
     
     
     // MARK: - 아이템 이동
-    func moveToItem(date: Date) {
+    func moveToItem(date: Date, animated: Bool = true) {
         guard let dateType = date.reset_time() else { return }
         
         // 날짜뷰 날짜 바꾸기
@@ -263,7 +254,7 @@ extension DiaryListController {
                 self.collectionView.scrollToItem(
                     at: IndexPath(row: index, section: 0),
                     at: .right,
-                    animated: true)
+                    animated: animated)
             }
         }
     }
@@ -354,7 +345,7 @@ extension DiaryListController {
                 // 해당 날짜로 콜렉션뷰 자동 스크롤
                 self.currentPage = index
                 if !recordArray.isEmpty {
-                    self.moveToItem(date: recordArray[index].date)
+                    self.moveToItem(date: recordArray[index].date, animated: false)
                 }
                 break
             case .failure(_):
@@ -393,14 +384,20 @@ extension DiaryListController: CalendarDelegate {
         
         // 데이터가 있을 때
         if self.diaryArray.count != 0 {
+            
+            
             // 선택한 날짜가 몇 번째인지 가져오기
             let index = self.diaryDateArray.firstIndex { record in
                 record == date
-            } ?? 0
-            // 현재 인덱스 저장
-                // -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
-            self.currentPage = index
-            self.moveToItem(date: self.diaryDateArray[index])
+            }
+            
+            if let index = index {
+                // 현재 인덱스 저장
+                    // -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
+                self.currentPage = index
+                self.moveToItem(date: self.diaryDateArray[index])
+            }
+            return
         }
     }
     /// 달력의 형태(week <-> month)가 바뀌면  높이가 업데이트된다.

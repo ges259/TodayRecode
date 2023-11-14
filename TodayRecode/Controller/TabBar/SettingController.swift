@@ -10,15 +10,16 @@ import SnapKit
 
 final class SettingController: UIViewController {
     // MARK: - 레이아웃
-    /// 배경 이미지
-    private lazy var backgroundImg: UIImageView = UIImageView(
-        image: UIImage.blueSky)
-    
     /// 유저의 정보를 담을 뷰
     private lazy var userContainerView: UIView = UIView.backgroundView(
         color: UIColor.customWhite5)
     /// 유저 이미지
-    private lazy var userImgView: UIImageView = UIImageView()
+    private lazy var userImgView: UIImageView = {
+        let img = UIImageView(image: UIImage.person_Img)
+            img.tintColor = UIColor.black
+        return img
+    }()
+    
     /// 유저 이름
     private lazy var userNameLbl: UILabel = UILabel.configureLbl(
         font: UIFont.boldSystemFont(ofSize: 17))
@@ -45,7 +46,6 @@ final class SettingController: UIViewController {
         return tableView
     }()
     
-    
     private lazy var logoutBtn: UIButton = UIButton.buttonWithTitle(
         title: "로그아웃",
         titleColor: UIColor.red,
@@ -64,7 +64,8 @@ final class SettingController: UIViewController {
         distribution: .fill)
     
     
-    
+    /// 네비게이션 타이틀 레이블
+    private lazy var navTitle: UILabel = UILabel.navTitleLbl()
     
     
     
@@ -112,7 +113,11 @@ extension SettingController {
     
     // MARK: - UI 설정
     private func configureUI() {
-        self.navigationItem.title = "설정"
+        self.view.backgroundColor = UIColor.blue_base
+        // 네비게이션 타이틀뷰(View) 설정
+        self.navigationItem.titleView = self.navTitle
+        self.navTitle.text = "설정"
+        
         // 테이블뷰 설정
         self.tableView.register(
             SettingTableViewCell.self,
@@ -131,18 +136,13 @@ extension SettingController {
         // ********** addSubview 설정 **********
         self.userContainerView.addSubview(self.userImgView)
         self.userContainerView.addSubview(self.stackView)
-        self.view.addSubview(self.backgroundImg)
         self.view.addSubview(self.containerStackView)
         
         // ********** 오토레이아웃 설정 **********
-        // 배경뷰
-        self.backgroundImg.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         // 유저 이미지뷰
         self.userImgView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(15)
-            make.height.width.equalTo(60)
+            make.height.width.equalTo(50)
             make.centerY.equalToSuperview()
         }
         // 유저 스택뷰
@@ -177,7 +177,6 @@ extension SettingController {
         // user 옵셔널바인딩
         guard let user = self.user else { return }
         // user 정보 업데이트
-        self.userImgView.image = UIImage(named: "cat")
         self.userNameLbl.text = user.userName
         self.userEmailLbl.text = user.email
     }

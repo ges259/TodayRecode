@@ -12,10 +12,6 @@ import FirebaseAuth
 final class SignUpController: UIViewController {
     
     // MARK: - 레이아웃
-    /// 배경뷰
-    private lazy var backgroundImg: UIImageView = UIImageView(
-        image: UIImage.blueSky)
-    
     private lazy var containerView: UIView = UIView.backgroundView(
         color: UIColor.customWhite5)
     
@@ -65,7 +61,7 @@ final class SignUpController: UIViewController {
     private lazy var signUpBtn: UIButton = {
         let btn = UIButton.buttonWithTitle(
             title: "회원가입",
-            titleColor: UIColor.customBlack5,
+            titleColor: UIColor.white,
             font: UIFont.systemFont(ofSize: 20),
             backgroundColor: UIColor.customblue3)
             btn.isEnabled = false
@@ -84,6 +80,16 @@ final class SignUpController: UIViewController {
         spacing: 7,
         alignment: .fill,
         distribution: .fill)
+    
+    /// 네비게이션 타이틀 레이블
+    private lazy var navTitle: UILabel = UILabel.navTitleLbl()
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -117,7 +123,7 @@ final class SignUpController: UIViewController {
          self.passwordCheckTF].forEach { tf in
             tf.text = nil
         }
-        self.signUpBtn.isEnabled = false
+        self.formValidation()
     }
 }
 
@@ -136,7 +142,11 @@ extension SignUpController {
     
     // MARK: - UI 설정
     private func configureUI() {
-        self.navigationItem.title = "회원가입"
+        self.view.backgroundColor = UIColor.blue_base
+        // 네비게이션 타이틀뷰(View) 설정
+        self.navigationItem.titleView = self.navTitle
+        self.navTitle.text = "설정"
+        
         self.stackView.setCustomSpacing(15, after: self.signUpLbl)
         
         [self.containerView,
@@ -155,15 +165,10 @@ extension SignUpController {
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         // ********** addSubview 설정 **********
-        self.view.addSubview(self.backgroundImg)
         self.view.addSubview(self.containerView)
         self.containerView.addSubview(self.stackView)
         
         // ********** 오토레이아웃 설정 **********
-        // 배경뷰
-        self.backgroundImg.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         // 컨테이너뷰
         self.containerView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(50)
@@ -237,13 +242,11 @@ extension SignUpController {
             // 텍스트필드가 빈칸이 없을 때
             self.signUpBtn.isEnabled = true
             self.signUpBtn.backgroundColor = .customblue6
-            self.signUpBtn.setTitleColor(.black, for: .normal)
             return
         }
         // 텍스트필드에 빈칸이 있을 때
         self.signUpBtn.isEnabled = false
         self.signUpBtn.backgroundColor = .customblue3
-        self.signUpBtn.setTitleColor(UIColor.customBlack5, for: .normal)
     }
 }
 

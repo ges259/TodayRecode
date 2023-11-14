@@ -75,6 +75,11 @@ enum NavTitleSetEnum {
         return "하루 기록"
     }
 }
+
+
+
+
+
 enum NoDataEnum {
     case record_Main
     case record_Check

@@ -22,7 +22,8 @@ final class TabBarController: UITabBarController {
     
     
     
-    
+    // 스플래시 화면
+    // 얼럿창 취소 버튼
     
     
     
@@ -49,8 +50,11 @@ final class TabBarController: UITabBarController {
     // MARK: - 화면 설정
     /// 뷰의 배경, 탭바, 네비게이션 바 설정
     private func configureUI() {
-        self.tabBar.tintColor = UIColor.blue.withAlphaComponent(0.3)
+        self.tabBar.tintColor = UIColor.blue_tab
+        
         self.tabBar.backgroundColor = UIColor.white
+        
+        self.tabBar.isTranslucent = false
     }
     
     // MARK: - 탭바 설정
@@ -123,7 +127,7 @@ final class TabBarController: UITabBarController {
             let vc = UINavigationController(rootViewController: controller)
                 vc.modalPresentationStyle = .fullScreen
             
-            self.present(vc, animated: true)
+            self.present(vc, animated: false)
         }
     }
 }
@@ -140,5 +144,6 @@ final class TabBarController: UITabBarController {
 extension TabBarController: AuthenticationDelegate {
     func authenticationComplete() {
         self.dismiss(animated: true)
+        self.configureTabBar()
     }
 }
