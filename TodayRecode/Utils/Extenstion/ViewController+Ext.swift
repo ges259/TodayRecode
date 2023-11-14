@@ -58,7 +58,7 @@ extension UIViewController {
     func customAlert(alertStyle: UIAlertController.Style = .actionSheet,
                      withTitle title: String,
                      message: String? = nil,
-                     cancelBtnColor: UIColor = UIColor.cancelGray,
+                     cancelBtnColor: UIColor = UIColor.alertCancelBlack,
                      
                      firstBtnName: String? = nil,
                      firstBtnColor: UIColor = UIColor.black,
@@ -77,7 +77,7 @@ extension UIViewController {
         let cancelAction = self.customAlertAction(
             style: .cancel,
             title: "취소",
-            color: UIColor.black.withAlphaComponent(0.7))
+            color: cancelBtnColor)
         alertController.addAction(cancelAction)
         
         // ********** 첫번째 버튼 **********
@@ -135,7 +135,7 @@ extension UIViewController {
             string: title,
             attributes: [ //타이틀 폰트사이즈랑 글씨
                 NSAttributedString.Key.font : font,
-                NSAttributedString.Key.foregroundColor : UIColor.alertCancelGray])
+                NSAttributedString.Key.foregroundColor : UIColor.alertTitleGray])
     }
     
     

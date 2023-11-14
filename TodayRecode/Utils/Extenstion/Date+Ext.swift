@@ -29,7 +29,7 @@ extension Date {
     
     
     static func DateLabelString(date: Date) -> String {
-        let timeFormat: TodayFormatEnum = timeFormat_Static == 0
+        let timeFormat: TodayFormatEnum = Format.timeFormat_Static == 0
         ? .a_hmm // PM 2:00
         : .HHmm // 14: 00
         

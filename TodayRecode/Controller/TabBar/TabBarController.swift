@@ -9,18 +9,17 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
-    // MARK: - 유저가 있는지 확인
-    private var checkUser: () {
-        // user가 있는지 없는지 확인
-        return User_API.shared.checkUser
-        // 있다면 -> 탭바 설정
-        ? self.configureTabBar()
-        // 없다면 -> 로그인 선택 창으로 이동
-        : self.goToSelectALoginController()
-    }
     
+//    private var checkUser: () {
+//        // user가 있는지 없는지 확인
+//        return User_API.shared.checkUser
+//        // 있다면 -> 탭바 설정
+//        ? self.configureTabBar()
+//        // 없다면 -> 로그인 선택 창으로 이동
+//        : self.goToSelectALoginController()
+//    }
     
-    
+
     
     // 스플래시 화면
     // 얼럿창 취소 버튼
@@ -33,9 +32,10 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // 로그인이 되어있는 상태인지 확인
-        self.checkUser
+        self.checkUser()
         // 탭바 설정
         self.configureUI()
+        self.configureTabBar()
     }
     
     
@@ -50,7 +50,7 @@ final class TabBarController: UITabBarController {
     // MARK: - 화면 설정
     /// 뷰의 배경, 탭바, 네비게이션 바 설정
     private func configureUI() {
-        self.tabBar.tintColor = UIColor.blue_tab
+        self.tabBar.tintColor = UIColor.blue_Point
         
         self.tabBar.backgroundColor = UIColor.white
         
@@ -112,7 +112,17 @@ final class TabBarController: UITabBarController {
     
     
     
-    
+    // MARK: - 유저가 있는지 확인
+    private func checkUser() {
+        // user가 있는지 없는지 확인
+        if User_API.shared.checkUser {
+            // 있다면 -> 탭바 설정
+            self.fetchUser_API()
+        } else {
+            // 없다면 -> 로그인 선택 창으로 이동
+            self.goToSelectALoginController()
+        }
+    }
     
 
     
@@ -130,6 +140,33 @@ final class TabBarController: UITabBarController {
             self.present(vc, animated: false)
         }
     }
+    
+    
+    
+    
+    
+    
+    // MARK: - 유저정보 가져오기 _ API
+    private func fetchUser_API() {
+        // 유저가 있는지 확인
+        User_API
+            .shared
+            .fetchUser { result in
+            switch result {
+                // 유저가 있다면
+            case .success(let user):
+                print("로그인 성공")
+                UserData.user = user
+                break
+                
+            case .failure(_):
+                print("로그인 실패")
+                // 로그인 선택 창으로 이동
+                self.goToSelectALoginController()
+                break
+            }
+        }
+    }
 }
 
 
@@ -143,7 +180,9 @@ final class TabBarController: UITabBarController {
 
 extension TabBarController: AuthenticationDelegate {
     func authenticationComplete() {
+        self.fetchUser_API()
+        // 로그인 시
+        self.selectedIndex = 0
         self.dismiss(animated: true)
-        self.configureTabBar()
     }
 }

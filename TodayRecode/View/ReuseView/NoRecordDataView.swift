@@ -16,7 +16,7 @@ final class NoRecordDataView: UIView {
     
     private lazy var plusBtn: UIImageView = {
         let img = UIImageView()
-        img.tintColor = .customblue3
+        img.tintColor = .blue_Point
         return img
     }()
     

@@ -169,7 +169,7 @@ enum SettingTableEnum: Int {
     }
     
     var timeOption: String {
-        switch timeFormat_Static {
+        switch Format.timeFormat_Static {
         case 0: return "12시간 형식: PM 2:00"
         case 1: return "24시간 형식: 14:00"
         default: return ""
@@ -177,7 +177,7 @@ enum SettingTableEnum: Int {
     }
     
     var dateOption: String {
-        switch dateFormat_Static {
+        switch Format.dateFormat_Static {
         case 0: return "일요일 시작"
         case 1: return "월요일 시작"
         default: return ""

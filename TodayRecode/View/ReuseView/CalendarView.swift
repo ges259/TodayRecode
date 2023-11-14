@@ -36,17 +36,15 @@ final class CalendarView: UIView {
         // 이벤트 - 점 위치
         calendar.appearance.eventOffset.y -= 5
         // 이벤트 - 선택되지 않은 날짜 색깔
-        calendar.appearance.eventDefaultColor = UIColor.blue_tab
+        calendar.appearance.eventDefaultColor = UIColor.blue_Point
         // 이벤트 - 선택된 날짜 색깔
         calendar.appearance.eventSelectionColor = UIColor.clear
-        
-        
         
         // 찾았다
         calendar.appearance.borderRadius = .zero
         
         // 선택된 날짜의 색상
-        calendar.appearance.selectionColor = UIColor.blue_tab
+        calendar.appearance.selectionColor = UIColor.blue_Point
         // 오늘 날짜 생상
         calendar.appearance.todayColor = UIColor.customblue1
         // 오늘 날짜 타이틀 생상
@@ -147,7 +145,7 @@ extension CalendarView {
     
     
     func configureDateFormat() {
-        self.calendar.firstWeekday = dateFormat_Static == 0
+        self.calendar.firstWeekday = Format.dateFormat_Static == 0
         ? 1 // 일요일 시작
         : 2 // 월요일 시작
     }

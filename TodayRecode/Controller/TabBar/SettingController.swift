@@ -73,10 +73,9 @@ final class SettingController: UIViewController {
     
     
     
-    // MARK: - 프로퍼티
-    private var user: User? {
-        didSet { self.configureData() }
-    }
+    
+    
+    
     
     
     
@@ -90,11 +89,14 @@ final class SettingController: UIViewController {
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.fetchUser_API()
+        
         self.configureUI()
         self.configureAutoLayout()
         self.configureAction()
-        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.configureData()
     }
 }
 
@@ -139,10 +141,11 @@ extension SettingController {
         self.view.addSubview(self.containerStackView)
         
         // ********** 오토레이아웃 설정 **********
-        // 유저 이미지뷰
+        // 유저 이미지
         self.userImgView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(15)
-            make.height.width.equalTo(50)
+            make.width.equalTo(55)
+            make.height.equalTo(50)
             make.centerY.equalToSuperview()
         }
         // 유저 스택뷰
@@ -175,7 +178,7 @@ extension SettingController {
     // MARK: - 유저 정보 설정
     private func configureData() {
         // user 옵셔널바인딩
-        guard let user = self.user else { return }
+        guard let user = UserData.user else { return }
         // user 정보 업데이트
         self.userNameLbl.text = user.userName
         self.userEmailLbl.text = user.email
@@ -237,28 +240,6 @@ extension SettingController {
             case .failure(_):
                 // MARK: - Fix
                 self.apiFail_Alert()
-                break
-            }
-        }
-    }
-    
-    // MARK: - 유저정보 가져오기 _ API
-    private func fetchUser_API() {
-        // 유저가 있는지 확인
-        User_API
-            .shared
-            .fetchUser { result in
-            switch result {
-                // 유저가 있다면
-            case .success(let user):
-                print("로그인 성공")
-                self.user = user
-                break
-                
-            case .failure(_):
-                print("로그인 실패")
-                // 로그인 선택 창으로 이동
-                self.goToSelectALoginController()
                 break
             }
         }
@@ -346,15 +327,15 @@ extension SettingController {
         // 전역 변수 업데이트
         if settingTableEnum.rawValue == 0 {
             // 날짜 형식을 바꿈
-            dateFormat_Static = index
+            Format.dateFormat_Static = index
             // 날짜 형식을 바뀌었다는 것을 알림
-            dateFormat_Diary_Date = true
-            dateFormat_Record_Date = true
+            Format.dateFormat_Diary_Date = true
+            Format.dateFormat_Record_Date = true
         } else {
             // 시간 형식을 바꿈
-            timeFormat_Static = index
+            Format.timeFormat_Static = index
             // 시간 형식을 바뀌었다는 것을 알림
-            dateFormat_Record_Time = true
+            Format.dateFormat_Record_Time = true
         }
     }
 }

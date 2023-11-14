@@ -11,20 +11,29 @@ import FirebaseFirestore
 
 
 // MARK: - Format
-// ********** 현재 형식을 알려주는 전역 변수 **********
-var timeFormat_Static: Int = 0
-var dateFormat_Static: Int = 0
+enum Format {
+    // ********** 현재 형식을 알려주는 전역 변수 **********
+    static var timeFormat_Static: Int = 0
+    static var dateFormat_Static: Int = 0
 
-// ********** 데이터 형식이 변했다는 것을 알려주는 전역 변수 **********
-/// 기록 화면, 달력의 형식이 바뀌었다는 것을 알려주는 전역 변수
-var dateFormat_Record_Date: Bool = false
-/// 기록 화면, 시간의 형식이 바뀌었다는 것을 알려주는 전역 변수
-var dateFormat_Record_Time: Bool = false
-/// 일기 목록 화면, 달력의 형식이 바뀌었다는 것을 알려주는 전역 변수
-var dateFormat_Diary_Date: Bool = false
+    // ********** 데이터 형식이 변했다는 것을 알려주는 전역 변수 **********
+    /// 기록 화면, 달력의 형식이 바뀌었다는 것을 알려주는 전역 변수
+    static var dateFormat_Record_Date: Bool = false
+    /// 기록 화면, 시간의 형식이 바뀌었다는 것을 알려주는 전역 변수
+    static var dateFormat_Record_Time: Bool = false
+    /// 일기 목록 화면, 달력의 형식이 바뀌었다는 것을 알려주는 전역 변수
+    static var dateFormat_Diary_Date: Bool = false
+}
 
-// ********** 이미지 캐시 전역 변수 **********
-var imageCache = [String: UIImage]()
+enum UserData {
+    static var user: User?
+    
+    // ********** 이미지 캐시 전역 변수 **********
+    static var imageCache = [String: UIImage]()
+}
+
+
+
 
 
 

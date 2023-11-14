@@ -13,7 +13,7 @@ struct User {
         self.email = dictionary[API_String.email] as? String ?? ""
         self.userName = dictionary[API_String.userName] as? String ?? ""
         
-        timeFormat_Static = dictionary[API_String.timeFormat] as? Int ?? 0
-        dateFormat_Static = dictionary[API_String.dateFomat] as? Int ?? 0
+        Format.timeFormat_Static = dictionary[API_String.timeFormat] as? Int ?? 0
+        Format.dateFormat_Static = dictionary[API_String.dateFomat] as? Int ?? 0
     }
 }

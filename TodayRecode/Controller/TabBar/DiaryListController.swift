@@ -44,7 +44,7 @@ final class DiaryListController: UIViewController {
     private lazy var plusBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.plus,
         tintColor: UIColor.white,
-        backgroundColor: UIColor.blue_tab)
+        backgroundColor: UIColor.blue_Point)
     
     
     /// Record데이터가 없을 때 보이는 뷰
@@ -105,9 +105,9 @@ final class DiaryListController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // 날짜 형식이 바뀌었다면 -> 캘린더 리로드
-        if dateFormat_Diary_Date {
+        if Format.dateFormat_Diary_Date {
             self.calendar.configureDateFormat()
-            dateFormat_Diary_Date = false
+            Format.dateFormat_Diary_Date = false
         }
     }
 }
@@ -530,11 +530,15 @@ extension DiaryListController: UICollectionViewDataSource,
             todayFormat: .d일,
             date: self.diaryArray[indexPath.row].date)
         
+         
+        
         if !diaryArray.isEmpty {
-            ImageUploader.shared.loadImageView(
-                with: self.diaryArray[indexPath.row].imageUrl, completion: { image in
-                    cell.imageView.image = image?.first
-                })
+            if let url = self.diaryArray[indexPath.row].imageUrl.first?.value {
+                ImageUploader.shared.loadImageView(
+                    with: [url], completion: { image in
+                        cell.imageView.image = image?.first
+                    })
+            }
         }
         return cell
     }

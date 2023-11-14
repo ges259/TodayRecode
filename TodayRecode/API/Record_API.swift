@@ -110,7 +110,7 @@ struct Record_API {
     func createRecord(writing_Type: DetailViewMode,
                       date: Date?,
                       context: String,
-                      image: [String]?,
+                      image: [String: String]? = [:],
                       completion: @escaping RecordCompletion) {
         // uid가져오기
         guard let uid = Auth.auth().currentUser?.uid,
@@ -124,13 +124,9 @@ struct Record_API {
             API_String.writing_Type: writing_Type.api,
             API_String.context: context,
             API_String.created_at: current,
+            API_String.image_url: image ?? [:],       // 이미지_url
             API_String.user: uid]
-        //
-        // 이미지 배열 옵셔널 바인딩
-        if let image = image, !image.isEmpty {
-            // 딕셔너리에 추가
-            value[API_String.image_url] = image       // 이미지_url
-        }
+        
         // DB에 저장
         API_String
             .recodeDB
@@ -163,7 +159,7 @@ struct Record_API {
     func updateRecord(writing_Type: DetailViewMode,
                       record: Record,
                       context: String,
-                      image: [String]?,
+                      image: [String: String]? = [:],
                       completion: @escaping RecordCompletion) {
         
         // uid가져오기
@@ -177,7 +173,7 @@ struct Record_API {
             API_String.writing_Type: writing_Type.api,  // writing_Type
             API_String.context: context,                // context
             API_String.created_at: current,             // record의 날짜
-            API_String.image_url: image ?? [],       // 이미지_url
+            API_String.image_url: image ?? [:],       // 이미지_url
             API_String.user: uid]                       // uid
         
         // DB에 저장
@@ -206,8 +202,11 @@ struct Record_API {
     
     // MARK: - 기록 삭제
     func deleteRecord(documentID: String?,
-                      imageUrl: [String]?,
+                      imageUrl: [String: String]?,
                       completion: @escaping (Result<Void, Error>) -> Void) {
+        
+        ImageUploader.shared.deleteImage(imageUrl: imageUrl)
+        
         // 문서ID 옵셔널 바인딩
         guard let documentID = documentID else { return }
         // DB에서 삭제
@@ -218,22 +217,30 @@ struct Record_API {
                 return
             }
             
-//            if let imageUrl = imageUrl {
+//            print("1")
+//            if let imageUrl = imageUrl?.keys {
+//                print("2")
 //                // DC01B082-68D2-472F-B300-2423A5BD6026/images_0
 //                imageUrl.forEach({ url_String in
 //                    let ref = Storage.storage().reference().child(url_String)
-//                    
+//                    print("3")
 //                    print(url_String)
 //                    ref.delete { error in
+//                        print("4")
 //                        // 에러가 있다면
 //                        if let error = error {
 //                            completion(.failure(error))
+//                            print("000000")
 //                            return
 //                        }
+//                        print("5")
 //                        print("이미지 삭제 성공")
 //                    }
 //                })
 //            }
+//
+            
+            
             
             print("기록 삭제 성공")
             // 삭제에 성공한다면

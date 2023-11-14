@@ -49,7 +49,8 @@ final class DetailWritingScreenController: UIViewController {
         tv.inputAccessoryView = self.accessoryCustomView
         return tv
     }()
-    
+    /// 텍스트뷰의 높이 제약
+    private var stackViewHeight: NSLayoutConstraint?
     /// 플레이스홀더 레이블
     private lazy var placeholderLbl: UILabel = UILabel.configureLbl(
         text: "오늘 무슨 일이 있었지?",
@@ -70,7 +71,7 @@ final class DetailWritingScreenController: UIViewController {
     private let recodeShowBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.recodeShow,
         tintColor: UIColor.white,
-        backgroundColor: UIColor.blue_tab)
+        backgroundColor: UIColor.blue_Point)
     
     // 악세서리 뷰
     /// 카메라 버튼
@@ -94,6 +95,7 @@ final class DetailWritingScreenController: UIViewController {
         spacing: 12,
         alignment: .center,
         distribution: .fill)
+    
     /// 키보드 내리기 버튼
     private let keyboardDownBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.keyboardDown,
@@ -144,24 +146,21 @@ final class DetailWritingScreenController: UIViewController {
     
     
     // MARK: - 프로퍼티
+    // ********** 기본? 변수들 **********
     /// 일기 모드 / 기록 모드를 알 수 있는 enum변수
     var detailViewMode: DetailViewMode?
     /// 델리게이트
     weak var delegate: DetailWritingScreenDelegate?
     
     
+    // ********** 데이터 **********
     /// 기록 확인 화면에서 오늘 기록을 볼 수 있게 하는 Record배열
     lazy var todayRecords: [Record] = []
     /// 셀을 클릭하여 상세작성 화면에 들어온 경우
-    var selectedRecord: Record? {
-        didSet {
-            if let selectedRecord = selectedRecord {
-                dump(selectedRecord)
-            }
-        }
-    }
+    var selectedRecord: Record?
     
     
+    // ********** 날짜 관련 변수들 **********
     /// DB에 저장할 날짜를 표시
     lazy var todayDate: Date? = Date()
     // 오늘인지 아닌지를 판단하는 변수
@@ -172,6 +171,9 @@ final class DetailWritingScreenController: UIViewController {
         let today = Date().reset_time()
         return selectedDate == today
     }
+    
+    
+    // ********** 상황에 따라 필요한 변수들 **********
     /// 현재 콜렉션뷰의 페이지를 보여주는 변수
     private var currentPage: CGFloat = 0
     /// 키보드가 올라와있는지 확인하는 변수
@@ -183,10 +185,9 @@ final class DetailWritingScreenController: UIViewController {
     
     
     
-    
+    // ********** 앨범 이미지 **********
     // 이미지 관련 배열
     private lazy var selectedAssets: [PHAsset] = []
-    
     /// 모든 이미지
     private lazy var selectedImages: [UIImage] = [] {
         didSet {
@@ -197,12 +198,22 @@ final class DetailWritingScreenController: UIViewController {
             : false
         }
     }
-    /// 추가된 이미지
-    private lazy var addedImages: [UIImage] = []
-    /// url_String을 저장하는 배열
-    private var urlString: [String] = []
-    lazy var imageIsChanged: Bool = false
     
+    
+    
+    // ********** 이미지 - DB 저장 관련 변수들 **********
+    /// 추가된 이미지
+    private lazy var addedImages: [UIImage] = [] {
+        didSet { self.imageIsChanged = true }
+    }
+    private lazy var willDeleteImage: [String: String] = [:] {
+        didSet { self.imageIsChanged = true }
+    }
+    private var imageDictionary: [String: String] = [:]
+    /// url_String을 저장하는 배열
+    private var savedUrl: [String] = []
+    
+    private lazy var imageIsChanged: Bool = false
     
     
     private var createOrUpdate: () {
@@ -248,6 +259,7 @@ final class DetailWritingScreenController: UIViewController {
             selector: #selector(self.keyboardWillHide(_:)),
             name: UIResponder.keyboardWillHideNotification,
             object: nil)
+
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -358,8 +370,9 @@ extension DetailWritingScreenController {
             make.top.equalToSuperview().offset(10)
             make.leading.equalToSuperview().offset(11)
             make.trailing.equalToSuperview().offset(-11)
-            make.bottom.equalToSuperview().offset(-10)
         }
+        self.stackViewHeight = self.verticalStackView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
+        self.stackViewHeight?.isActive = true
         // 플레이스 홀더
         self.placeholderLbl.snp.makeConstraints { make in
             make.top.equalTo(self.diaryTextView).offset(18)
@@ -409,6 +422,13 @@ extension DetailWritingScreenController {
         self.keyboardDownBtn.addTarget(self, action: #selector(self.keyboardDownBtnTapped), for: .touchUpInside)
         self.cameraBtn.addTarget(self, action: #selector(self.cameraBtnTapped), for: .touchUpInside)
         self.albumBtn.addTarget(self, action: #selector(self.albumBtnTapped), for: .touchUpInside)
+        
+        
+        
+        
+        // MARK: - Fix
+//        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+//        navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
     
     
@@ -417,29 +437,10 @@ extension DetailWritingScreenController {
     private func configureNavBtn() {
         // ********** 네비게이션 오르쪽 버튼 설정 **********
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage.option,
+            image: UIImage.trash,
             style: .plain,
             target: self,
-            action: .none)
-        // 오른쪽 네비게이션 설정
-        // 메뉴 액션 설정
-        let addRecodeMenu = UIAction(title: "기록 추가", image: UIImage.plus) { _ in
-            self.addRecodeBtnTapped()
-        }
-        let deleteMenu = UIAction(title: "삭제", image: UIImage.trash) { _ in
-            self.deleteBtnTapped()
-        }
-        // 오른쪽 네비게이션 메뉴 버튼 설정
-        self.navigationItem.rightBarButtonItem?.menu
-        // 네비게이션 타이틀 및 메뉴 버튼 설정
-            // (.record && 오늘) 인 경우에만 기록 추가 버튼 활성화
-        = self.detailViewMode == .diary || !self.isToday
-        // [삭제 버튼]
-        ? UIMenu(children: [deleteMenu])
-        // [기록 추가 버튼, 삭제 버튼]
-        : UIMenu(children: [addRecodeMenu, deleteMenu])
-        
-        
+            action: #selector(self.deleteBtnTapped))
         
         // ********** 네비게이션 왼쪽 버튼 설정 **********
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(
@@ -448,8 +449,6 @@ extension DetailWritingScreenController {
             target: self,
             action: #selector(self.leftNavBtnTapped))
     }
-    
-    
     
     // MARK: - 날짜 및 텍스트 설정
     /// 셀을 클릭하여 상세작성화면에 들어온 경우 데이터 설정
@@ -469,12 +468,9 @@ extension DetailWritingScreenController {
             // 시간뷰에 기록(Record)의 시간 표시
             self.dateLbl.text = Date.DateLabelString(date: currentRecode.date)
             // ********** 이미지 (콜렉션뷰) **********
-            if !currentRecode.imageUrl.isEmpty {
-                // 가져온 이미지 url저장
-                self.urlString = currentRecode.imageUrl
-                // url -> 이미지로 변환
-                self.loadImage(imageUrl: currentRecode.imageUrl)
-            }
+            self.configureImage(record: currentRecode)
+            
+            
             
         // 플러스버튼을 통해 들어온 경우
         } else {
@@ -488,6 +484,19 @@ extension DetailWritingScreenController {
             self.dateView.configureDate()
             // 시간뷰에 기록(Record)의 시간 표시
             self.dateLbl.text = Date.DateLabelString(date: Date())
+        }
+    }
+    
+    
+    private func configureImage(record: Record) {
+        if !record.imageUrl.isEmpty {
+            
+            self.imageDictionary = record.imageUrl
+            record.imageUrl.forEach { (key: String, value: String) in
+                self.savedUrl.append(value)
+            }
+            // url -> 이미지로 변환
+            self.loadImage(imageUrl: self.savedUrl)
         }
     }
 }
@@ -516,6 +525,7 @@ extension DetailWritingScreenController {
 extension DetailWritingScreenController {
     
     // MARK: - 노티피케이션 셀렉터
+    /// 키보드가 올라올 때
     @objc private func keyboardWillShow(_ notification: Notification) {
         // 키보드 높이 가져오기
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
@@ -527,6 +537,7 @@ extension DetailWritingScreenController {
                                       keyboardSize: keyboardSize)
         }
     }
+    /// 키보드가 내려갈 때
     @objc private func keyboardWillHide(_ notification: Notification) {
         // 키보드 높이 가져오기
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
@@ -537,20 +548,6 @@ extension DetailWritingScreenController {
             self.keyboardStateChanged(keyboard_Up: false,
                                       keyboardSize: keyboardSize)
         }
-    }
-    
-    // MARK: - 기록 추가 버튼
-    @objc private func addRecodeBtnTapped() {
-        // 업데이트인지 생성인지 확인
-        _ = self.detailViewMode == .record_CellTapped
-        ? self.updateRecord_API()
-        : self.createRecord_API()
-        // 앞으로는 쭉 [생성]이기 때문에 플러스 버튼으로 바꿔줌 (플러스 버튼으로 들어온 상황 == 생성)
-        self.detailViewMode = .record_plusBtn
-        // 화면 초기화
-        self.selectedRecord = nil
-        self.diaryTextView.text = nil
-        self.configureData()
     }
     
     // MARK: - 기록 삭제 버튼
@@ -600,6 +597,11 @@ extension DetailWritingScreenController {
         NotificationCenter.default.removeObserver(self)
         // 뒤로가기
         self.navigationController?.popViewController(animated: true)
+        
+        if !self.willDeleteImage.isEmpty {
+            ImageUploader.shared.deleteImage(imageUrl: self.willDeleteImage)
+        }
+        
         
         // 현재 모드 확인
         guard let mode = self.detailViewMode else { return }
@@ -653,22 +655,22 @@ extension DetailWritingScreenController {
                                       keyboardSize: CGFloat) {
         // ********** 키보드 올리는 상황 **********
         if keyboard_Up {
+            // 아이폰 종류 확인
+            self.stackViewHeight?.constant = UIDevice.current.isiPhoneSE
+            ? -(keyboardSize + 10) // se or 8
+            : -(keyboardSize - 20) // 10이상
             
             self.dateView.alpha = 0
-            // 화면 올리기
-            self.view.frame.origin.y -= keyboardSize
-            // 화면 올리는 만큼 스택뷰 간격을 넓혀 텍스트뷰가 가려지지 않게 설정
-            self.verticalStackView.setCustomSpacing(keyboardSize - 33,
-                                                    after: self.dateView)
+            self.dateView.isHidden = true
             
         // ********** 키보드 내리는 상황 **********
         } else {
+            self.stackViewHeight?.constant = -10
             self.dateView.alpha = 1
-            // 화면 내리기
-            self.view.frame.origin.y = 0
-            // 스택뷰 간격 설정 (뷰를 올리면 키보드에 가려지는 현상 때문)
-            self.verticalStackView.setCustomSpacing(7, after: self.dateView)
+            self.dateView.isHidden = false
         }
+        self.view.layoutIfNeeded()
+        
         // ********** 모든 상황 **********
         // 네비게이션 타이틀(String) 설정
         self.setNavTitle(date: self.todayDate ?? Date(),
@@ -701,24 +703,31 @@ extension DetailWritingScreenController {
         // 이미지가 5개면 더이상 추가 못 함
         self.presentImagePicker(self.imagePicker, select: {
             (asset) in
-                // 사진 하나 선택할 때마다 실행되는 내용 쓰기
-            print("select")
+            // 사진 하나 선택할 때마다 실행되는 내용 쓰기
+            return
         }, deselect: {
             (asset) in
-                // 선택했던 사진들 중 하나를 선택 해제할 때마다 실행되는 내용 쓰기
-            print("deSelect")
+            // 선택했던 사진들 중 하나를 선택 해제할 때마다 실행되는 내용 쓰기
+            return
         }, cancel: {
             (assets) in
-                // Cancel 버튼 누르면 실행되는 내용
-            print("cancel")
+            // Cancel 버튼 누르면 실행되는 내용
+            return
         }, finish: {
             (assets) in
-                // Done 버튼 누르면 실행되는 내용
-            print("done")
-            
+            // Done 버튼 누르면 실행되는 내용
+            // 이미 가지고 있던 사진 + 새로 선택한 사진이 6개 이상이라면
             _ = self.selectedImages.count + assets.count >= 6
+            // 6개 이상 -> 경고문 띄우기
             ? self.limit5Image_Alert()
+            // 5개 이하 -> 이미지 추가
             : self.imagePlus(assets: assets)
+            
+            // 선택되었던 사진들 선택 해제
+            self.selectedAssets.forEach { asset in
+                self.imagePicker.deselect(asset: asset)
+            }
+            return
         })
     }
     
@@ -741,8 +750,6 @@ extension DetailWritingScreenController {
         }
         // PHAsset을 UIImage로 변환 후 저장
         let images = self.convertAssetToImage(selectedAssets: self.selectedAssets)
-        
-        self.imageIsChanged = true
         // 이미지 저장
         // -> 콜렉션뷰에 전달
         // -> 콜렉션뷰 리로드
@@ -753,20 +760,32 @@ extension DetailWritingScreenController {
     
     // MARK: - 콜렉션뷰 이미지 삭제
     private func deleteImage(page: Int) {
-        if self.urlString.count > page {
+        if self.savedUrl.count > page {
             // url삭제
-            self.urlString.remove(at: page)
+            self.imageDelete(index: page)
+            self.savedUrl.remove(at: page)
             self.selectedImages.remove(at: page)
             
         // urlString이 존재
-        } else if urlString.count != 0 {
+        } else if savedUrl.count != 0 {
             self.selectedImages.remove(at: page)
-            let index = page - (self.urlString.count)
+            let index = page - (self.savedUrl.count)
             self.addedImages.remove(at: index)
+            
         // urlString이 존재X
         } else {
             self.selectedImages.remove(at: page)
             self.addedImages.remove(at: page)
+        }
+    }
+    
+    // MARK: - 이미지 삭제
+    private func imageDelete(index: Int) {
+        self.imageDictionary.forEach { (key: String, value: String) in
+            if value == self.savedUrl[index] {
+                self.willDeleteImage[key] = value
+                self.imageDictionary.removeValue(forKey: key)
+            }
         }
     }
 }
@@ -791,7 +810,7 @@ extension DetailWritingScreenController {
         
         // DB - 삭제
         Record_API.shared.deleteRecord(documentID: documentID,
-                                       imageUrl: self.urlString) { result in
+                                       imageUrl: self.imageDictionary) { result in
             switch result {
             case .success(_):
                 print("데이터 삭제 성공")
@@ -819,7 +838,7 @@ extension DetailWritingScreenController {
         Record_API.shared.updateRecord(writing_Type: writing_Type,
                                        record: selectedRecord,
                                        context: self.diaryTextView.text,
-                                       image: self.urlString) { result in
+                                       image: self.imageDictionary) { result in
             switch result {
             case .success(let record):
                 print("데이터 업데이트 성공")
@@ -845,7 +864,7 @@ extension DetailWritingScreenController {
         Record_API.shared.createRecord(writing_Type: writing_Type,
                                        date: date,
                                        context: self.diaryTextView.text,
-                                       image: self.urlString) { result in
+                                       image: self.imageDictionary) { result in
             switch result {
             case .success(let record):
                 print("데이터 생성 성공")
@@ -878,12 +897,16 @@ extension DetailWritingScreenController {
     private func imageUpload() {
         // 이미지 업로드
         ImageUploader.shared.uploadImage(image: self.addedImages) { urlStrings in
-            // url_String 추가
-            self.urlString.append(contentsOf: urlStrings)
+            urlStrings.forEach { (key: String, value: String) in
+                self.imageDictionary[key] = value
+            }
             // 생성 or 업데이트
             self.createOrUpdate
         }
     }
+    
+
+    
     
     // MARK: - 이미지 로드
     private func loadImage(imageUrl: [String]) {
@@ -979,7 +1002,6 @@ extension DetailWritingScreenController: UICollectionViewDataSource, UICollectio
 extension DetailWritingScreenController: ImageCollectionViewDelegate {
     ///
     func cellDeleteBtnTapped() {
-        self.imageIsChanged = true
         // 현재 페이지 타입캐스팅
         let page = Int(self.currentPage)
         self.deleteImage(page: page)
@@ -1048,3 +1070,13 @@ extension DetailWritingScreenController {
             y: scrollView.contentInset.top)
     }
 }
+
+
+
+// MARK: - Fix
+//extension DetailWritingScreenController: UIGestureRecognizerDelegate {
+//    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+//        return navigationController?.viewControllers.count ?? 0 > 1
+//    }
+//}
+

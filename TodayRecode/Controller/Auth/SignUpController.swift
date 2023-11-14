@@ -63,7 +63,7 @@ final class SignUpController: UIViewController {
             title: "회원가입",
             titleColor: UIColor.white,
             font: UIFont.systemFont(ofSize: 20),
-            backgroundColor: UIColor.customblue3)
+            backgroundColor: UIColor.customblue1)
             btn.isEnabled = false
         return btn
     }()
@@ -145,7 +145,7 @@ extension SignUpController {
         self.view.backgroundColor = UIColor.blue_base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
-        self.navTitle.text = "설정"
+        self.navTitle.text = "회원가입"
         
         self.stackView.setCustomSpacing(15, after: self.signUpLbl)
         
@@ -239,14 +239,14 @@ extension SignUpController {
     @objc private func formValidation() {
         // 모든 텍스트필드에 텍스트가 있는지 확인
         if self.textfieldHasText {
-            // 텍스트필드가 빈칸이 없을 때
+            // 텍스트필드에 빈칸이 있을 때
             self.signUpBtn.isEnabled = true
-            self.signUpBtn.backgroundColor = .customblue6
+            self.signUpBtn.backgroundColor = UIColor.blue_Point
             return
         }
-        // 텍스트필드에 빈칸이 있을 때
+        // 텍스트필드가 빈칸이 없을 때
         self.signUpBtn.isEnabled = false
-        self.signUpBtn.backgroundColor = .customblue3
+        self.signUpBtn.backgroundColor = UIColor.customblue1
     }
 }
 
@@ -334,7 +334,6 @@ extension SignUpController {
                 switch result {
                 case .success(_):
                     // 뒤로가기
-//                    self.dismiss(animated: true)
                     self.delegate?.authenticationComplete()
                     
                 case .failure(_):

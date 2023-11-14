@@ -165,7 +165,7 @@ extension RecordTableViewCell {
         // 이미지가 있다면
         if !record.imageUrl.isEmpty {
             self.recodeImage.isHidden = false
-            guard let url = record.imageUrl.first else { return }
+            guard let url = record.imageUrl.first?.value else { return }
             
             ImageUploader.shared.loadImageView(
                 with: [url]) { image in

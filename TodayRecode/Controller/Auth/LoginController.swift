@@ -46,7 +46,7 @@ final class LoginController: UIViewController {
             title: "로그인",
             titleColor: UIColor.white,
             font: UIFont.boldSystemFont(ofSize: 20),
-            backgroundColor: UIColor.customblue3)
+            backgroundColor: UIColor.customblue1)
             btn.isEnabled = false
         return btn
     }()
@@ -132,7 +132,7 @@ extension LoginController {
 //        self.navigationItem.title = "로그인"
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
-        self.navTitle.text = "설정"
+        self.navTitle.text = "이메일 로그인"
         
         self.stackView.setCustomSpacing(15, after: self.loginLbl)
         
@@ -226,14 +226,14 @@ extension LoginController {
     @objc private func formValidation() {
         if self.emailTF.hasText
             && self.passwordTF.hasText {
-            // 텍스트필드에 빈칸이 있을 때
+            // 텍스트필드가 모두 채워지면
             self.logInBtn.isEnabled = true
-            self.logInBtn.backgroundColor = .customblue6
+            self.logInBtn.backgroundColor = UIColor.blue_Point
             return
         }
-        // 텍스트필드가 모두 채워지면
+        // 텍스트필드에 빈칸이 있을 때
         self.logInBtn.isEnabled = false
-        self.logInBtn.backgroundColor = .customblue3
+        self.logInBtn.backgroundColor = UIColor.customblue1
     }
     
     
