@@ -16,6 +16,7 @@ final class DetailWritingScreenController: UIViewController {
     // MARK: - 레이아웃
     /// 네비게이션 타이틀 레이블
     private lazy var navTitle: UILabel = UILabel.navTitleLbl()
+    
     /// 콜렉션뷰
     private lazy var collectionView: CustomCollectionView = {
         let collectionView = CustomCollectionView()
@@ -35,7 +36,7 @@ final class DetailWritingScreenController: UIViewController {
         scrollView.bounces = false
         return scrollView
     }()
-    /// 컨텐트뷰 (- 스크롤뷰)
+    /// 컨텐트뷰 (- 스크롤뷰 관련 뷰)
     private lazy var contentView: UIView = UIView()
     
     /// 텍스트뷰
@@ -179,21 +180,20 @@ final class DetailWritingScreenController: UIViewController {
     private lazy var collectionViewWidth = self.collectionView.frame.width
     
     
+    // ********** 이미지 - 이전 화면에서 가져온 이미지 데이터 **********
+    /// 이전 화면에서 가져온 데이터, (--- 저장할 때도 이 변수를 사용)
+    private var imageDictionary: [String: String] = [:]
+    /// url_String을 저장하는 배열
+    private var savedUrl: [String] = []
+    
     
     // ********** 앨범 이미지 **********
     // 이미지 관련 배열
     private lazy var selectedAssets: [PHAsset] = []
-    /// 모든 이미지
+    /// 모든 이미지, 앨범에서 추가하면 이 변수에 추가 됨
     private lazy var selectedImages: [UIImage] = [] {
-        didSet {
-            self.collectionView.reloadData()
-            // MARK: - Fix
-            self.collectionView.isHidden = self.selectedImages.count == 0
-            ? true
-            : false
-        }
+        didSet { self.collectionView.reloadData() }
     }
-    
     
     
     // ********** 이미지 - DB 저장 관련 변수들 **********
@@ -204,15 +204,11 @@ final class DetailWritingScreenController: UIViewController {
     private lazy var willDeleteImage: [String: String] = [:] {
         didSet { self.imageIsChanged = true }
     }
-    private var imageDictionary: [String: String] = [:]
-    /// url_String을 저장하는 배열
-    private var savedUrl: [String] = []
-    
+    /// 이미지가 추가되거나 삭제되면 true로 바뀜, true-> 데이터 저장
     private lazy var imageIsChanged: Bool = false
-    
-    
+    /// 현재 데이터를 생성해야할 지 수정해야할 지 결정하는 변수
     private var createOrUpdate: () {
-        // 뒤로가기
+        // selectedRecord가 nil인지 판단
         return self.selectedRecord == nil
         // selectedRecord가 없는 경우(셀) -> 생성
         ? self.createRecord_API()
@@ -237,7 +233,6 @@ final class DetailWritingScreenController: UIViewController {
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
         self.configureData()        // 텍스트 및 시간, 이미지 등 설정
-        self.configureNavBtn()      // 네비게이션바 오른쪽 버튼 및 타이틀 설정
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -302,6 +297,7 @@ extension DetailWritingScreenController {
     
     // MARK: - UI 설정
     private func configreUI() {
+        // 배경 색상 설정
         self.view.backgroundColor = UIColor.blue_base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
@@ -323,10 +319,10 @@ extension DetailWritingScreenController {
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         // ********** addSubViews 설정 **********
-        [self.scrollView,
-         self.recordShowBtn].forEach { view in
-            self.view.addSubview(view)
-        }
+        // 뷰
+        self.view.addSubview(self.scrollView)
+        self.view.addSubview(self.recordShowBtn)
+        // 텍스트뷰
         self.diaryTextView.addSubview(self.placeholderLbl)
         // 스크롤뷰
         self.scrollView.addSubview(self.contentView)
@@ -395,7 +391,6 @@ extension DetailWritingScreenController {
         }
         // 기록 확인 버튼 설정
         self.recordShowBtn.snp.makeConstraints { make in
-//            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-17)
             make.bottom.equalTo(self.view.keyboardLayoutGuide.snp.bottom).offset(-40)
             make.trailing.equalToSuperview().offset(-17)
             make.width.height.equalTo(65)
@@ -415,29 +410,25 @@ extension DetailWritingScreenController {
         self.keyboardDownBtn.addTarget(self, action: #selector(self.keyboardDownBtnTapped), for: .touchUpInside)
         self.albumBtn.addTarget(self, action: #selector(self.albumBtnTapped), for: .touchUpInside)
         
+        // 네비게이션 오르쪽 버튼 설정
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage.trash,
+            style: .plain,
+            target: self,
+            action: #selector(self.deleteBtnTapped))
+        // 네비게이션 왼쪽 버튼 설정
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage.back,
+            style: .plain,
+            target: self,
+            action: #selector(self.leftNavBtnTapped))
+        
         // 스와이프로 뒤로가기 설정
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
     
     
-    
-    // MARK: - 오른쪽 네비게이션바 설정
-    private func configureNavBtn() {
-        // ********** 네비게이션 오르쪽 버튼 설정 **********
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage.trash,
-            style: .plain,
-            target: self,
-            action: #selector(self.deleteBtnTapped))
-        
-        // ********** 네비게이션 왼쪽 버튼 설정 **********
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: UIImage.back,
-            style: .plain,
-            target: self,
-            action: #selector(self.leftNavBtnTapped))
-    }
     
     // MARK: - 날짜 및 텍스트 설정
     /// 셀을 클릭하여 상세작성화면에 들어온 경우 데이터 설정
@@ -477,14 +468,19 @@ extension DetailWritingScreenController {
     }
     
     
+    
+    // MARK: - 이미지 설정
     private func configureImage(record: Record) {
+        // Record 데이터에 이미지가 있다면
         if !record.imageUrl.isEmpty {
-            
+            // 딕셔너리 형태로 저장
             self.imageDictionary = record.imageUrl
+            // url만 가져오기
             record.imageUrl.forEach { (key: String, value: String) in
+                // url저장
                 self.savedUrl.append(value)
             }
-            // url -> 이미지로 변환
+            // url -> 이미지로 변환 -> selectedImages에 저장 -> 화면에 이미지 보임
             self.loadImage(imageUrl: self.savedUrl)
         }
     }
@@ -569,18 +565,17 @@ extension DetailWritingScreenController {
     }
     /// 기록 확인 버튼을 누르면 오늘 기록을 볼 수 있다.
     @objc private func recodeShowBtnTapped() {
-        self.diaryTextView.resignFirstResponder()
         let recodeCheckVC = RecodeCheckController(recordArray: self.todayRecords)
-        recodeCheckVC.modalPresentationStyle = .overFullScreen
+            recodeCheckVC.modalPresentationStyle = .overFullScreen
         // 화면 전환
         self.presentPanModal(recodeCheckVC)
     }
     
     // MARK: - 화면 나가기 버튼
     @objc private func leftNavBtnTapped() {
-        
         // 뒤로가기
         self.navigationController?.popViewController(animated: true)
+        // 데이터 저장
         self.popViewController()
     }
 }
@@ -605,29 +600,31 @@ extension DetailWritingScreenController {
         // ********** 키보드 올리는 상황 **********
         if keyboard_Up {
             // 아이폰 종류 확인
+            // 스택뷰 스크롤이 되도록 설정
             self.stackViewHeight?.constant = UIDevice.current.isiPhoneSE
             ? -(keyboardSize + 10) // se or 8
             : -(keyboardSize - 20) // 10이상
             
+            // 기록 보기 버튼 위로 올리기
             self.recordShowBtn.frame.origin.y -= keyboardSize - 30
-            
-            
-            
+            // 날짜뷰 안 보이도록 설정
             self.dateView.alpha = 0
             self.dateView.isHidden = true
             
         // ********** 키보드 내리는 상황 **********
         } else {
+            // 스택뷰 스크롤 안 되도록 설정
             self.stackViewHeight?.constant = -10
-            
+            // 기록 보기 버튼 아래로 내리기
             self.recordShowBtn.frame.origin.y += keyboardSize - 30
-            
+            // 날짜뷰 보이도록 설정
             self.dateView.alpha = 1
             self.dateView.isHidden = false
         }
-        self.view.layoutIfNeeded()
         
         // ********** 모든 상황 **********
+        // 뷰 다시 그리기 (스택뷰 바텀 앵커 변경)
+        self.view.layoutIfNeeded()
         // 네비게이션 타이틀(String) 설정
         self.setNavTitle(date: self.todayDate ?? Date(),
                          keyboard_Up: keyboard_Up)
@@ -641,14 +638,16 @@ extension DetailWritingScreenController {
         let navEnum: NavTitleSetEnum = .M월d일
         
         let navMainTitle: String = self.detailViewMode == .diary
-        ? navEnum.diary_String
-        : navEnum.record_String
+        ? navEnum.diary_String // 기록 화면이라면
+        : navEnum.record_String // 일기 화면이라면
         
+        // 키보드가 올라간 상황
         if keyboard_Up {
             self.navTitle.attributedText = self.configureNavTitle(
                 navMainTitle,
                 navTitleSetEnum: navEnum,
                 date: date)
+        // 키보드가 내려간 상황
         } else {
             self.navTitle.text = navMainTitle
         }
@@ -659,9 +658,10 @@ extension DetailWritingScreenController {
     private func popViewController() {
         // 노티피케이션 삭제
         NotificationCenter.default.removeObserver(self)
-        
+        // 삭제할 이미지가 있다면
         if !self.willDeleteImage.isEmpty {
-            ImageUploader.shared.deleteImage(imageUrl: self.willDeleteImage)
+            // 이미지 삭제
+            ImageUploader.shared.deleteImage(imageDictionary: self.willDeleteImage)
         }
         
         // 현재 모드 확인
@@ -721,7 +721,7 @@ extension DetailWritingScreenController {
             // 5개 이하 -> 이미지 추가
             : self.imagePlus(assets: assets)
             
-            // 선택되었던 사진들 선택 해제
+            // 앨범뷰에서 선택되었던 사진들 선택 해제
             self.selectedAssets.forEach { asset in
                 self.imagePicker.deselect(asset: asset)
             }
@@ -740,9 +740,9 @@ extension DetailWritingScreenController {
     
     // MARK: - 콜렉션뷰 이미지 추가
     private func imagePlus(assets: [PHAsset]) {
-        // assets
+        // assets 모두 삭제
         self.selectedAssets.removeAll()
-        
+        // selectedAssets에 추가
         for i in assets {
             self.selectedAssets.append(i)
         }
@@ -753,11 +753,13 @@ extension DetailWritingScreenController {
         // -> 콜렉션뷰 리로드
         // 0개라면 콜렉션뷰 숨기기
         self.selectedImages.append(contentsOf: images)
+        // '추가된 이미지 배열'에 이미지 추가 -> DB에 저장할 이미지들
         self.addedImages.append(contentsOf: images)
     }
     
     // MARK: - 콜렉션뷰 이미지 삭제
     private func deleteImage(page: Int) {
+        // page에 따라 달라짐.
         if self.savedUrl.count > page {
             // url삭제
             self.imageDelete(index: page)
@@ -778,10 +780,15 @@ extension DetailWritingScreenController {
     }
     
     // MARK: - 이미지 삭제
+    /// 이전 화면에서 가져온 이미지를 삭제할 때 불리는 메서드
     private func imageDelete(index: Int) {
+        // 이미지 딕셔너리에서 value값(url) 중 삭제할 url과 맞는 것을 찾아냄
         self.imageDictionary.forEach { (key: String, value: String) in
+            // 찾아냈다면
             if value == self.savedUrl[index] {
+                // '삭제할 이미지 배열'에 저장 -> 화면 나갈 때 이미지 삭제 진행
                 self.willDeleteImage[key] = value
+                // 딕셔너리에서 삭제
                 self.imageDictionary.removeValue(forKey: key)
             }
         }
@@ -805,13 +812,11 @@ extension DetailWritingScreenController {
     private func deleteRecord_API() {
         // 문서ID 가져오기
         guard let documentID = self.selectedRecord?.documentID else { return }
-        
         // DB - 삭제
         Record_API.shared.deleteRecord(documentID: documentID,
-                                       imageUrl: self.imageDictionary) { result in
+                                       imageDictionary: self.imageDictionary) { result in
             switch result {
             case .success(_):
-                print("데이터 삭제 성공")
                 // 셀 삭제
                 self.delegate?.deleteRecord(success: true)
                 break
@@ -836,14 +841,12 @@ extension DetailWritingScreenController {
         Record_API.shared.updateRecord(writing_Type: writing_Type,
                                        record: selectedRecord,
                                        context: self.diaryTextView.text,
-                                       image: self.imageDictionary) { result in
+                                       imageDictionary: self.imageDictionary) { result in
             switch result {
             case .success(let record):
-                print("데이터 업데이트 성공")
                 self.delegate?.updateRecord(record: record)
                 break
             case .failure(_):
-                // Fix
                 self.delegate?.updateRecord(record: nil)
                 break
             }
@@ -854,7 +857,7 @@ extension DetailWritingScreenController {
     private func createRecord_API() {
         // 텍스트뷰가 빈칸인 경우 생성X
         // 오늘 날짜 및 타입 - 옵셔널바인딩
-        guard self.diaryTextView.text != ""
+        guard self.diaryTextView.text == ""
                 || !self.addedImages.isEmpty,
               let date = self.todayDate, // 날짜 가져오기
               let writing_Type = self.detailViewMode else { return }
@@ -862,15 +865,13 @@ extension DetailWritingScreenController {
         Record_API.shared.createRecord(writing_Type: writing_Type,
                                        date: date,
                                        context: self.diaryTextView.text,
-                                       image: self.imageDictionary) { result in
+                                       imageDictionary: self.imageDictionary) { result in
             switch result {
             case .success(let record):
-                print("데이터 생성 성공")
                 // 셀 업데이트
                 self.delegate?.createRocord(record: record)
                 break
             case .failure(_):
-                // Fix
                 self.delegate?.createRocord(record: nil)
                 break
             }
@@ -894,8 +895,10 @@ extension DetailWritingScreenController {
     // MARK: - 이미지 업로드
     private func imageUpload() {
         // 이미지 업로드
-        ImageUploader.shared.uploadImage(image: self.addedImages) { urlStrings in
-            urlStrings.forEach { (key: String, value: String) in
+        ImageUploader.shared.uploadImage(image: self.addedImages) { imageDictionary in
+            // 받아온 이미지 딕셔너리를 모두 저장
+            imageDictionary.forEach { (key: String, value: String) in
+                // 이미지 딕셔너리에 저장 -> 화면 나갈 때 해당 딕셔너리 저장
                 self.imageDictionary[key] = value
             }
             // 생성 or 업데이트
@@ -908,10 +911,12 @@ extension DetailWritingScreenController {
     
     // MARK: - 이미지 로드
     private func loadImage(imageUrl: [String]) {
-        ImageUploader.shared.loadImageView(with: imageUrl) { imgString in
+        // 이미지를 로드
+        ImageUploader.shared.loadImageView(with: imageUrl) { images in
             DispatchQueue.main.async {
-                guard let imgString = imgString else { return }
-                self.selectedImages = imgString
+                guard let images = images else { return }
+                // 로드한 이미지를 저장 -> 화면에 보이도록 함
+                self.selectedImages = images
             }
         }
     }
@@ -960,6 +965,11 @@ extension DetailWritingScreenController: UICollectionViewDataSource, UICollectio
     /// 아이템 개수
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
+        // 셀의 개수가 0이라면 -> 콜렉션뷰 숨기기
+        self.collectionView.isHidden = self.selectedImages.count == 0
+        ? true
+        : false
+        // 셀의 개수 설정
         return self.selectedImages.count
     }
     
@@ -969,13 +979,11 @@ extension DetailWritingScreenController: UICollectionViewDataSource, UICollectio
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: Identifier.imageListCollectionViewCell,
             for: indexPath) as! ImageCollectionViewCell
-        
             cell.delegate = self
             // 상세 작성 화면
             cell.collectionViewEnum = .photoList
             // 이미지 넣기
             cell.imageView.image = self.selectedImages[indexPath.row]
-        
         return cell
     }
     
@@ -998,10 +1006,11 @@ extension DetailWritingScreenController: UICollectionViewDataSource, UICollectio
 
 
 extension DetailWritingScreenController: ImageCollectionViewDelegate {
-    ///
+    /// 이미지 우상단 삭제 버튼을 눌리면 불리는 메서드
     func cellDeleteBtnTapped() {
         // 현재 페이지 타입캐스팅
         let page = Int(self.currentPage)
+        // 이미지 삭제
         self.deleteImage(page: page)
         // 배열의 마지막이라면, 첫번째 페이지가 아니라면
         if page == self.selectedImages.count
@@ -1082,7 +1091,7 @@ extension DetailWritingScreenController {
 extension DetailWritingScreenController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer)
     -> Bool {
-        
+        // 데이터 저장
         self.popViewController()
         return navigationController?.viewControllers.count ?? 0 > 1
     }

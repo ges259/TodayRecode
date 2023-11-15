@@ -10,9 +10,13 @@ import SnapKit
 
 final class SettingController: UIViewController {
     // MARK: - 레이아웃
+    /// 네비게이션 타이틀 레이블
+    private lazy var navTitle: UILabel = UILabel.navTitleLbl()
+    
     /// 유저의 정보를 담을 뷰
     private lazy var userContainerView: UIView = UIView.backgroundView(
         color: UIColor.customWhite5)
+    
     /// 유저 이미지
     private lazy var userImgView: UIImageView = {
         let img = UIImageView(image: UIImage.person_Img)
@@ -64,10 +68,6 @@ final class SettingController: UIViewController {
         distribution: .fill)
     
     
-    /// 네비게이션 타이틀 레이블
-    private lazy var navTitle: UILabel = UILabel.navTitleLbl()
-    
-    
     
     
     
@@ -115,6 +115,7 @@ extension SettingController {
     
     // MARK: - UI 설정
     private func configureUI() {
+        // 배경 색상 설정
         self.view.backgroundColor = UIColor.blue_base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
@@ -238,7 +239,6 @@ extension SettingController {
                 break
                 
             case .failure(_):
-                // MARK: - Fix
                 self.apiFail_Alert()
                 break
             }

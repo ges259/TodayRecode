@@ -19,7 +19,7 @@ extension UIColor {
     
     
     
-    static let customWhite5: UIColor = UIColor.white.withAlphaComponent(0.75)
+    static let customWhite5: UIColor = UIColor.white.withAlphaComponent(0.6)
     static let customblue1: UIColor = UIColor.systemBlue.withAlphaComponent(0.2)
     
     

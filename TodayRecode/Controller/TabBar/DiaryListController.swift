@@ -46,7 +46,6 @@ final class DiaryListController: UIViewController {
         tintColor: UIColor.white,
         backgroundColor: UIColor.blue_Point)
     
-    
     /// Record데이터가 없을 때 보이는 뷰
     private lazy var noDataView: NoRecordDataView = {
         let view = NoRecordDataView(
@@ -61,16 +60,24 @@ final class DiaryListController: UIViewController {
     
     
     
+    
+    
+    
     // MARK: - 프로퍼티
+    /// 셀의 넓이
     private lazy var collectionViewWidth = self.collectionView.frame.width
+    /// 셀의 높이
     private lazy var collectionViewHeight = self.collectionView.frame.height
     
+    /// 콜렉션뷰의 현재 페이지
     private lazy var currentPage: Int = 0 {
         didSet {
             // 스크롤을 한다면 -> (일기 기록이 있다면)
             if self.diaryArray.count != 0 {
+                // 스크롤된(도착) 날짜 가져오기
+                let date = self.diaryArray[self.currentPage].date
                 // -> 달력의 날짜 바꾸기
-                self.calendar.calendar.select(self.diaryArray[self.currentPage].date)
+                self.calendar.calendar.select(date)
             }
         }
     }
@@ -84,7 +91,10 @@ final class DiaryListController: UIViewController {
             self.checkTodayDiary()
         }
     }
+    /// Record데이터 배열의 날짜를 모아둔 배열
     private lazy var diaryDateArray = [Date]()
+    
+    
     
     
     
@@ -137,13 +147,12 @@ extension DiaryListController {
     
     // MARK: - UI 설정
     private func configureUI() {
+        // 배경 색상 설정
         self.view.backgroundColor = UIColor.blue_base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
-        
         // 네비게이션 타이틀(String) 설정
         self.setNavTitle() // -> 오늘로 설정
-        
         // 코너 둥글게 설정
         self.plusBtn.clipsToBounds = true
         self.plusBtn.layer.cornerRadius = 65 / 2
@@ -189,6 +198,7 @@ extension DiaryListController {
         self.navTitle.snp.makeConstraints { make in
             make.width.lessThanOrEqualTo(100)
         }
+        // 데이터 없을 때 나오는 뷰
         self.noDataView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(self.collectionView)
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-10)
@@ -215,8 +225,8 @@ extension DiaryListController {
 extension DiaryListController {
     
     // MARK: - 네비게이션 타이틀 설정 액션
-    private func setNavTitle(date: Date = Date()) {
-        let navEnum: NavTitleSetEnum = .yyyy년M월
+    private func setNavTitle(date: Date = Date(),
+                             navEnum: NavTitleSetEnum = .yyyy년M월) {
         self.navTitle.attributedText = self.configureNavTitle(
             navEnum.diary_String,
             navTitleSetEnum: navEnum,
@@ -231,10 +241,9 @@ extension DiaryListController {
         let diaryDateArray: [Date] = self.diaryArray.map { record in
             record.date.reset_time() ?? Date()
         }
-        
+        // Record 날짜 배열에 저장
         self.diaryDateArray = diaryDateArray
-        // 캘린더뷰에는 날짜만 가면 됨
-            // dateArray그대로 보내고 이벤트 표시할 때 바꾸는 것으로
+        // 캘린더뷰에는 날짜 보내기 (일기를 쓴 날 표시하기 위함)
         self.calendar.diaryArray = diaryDateArray
     }
     
@@ -242,11 +251,10 @@ extension DiaryListController {
     
     // MARK: - 아이템 이동
     func moveToItem(date: Date, animated: Bool = true) {
+        // 선택된 날짜
         guard let dateType = date.reset_time() else { return }
-        
-        // 날짜뷰 날짜 바꾸기
+        // 날짜뷰 텍스트 해당 날짜로 바꾸기
         self.dateView.configureDate(selectedDate: date)
-        
         // 콜렉션뷰 이동
         if let index = self.diaryDateArray.firstIndex(of: dateType) {
             // 자꾸 index가 -1되어 스크롤되는 상황이 발생하여 해당 코드 처럼 바꿈
@@ -263,7 +271,7 @@ extension DiaryListController {
     
     // MARK: - 플러스 버튼 액션
     @objc private func plusBtnTapped() {
-        // 오늘 일기가 없다면 -> 새로. 생성
+        // 오늘 일기가 없다면 -> 새로 생성
         self.goToDetailWriting()
     }
     
@@ -281,11 +289,14 @@ extension DiaryListController {
             vc.hidesBottomBarWhenPushed = true
         
         
+        // ********** 아이템 선택한 경우 **********
         // 아이템(셀) 선택을 했을 경우 -> 데이터 보내기
         if let index = index {
             vc.selectedRecord = self.diaryArray[index]
             // 셀에 적힌 날짜의 기록 가져오기
             vc.fetchRecords_API(date: self.calendar.returnSelectedDate ?? Date())
+            
+        // ********** 플러스 버튼을 선택한 경우 **********
         } else {
             // 오늘 기록 가져오기
             vc.fetchRecords_API(date: Date())
@@ -298,22 +309,14 @@ extension DiaryListController {
     
     // MARK: - 오늘 일기를 썼는지 확인
     private func checkTodayDiary() {
-        // 오늘 일기를 쓴 데이터가
-        self.noDataView.isHidden = self.diaryArray.count == 0
-        ? false // 있다면 -> 숨기기
-        : true // 없다면 -> 이번 달에 작성한 일기가 없다고 띄우기
-        
-        
         // 배열의 마지막 날
         let arrayLast = self.diaryArray.last?.date.reset_time()
         // 오늘
         let today = Date().reset_time()
         // 서로 비교
-        // -> 같다면 일기를 썼다는 표시 -> 플러스버튼 숨기기
-        // -> 다르다면 일기를 쓰지 않았다는 표시 -> 플러스버튼 보이게 하기
         self.plusBtn.isHidden = arrayLast == today
-        ? true
-        : false // 이번달에 일기를 쓴 기록이 없다면 -> 플러스버튼 보이게 하기
+        ? true  // -> 같다면 일기를 썼다는 표시 -> 플러스버튼 숨기기
+        : false // -> 다르다면 일기를 쓰지 않았다는 표시 -> 플러스버튼 보이게 하기
     }
 }
 
@@ -336,18 +339,21 @@ extension DiaryListController {
                                       date: date) { result in
             switch result {
             case .success(let recordArray):
-                // 저장
+                // 가져온 데이터 저장
                 self.diaryArray = recordArray
                 self.collectionView.reloadData()
                 
-                let index = recordArray.count - 1
-                // 가장 최근에 쓴 일기 == (배열의 마지막 날짜)
-                // 해당 날짜로 콜렉션뷰 자동 스크롤
-                self.currentPage = index
+                // 데이터가 있다면
                 if !recordArray.isEmpty {
+                    // 가장 최근에 쓴 일기 == (배열의 마지막 날짜)
+                    let index = recordArray.count - 1
+                    // 마지막 날짜의 인덱스 저장
+                    self.currentPage = index
+                    // 해당 날짜로 콜렉션뷰 자동 스크롤
                     self.moveToItem(date: recordArray[index].date, animated: false)
                 }
                 break
+                
             case .failure(_):
                 self.apiFail_Alert()
                 break
@@ -382,29 +388,30 @@ extension DiaryListController: CalendarDelegate {
         // -> dateView의 날짜 레이블 바꾸기
         self.dateView.configureDate(selectedDate: date)
         
-        // 데이터가 있을 때
+        // ********** 데이터가 있을 때 **********
         if self.diaryArray.count != 0 {
-            
-            
-            // 선택한 날짜가 몇 번째인지 가져오기
+            // 선택한 날짜에 일기를 썼는지 확인
+                // 썼다면 -> 몇 번째 인지 가져오기
             let index = self.diaryDateArray.firstIndex { record in
                 record == date
             }
             
+            // ********** 선택한 날짜에 일기를 썼다면 **********
             if let index = index {
                 // 현재 인덱스 저장
-                    // -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
                 self.currentPage = index
+                // 찾은 인덱스로 이동
                 self.moveToItem(date: self.diaryDateArray[index])
             }
-            return
         }
     }
+    
     /// 달력의 형태(week <-> month)가 바뀌면  높이가 업데이트된다.
     func heightChanged(height: CGFloat) {
         // 아무거나 넣어놨음
         self.setNavTitle()
     }
+    
     /// month가 바뀌었을 때 호출
     func monthChanged(date: Date) {
         self.setNavTitle(date: date)
@@ -437,29 +444,28 @@ extension DiaryListController: DetailWritingScreenDelegate {
             let last = self.diaryArray.count
             // 현재 배열 리로드
             self.diaryArray.insert(record, at: last)
-            
+            // 콜렉션뷰에 추가
             self.collectionView.insertItems(at: [IndexPath(item: last,
                                                            section: 0)])
             // 날짜 선택
             self.currentPage = last
-            
+            // 오늘 날짜로 콜렉션뷰 이동
             self.moveToItem(date: record.date)
             
         } else {
-            print("create_Error")
             self.apiFail_Alert()
         }
     }
     
     func updateRecord(record: Record?) {
         if let record = record {
-            // 콜렉션뷰 날짜는 변경X
+            // 콜렉션뷰 업데이트, 날짜는 변경X
             self.diaryArray[self.currentPage] = record
+            // 해당 콜렉션뷰 리로드
             self.collectionView.reloadItems(at: [IndexPath(item: self.currentPage,
                                                            section: 0)])
             
         } else {
-            print("update_Error")
             self.apiFail_Alert()
         }
     }
@@ -475,13 +481,11 @@ extension DiaryListController: DetailWritingScreenDelegate {
                 let nextIndex = self.diaryArray.count - 1
                 // 배열의 마지막이라면
                 self.currentPage = nextIndex
-                
                 // 날짜뷰 날짜 바꾸기
                 self.dateView.configureDate(
                     selectedDate: self.diaryArray[nextIndex].date)
             }
         } else {
-            print("delete_Error")
             self.apiFail_Alert()
         }
     }
@@ -512,6 +516,10 @@ extension DiaryListController: UICollectionViewDataSource,
     /// 아이템 개수
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
+        // 오늘 일기를 쓴 데이터가
+        self.noDataView.isHidden = self.diaryArray.count == 0
+        ? false // 있다면 -> 숨기기
+        : true // 없다면 -> 이번 달에 작성한 일기가 없다고 띄우기
         
         return self.diaryArray.count
     }
@@ -525,17 +533,23 @@ extension DiaryListController: UICollectionViewDataSource,
             
         // 상세 작성 화면
         cell.collectionViewEnum = .diaryList
-        // 이미지 넣기
+        
         cell.dateLbl.text = Date.dateReturn_Custom(
             todayFormat: .d일,
             date: self.diaryArray[indexPath.row].date)
         
-         
         
+        // ********** 이미지 관련 **********
+        // 셀 이미지 초기화
+        cell.imageView.image = nil
+        // 셀에 이미지 넣기
         if !diaryArray.isEmpty {
+            // 일기 배열에서 가장 첫번째 이미지 가져오기
             if let url = self.diaryArray[indexPath.row].imageUrl.first?.value {
+                // 이미지 로드
                 ImageUploader.shared.loadImageView(
                     with: [url], completion: { image in
+                        // 셀에 이미지 넣기
                         cell.imageView.image = image?.first
                     })
             }

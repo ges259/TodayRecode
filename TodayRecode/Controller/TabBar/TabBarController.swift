@@ -12,7 +12,6 @@ final class TabBarController: UITabBarController {
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
-        // 로그인이 되어있는 상태인지 확인
         
         // 탭바 설정
         self.configureUI()
@@ -28,41 +27,42 @@ final class TabBarController: UITabBarController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
     
     
     
     
     
+// MARK: - 화면 설정
+
+extension TabBarController {
     
-    
-    
-    // MARK: - 화면 설정
+    // MARK: - UI 설정
     /// 뷰의 배경, 탭바, 네비게이션 바 설정
     private func configureUI() {
+        // 탭바 아이콘의 배경색
         self.tabBar.tintColor = UIColor.blue_Point
-        
+        // 탭바 배경 색
         self.tabBar.backgroundColor = UIColor.white
-        
-        self.tabBar.isTranslucent = false
     }
     
     // MARK: - 탭바 설정
     /// 탭바 설정
     private func configureTabBar(user: User? = nil) {
-        // 탭바 컨틀롤러 설정
-        // 오늘 날짜 가져오기
-        let today = Date.dateReturn_Custom(todayFormat: .d)
         // 기록 화면
         let recode = self.templateNavContoller(
             unselectedImg: UIImage.recode,
             selectedImg: UIImage.recode_fill,
             rootController: RecordController())
+        
+        let today = Date.dateReturn_Custom(todayFormat: .d)
         // 일기 목록 화면
-            // 오늘 날짜에 따라 탭바 이미지 다르게 설정
+        // 오늘 날짜 가져오기 -> 오늘 날짜에 따라 탭바 이미지 다르게 설정
         let diaryList = self.templateNavContoller(
             unselectedImg: UIImage(systemName: "\(today).circle"),
             selectedImg: UIImage(systemName: "\(today).circle.fill"),
             rootController: DiaryListController())
+        
         // 설정 화면
         let setting = self.templateNavContoller(
             unselectedImg: UIImage.setup,
@@ -71,15 +71,20 @@ final class TabBarController: UITabBarController {
         // 탭바 추가
         self.viewControllers = [recode, diaryList, setting]
     }
+}
     
     
     
     
     
     
+
+
+
+
+// MARK: - 액션
     
-    
-    
+extension TabBarController {
     
     // MARK: - 탭바 이미지 설정 액션
     /// 탭바의 이미지 및
@@ -93,37 +98,40 @@ final class TabBarController: UITabBarController {
         rootController: UIViewController)
     -> UINavigationController {
         let nav = UINavigationController(rootViewController: rootController)
+        // 선택되지 않았을 때 이미지 설정
         nav.tabBarItem.image = unselectedImg
+        // 선택되었을 때 이미지 설정
         nav.tabBarItem.selectedImage = selectedImg
         return nav
     }
-    
-    
-    
-    
-
-    
-
-    
-    
     
     // MARK: - 로그인 선택창 이동 액션
     private func goToSelectALoginController() {
         DispatchQueue.main.async {
             // 유저가 없다면 -> 로그인 선택 화면으로 이동
             let controller = SelectALoginMethodController()
+            // 델리게이트 설정
             controller.delegate = self
             let vc = UINavigationController(rootViewController: controller)
-                vc.modalPresentationStyle = .fullScreen
-            
+            vc.modalPresentationStyle = .fullScreen
+            // 화면 이동
             self.present(vc, animated: false)
         }
     }
+}
     
     
     
     
     
+    
+    
+    
+
+
+// MARK: - API
+
+extension TabBarController {
     
     // MARK: - 유저정보 가져오기 _ API
     private func fetchUser_API() {
@@ -134,12 +142,11 @@ final class TabBarController: UITabBarController {
             switch result {
                 // 유저가 있다면
             case .success(let user):
-                print("로그인 성공")
+                // user데이터 저장 -> 설정 화면에서 user데이터 사용
                 UserData.user = user
                 break
                 
             case .failure(_):
-                print("로그인 실패")
                 // 로그인 선택 창으로 이동
                 self.goToSelectALoginController()
                 break
@@ -157,11 +164,18 @@ final class TabBarController: UITabBarController {
 
 
 
+// MARK: - Auth 델리게이트
+
 extension TabBarController: AuthenticationDelegate {
+    
+    // MARK: - 로그인 성공 시
     func authenticationComplete() {
-        self.fetchUser_API()
         // 로그인 시
+        // user데이터 가져오기
+        self.fetchUser_API()
+        // 기록 화면이 보이도록 설정
         self.selectedIndex = 0
+        // 뒤로가기 (기록 화면으로 이동)
         self.dismiss(animated: true)
     }
 }

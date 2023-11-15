@@ -12,6 +12,9 @@ import FirebaseAuth
 final class SignUpController: UIViewController {
     
     // MARK: - 레이아웃
+    /// 네비게이션 타이틀 레이블
+    private lazy var navTitle: UILabel = UILabel.navTitleLbl()
+    
     private lazy var containerView: UIView = UIView.backgroundView(
         color: UIColor.customWhite5)
     
@@ -81,10 +84,7 @@ final class SignUpController: UIViewController {
         alignment: .fill,
         distribution: .fill)
     
-    /// 네비게이션 타이틀 레이블
-    private lazy var navTitle: UILabel = UILabel.navTitleLbl()
-    
-    
+
     
     
     
@@ -106,6 +106,13 @@ final class SignUpController: UIViewController {
     
     
     
+    
+    
+    
+    
+    
+    
+    
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,6 +120,11 @@ final class SignUpController: UIViewController {
         self.configureUI()
         self.configureAutoLayout()
         self.configureAction()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // 모든 키보드 내리기
+        self.view.endEditing(true)
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -142,6 +154,7 @@ extension SignUpController {
     
     // MARK: - UI 설정
     private func configureUI() {
+        // 배경 색상 설정
         self.view.backgroundColor = UIColor.blue_base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle

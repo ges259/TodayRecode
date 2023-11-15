@@ -7,10 +7,8 @@
 
 import FirebaseFirestore
 
-
-
-
-// MARK: - Format
+// MARK: - 형식
+/// 날짜 및 시간의 형식을 결정하는 전역 변수들을 관리
 enum Format {
     // ********** 현재 형식을 알려주는 전역 변수 **********
     static var timeFormat_Static: Int = 0
@@ -25,15 +23,16 @@ enum Format {
     static var dateFormat_Diary_Date: Bool = false
 }
 
+
+
+// MARK: - 유저 데이터
+/// 유저의 정보 및 이미지를 관리
 enum UserData {
+    // ********** 유저 데이터 **********
     static var user: User?
-    
     // ********** 이미지 캐시 전역 변수 **********
     static var imageCache = [String: UIImage]()
 }
-
-
-
 
 
 

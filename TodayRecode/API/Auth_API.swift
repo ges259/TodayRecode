@@ -22,8 +22,7 @@ struct Auth_API {
         // 회원가입
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error {
-                print("\(#function)---createUser---\(error)")
-                print("회원가입 실패")
+                completion(.failure(error))
                 return
             }
             // 딕셔너리 만들기
@@ -38,13 +37,10 @@ struct Auth_API {
                 .setData(userDatas) { error in
                     // 회원가입에 실패했다면
                     if let error = error {
-                        print("\(#function)---userDB_AddDocument---\(error)")
-                        print("회원가입 - 데이터 저장 실패")
                         completion(.failure(error))
                         return
                     }
                     // 회원가입 성공
-                    print("회원가입 성공")
                     completion(.success(()))
                 }
         }
@@ -60,14 +56,10 @@ struct Auth_API {
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             // 로그인에 실패했다면
             if let error = error {
-                print("\(#function)---login---\(error)")
-                print("로그인 실패")
                 completion(.failure(error))
                 return
             }
-            
             // 로그인 성공
-            print("로그인 성공")
             completion(.success(()))
         }
     }
@@ -79,10 +71,10 @@ struct Auth_API {
         do {
             // 로그아웃
             try Auth.auth().signOut()
-            print("로그아웃 성공")
+            // 로그아웃 성공
             completion(.success(()))
         } catch {
-            print("로그아웃 실패")
+            // 로그아웃 실패
             completion(.failure(error))
         }
     }

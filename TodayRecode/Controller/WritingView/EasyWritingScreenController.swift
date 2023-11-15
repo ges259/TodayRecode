@@ -24,12 +24,13 @@ final class EasyWritingScreenController: UIViewController {
     private lazy var touchGestureView: UIView = UIView.backgroundView(
         color: UIColor.clear)
     
-    // 상단 스택뷰
+    // ********** 상단 스택뷰 **********
     /// 텍스트뷰
     private lazy var recordTextView: UITextView = {
         let tv = UITextView.configureTV(fontSize: 14)
         tv.delegate = self
         tv.backgroundColor = UIColor.clear
+        tv.isScrollEnabled = false
         return tv
     }()
     /// 텍스트뷰의 높이 제약
@@ -47,17 +48,21 @@ final class EasyWritingScreenController: UIViewController {
         alignment: .top,
         distribution: .fill)
     
-    // 하단 스택뷰
+    // ********** 하단 스택뷰 **********
     /// 날짜 레이블
     private lazy var dateLbl: UILabel = UILabel.configureLbl(
         font: UIFont.boldSystemFont(ofSize: 13),
         textColor: UIColor.lightGray)
     
     /// 저장 버튼
-    private let sendBtn: UIButton = UIButton.buttonWithImage(
-        image: UIImage.check,
-        tintColor: UIColor.white,
-        backgroundColor: UIColor.lightGray)
+    private let sendBtn: UIButton = {
+        let btn = UIButton.buttonWithImage(
+            image: UIImage.check,
+            tintColor: UIColor.white,
+            backgroundColor: UIColor.lightGray)
+        btn.isEnabled = false
+        return btn
+    }()
     
     /// 스택뷰
     private lazy var bottomStackView: UIStackView = UIStackView.configureStackView(
@@ -78,14 +83,20 @@ final class EasyWritingScreenController: UIViewController {
     
     
     // MARK: - 프로퍼티
+    /// 텍스트뷰의 높이, 텍스트뷰의 높이를 동적으로 조절할 때 사용
     private lazy var size = CGSize(width: self.recordTextView.frame.width,
                                    height: .infinity)
     
-    // 델리게이트
+    /// 델리게이트
     weak var delegate: EasyWritingScreenDelegate?
     
-    
+    /// 이전 화면(RecordController)에서 달력의 선택된 날짜를 받는 변수
     var todayDate: Date?
+    
+    
+    
+    
+     
     
     
     
@@ -104,7 +115,7 @@ final class EasyWritingScreenController: UIViewController {
         self.containerView.isHidden = false
         self.recordTextView.becomeFirstResponder()
         
-        // 노티피케이션
+        // 노티피케이션 설정
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(self.keyboardWillShow),
@@ -140,8 +151,10 @@ extension EasyWritingScreenController {
     // MARK: - UI 설정
     private func configureUI() {
         // 배경 색 설정
-        self.view.backgroundColor = .darkGray.withAlphaComponent(0.4)
-        // 코너 둥글게
+        self.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.4)
+        // 데이트뷰에 날짜 설정
+        self.dateLbl.text = Date.DateLabelString(date: Date())
+        // 코너 둥글게 설정
         self.containerView.layer.maskedCorners = [.layerMinXMinYCorner,
                                                   .layerMaxXMinYCorner]
         [self.containerView,
@@ -149,16 +162,16 @@ extension EasyWritingScreenController {
             view.layer.cornerRadius = 10
             view.clipsToBounds = true
         }
-        // 데이트뷰에 날짜 설정
-        self.dateLbl.text = Date.DateLabelString(date: Date())
     }
     
     // MARK: - 오토레이아웃 설정
     private func configureAotoLayout() {
         // ********** addSubview 설정 **********
-        self.containerView.addSubview(self.topStackView)
-        self.containerView.addSubview(self.bottomStackView)
-        self.containerView.addSubview(self.placeholderLbl)
+        [self.topStackView,
+         self.bottomStackView,
+         self.placeholderLbl].forEach { view in
+            self.containerView.addSubview(view)
+        }
         self.view.addSubview(self.touchGestureView)
         self.view.addSubview(self.containerView)
         
@@ -183,7 +196,7 @@ extension EasyWritingScreenController {
         }
         // 텍스트뷰
         self.recordTextView.translatesAutoresizingMaskIntoConstraints = false
-        self.textViewHeight = self.self.recordTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 60)
+        self.textViewHeight = self.self.recordTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 80)
         self.textViewHeight?.isActive = true
         // 상단 스택뷰
         self.topStackView.snp.makeConstraints { make in
@@ -212,14 +225,12 @@ extension EasyWritingScreenController {
     // MARK: - 액션 설정
     /// 제스쳐, 버튼 액션, 노티피케이션 설정
     private func configureAction() {
-        /// 제스쳐
+        /// 뒤로가기 뷰(dismissView), 제스쳐 설정
         let gesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissView))
-        gesture.numberOfTapsRequired = 1
+            gesture.numberOfTapsRequired = 1
         self.touchGestureView.addGestureRecognizer(gesture)
         
-        
-        
-        // 액션
+        // 액션 설정
         self.expansionBtn.addTarget(self, action: #selector(self.expansionBtnTapped), for: .touchUpInside)
         self.sendBtn.addTarget(self, action: #selector(self.sendBtnTapped), for: .touchUpInside)
     }
@@ -230,9 +241,39 @@ extension EasyWritingScreenController {
     
     
     
+
+
+
+
+// MARK: - API
+extension EasyWritingScreenController {
+    private func createRecord_API() {
+        // DB에 데이터 생성
+        Record_API.shared.createRecord(writing_Type: .record_plusBtn,
+                                       date: self.todayDate,
+                                       context: self.recordTextView.text,
+                                       imageDictionary: nil) { result in
+            switch result {
+            case .success(let record):
+                // DB 생성
+                self.delegate?.createRecord(record: record)
+                break
+            case .failure(_):
+                self.delegate?.createRecord(record: nil)
+                break
+            }
+        }
+    }
+}
     
     
     
+
+
+
+
+
+
     
 // MARK: - 셀렉터
     
@@ -244,7 +285,6 @@ extension EasyWritingScreenController {
         if self.view.frame.origin.y == 0 {
             // 키보드 높이 구하기
             guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-            
             // 키보드 높이만큼 뷰 올리기
             self.view.frame.origin.y -= keyboardSize.height
         }
@@ -260,7 +300,7 @@ extension EasyWritingScreenController {
     @objc private func expansionBtnTapped() {
         // 뒤로가기
         self.dismiss(animated: false)
-        // DetailWritingScreen으로 진입
+        // RecordController -> DetailWritingScreen으로 진입
         self.delegate?.expansionBtnTapped(context: self.recordTextView.text)
     }
     
@@ -294,24 +334,50 @@ extension EasyWritingScreenController {
 
 
 
-// MARK: - API
+// MARK: - 텍스트뷰 액션
+
 extension EasyWritingScreenController {
-    private func createRecord_API() {
-        // DB에 데이터 생성
-        Record_API.shared.createRecord(writing_Type: .record_plusBtn,
-                                       date: self.todayDate,
-                                       context: self.recordTextView.text,
-                                       image: nil) { result in
-            switch result {
-            case .success(let record):
-                print("데이터 생성 성공")
-                // DB 생성
-                self.delegate?.createRecord(record: record)
-                break
-            case .failure(_):
-                self.delegate?.createRecord(record: nil)
-                break
+    
+    // MARK: - 보내기 버튼 및 플레이스 홀더
+    private func configureTextViewUI(text_Count: Int) {
+        // 텍스트뷰에 텍스트의 개수가 0개라면
+        if text_Count == 0 {
+            // 플레이스홀더 띄우기
+            self.placeholderLbl.isHidden = false
+            self.sendBtn.isEnabled = false
+            self.sendBtn.backgroundColor = UIColor.lightGray
+            
+        // 텍스트뷰에 텍스트가 있다면
+        } else {
+            // 플레이스홀더 없애기
+            self.placeholderLbl.isHidden = true
+            self.sendBtn.isEnabled = true
+            self.sendBtn.backgroundColor = UIColor.blue_Point
+        }
+    }
+    
+    // MARK: - 텍스트뷰 높이 설정
+    private func configureTextViewHeight(height: CGFloat) {
+        // 높이가 200이하라면
+        if height < 200 {
+            // 텍스트뷰의 제약이 80이상이 아니라면 -> 제약이 변경된 상태라면
+            if self.textViewHeight?.constant != 80 {
+                // 텍스트뷰의 높이 제약 변경
+                self.textViewHeight?.constant = 80
+                self.view.layoutIfNeeded()
+                // 스크롤이 불가능하도록 설정
+                self.recordTextView.isScrollEnabled = false
             }
+            
+        } else {
+            // 텍스트뷰가 스크롤이 불가능할 때 -> 텍스트뷰의 높이 제약을 바꿈 (여러번 불리는 것 방지)
+            if self.recordTextView.isScrollEnabled == false {
+                // 텍스트뷰의 높이 제약 변경
+                self.textViewHeight?.constant = height
+                self.view.layoutIfNeeded()
+            }
+            // 스크롤이 가능하도록 설정
+            self.recordTextView.isScrollEnabled = true
         }
     }
 }
@@ -327,50 +393,23 @@ extension EasyWritingScreenController {
 
 // MARK: - 텍스트뷰 델리게이트
 extension EasyWritingScreenController: UITextViewDelegate {
-    /// 텍스트를 입력하면
+    /// 텍스트를 입력할 때마다 불림
     func textViewDidChange(_ textView: UITextView) {
-        // 텍스트뷰에 텍스트의 개수가 0개라면
-        if textView.text.count == 0 {
-            // 플레이스홀더 띄우기
-            self.placeholderLbl.isHidden = false
-            self.sendBtn.isEnabled = false
-            self.sendBtn.backgroundColor = UIColor.lightGray
-        // 텍스트뷰에 텍스트가 있다면
-        } else {
-            // 플레이스홀더 없애기
-            self.placeholderLbl.isHidden = true
-            self.sendBtn.isEnabled = true
-            self.sendBtn.backgroundColor = UIColor.blue_Point
-        }
+        // 보내기 버튼 및 플레이스 홀더 UI 설정
+        self.configureTextViewUI(text_Count: textView.text.count)
         
+        // ********** 높이 설정 **********
         // 현재 테이블의 높이 가져오기
         let textViewHeight = self.recordTextView.sizeThatFits(self.size).height
-        
-        // 200이상이라면
-        if textViewHeight >= 200 {
-            self.textViewHeight?.constant = textViewHeight
-            self.view.layoutIfNeeded()
-            self.recordTextView.isScrollEnabled = true
-            
-        // 180이상이라면
-        } else if textViewHeight > 180 {
-            self.textViewHeight = self.recordTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 60)
-            self.view.layoutIfNeeded()
-            self.recordTextView.isScrollEnabled = false
-            
-        // 180이하이라면
-        } else {
-            self.recordTextView.isScrollEnabled = false
-        }
+        // 텍스트뷰 높이 설정
+        self.configureTextViewHeight(height: textViewHeight)
     }
-    
     /// 엔터 누르면 뒤로가기
     func textView(_ textView: UITextView,
                   shouldChangeTextIn range: NSRange,
                   replacementText text: String) -> Bool {
-        if text == "\n" {
-            self.dismissView()
-        }
+        // enter를 눌렀다면 -> 저장 및 뒤로가기
+        if text == "\n" { self.dismissView() }
         return true
     }
 }

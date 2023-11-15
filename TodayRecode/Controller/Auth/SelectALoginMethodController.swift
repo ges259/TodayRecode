@@ -44,8 +44,14 @@ final class SelectALoginMethodController: UIViewController {
     
     
     
+    
+    
+    
+    
     // MARK: - 프로퍼티
     weak var delegate: AuthenticationDelegate?
+    
+    
     
     
     
@@ -63,7 +69,7 @@ final class SelectALoginMethodController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        // 네비게이션바 없애기
         self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
 }
@@ -82,7 +88,9 @@ final class SelectALoginMethodController: UIViewController {
 extension SelectALoginMethodController {
     
     private func configureUIAndAutoLayout() {
+        // 배경 색상 설정
         self.view.backgroundColor = UIColor.blue_base
+        // 네비게이션 타이틀 설정
         self.navigationItem.title = "로그인 선택"
         
         // ********** addSubview 설정 **********
@@ -108,6 +116,7 @@ extension SelectALoginMethodController {
     
     
     
+    // MARK: - 액션 설정
     private func configureAutoAction() {
         self.appleLogin.addTarget(self, action: #selector(self.appleLoginTapped), for: .touchUpInside)
         self.googleLogin.addTarget(self, action: #selector(self.googleLoginTapped), for: .touchUpInside)

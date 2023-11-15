@@ -193,6 +193,7 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDele
             -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
          */
         // dateLabel에 선택된 날짜 띄우기
+        print(#function)
          self.delegate?.selectDate(date: date)
     }
     

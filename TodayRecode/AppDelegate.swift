@@ -12,28 +12,26 @@ import Firebase
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
+    
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // 파이어베이스
         FirebaseApp.configure()
         
         // 네비게이션 바 설정
         let navigationBarAppearance = UINavigationBarAppearance()
-            navigationBarAppearance.backgroundColor = UIColor.blue_base
-//
+        navigationBarAppearance.backgroundColor = UIColor.blue_base
+        //
         let navBar = UINavigationBar.appearance()
-//        // 상태바_불투명하게 설정
+        // 상태바_불투명하게 설정
         navBar.standardAppearance = navigationBarAppearance
         navBar.scrollEdgeAppearance = navigationBarAppearance
         navBar.compactAppearance = navigationBarAppearance
         
         UINavigationBar.appearance().tintColor = UIColor.black
-        UIApplication.shared.statusBarStyle = .darkContent
-        
         return true
     }
-
+    
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {

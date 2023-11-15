@@ -18,14 +18,10 @@ struct ImageUploader {
     // MARK: - 이미지 업로드
     func uploadImage(image: [UIImage],
                      completion: @escaping ([String: String]) -> Void) {
-        // 리턴할 urlString배열
-        var urlStringArray: [String: String] = [:]
-//        var urlStringArray: [String] = []
+        // 리턴할 imageDictionary배열
+        var imageDictionary: [String: String] = [:]
         // 저장할 이미지의 개수
         let count = image.count
-        
-        
-        
         
         // 이미지의 개수만큼 루프
         for (n, img) in image.enumerated() {
@@ -39,26 +35,24 @@ struct ImageUploader {
             // 경로 생성
             let storageRef = Storage.storage().reference().child("\(filePath)_\(n)")
             
-//            print("\(filePath)_\(n)")
             // 데이터 저장
             storageRef.putData(data) { (_, error) in
-                // url_String가져오기
+                // imageDictionary가져오기
                 storageRef.downloadURL { url, error in
                     // 에러가 있다면
-                    if let error = error {
-                        print("downloadUrl error ----- \(error.localizedDescription)")
+                    if let _ = error {
                         return
                     }
                     // url 옵셔널 바인딩
                     guard let imageUrl = url?.absoluteString else { return }
-                    // url_String배열에 추가
-//                    urlStringArray.append(imageUrl)
-                    urlStringArray["\(filePath)_\(n)"] = imageUrl
+                    // imageDictionary에 추가
+                    imageDictionary["\(filePath)_\(n)"] = imageUrl
                     
-                    
-                    // 가져온 이미지의 개수와 - 배열의 개수가 같다면 -> 리턴
-                    if count == urlStringArray.count {
-                        completion(urlStringArray)
+                    // 가져온 이미지의 개수와 - 리턴할 딕셔너리의 개수가 같다면 -> 리턴
+                    if count == imageDictionary.count {
+                        DispatchQueue.main.async {
+                            completion(imageDictionary)
+                        }
                     }
                 }
             }
@@ -84,31 +78,29 @@ struct ImageUploader {
                 }
                 return
             }
-            // if image does not exists in cache
+            // url_String을 URL로 바꿈
             guard let url = URL(string: url_String) else { return }
-            // fetch contents of URL
+            // url을 통해 이미지를 가져오기
             URLSession.shared.dataTask(with: url) { data, response, error in
                 
-                // handle error
+                // 에러가 생겼다면
                 if let error = error {
                     print("Failed to load image with error", error.localizedDescription)
                     return
                 }
                 // image url 데이터가 있는 지 확인
                 guard let imageData = data else { return }
+                // 이미지 데이터를 이미지로 바꿈 + 옵셔널 바인딩
+                guard let phothoImage = UIImage(data: imageData) else { return }
                 
-                // set image using image datas
-                let phothoImage = UIImage(data: imageData)
-                
-                // set key and value for iamge cache
+                // 캐시에 저장 [이미지Url : 이미지]
                 UserData.imageCache[url.absoluteString] = phothoImage
-                
-                guard let phothoImage = phothoImage else { return }
+                // 리턴할 변수에 이미지 넣기
                 returnImg.append(phothoImage)
                 
-                // set image
-                DispatchQueue.main.async {
-                    if returnImg.count == urlStrings.count {
+                // 가져온 이미지의 url의 개수와 리턴할 이미지의 개수가 같다면 -> completion
+                if returnImg.count == urlStrings.count {
+                    DispatchQueue.main.async {
                         completion(returnImg)
                     }
                 }
@@ -119,27 +111,20 @@ struct ImageUploader {
     
     
     // MARK: - 이미지 삭제
-    func deleteImage(imageUrl: [String: String]?) {
-        print("1")
-        if let imageUrl = imageUrl?.keys {
-            print("2")
-            
-            imageUrl.forEach({ url_String in
+    func deleteImage(imageDictionary: [String: String]?) {
+        // 이미지 딕셔너리의 key값(이미지가 저장된 경로) 옵셔널 바인딩
+        if let imagePath = imageDictionary?.keys {
+            // forEach를 통해 이미지 경로의 모든 이미지를 삭제
+            imagePath.forEach({ url_String in
                 let ref = Storage.storage().reference().child(url_String)
-                print("3")
-                print(url_String)
+                // 이미지 삭제
                 ref.delete { error in
-                    print("4")
                     // 에러가 있다면
                     if let _ = error {
-                        print("000000")
                         return
                     }
-                    print("5")
-                    print("이미지 삭제 성공")
                 }
             })
         }
     }
-    
 }

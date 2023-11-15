@@ -25,7 +25,6 @@ final class LoginController: UIViewController {
             withPlaceholder: "이메일을 입력하세요",
             keyboardType: .emailAddress)
         tf.delegate = self
-        
         return tf
     }()
     
@@ -102,13 +101,16 @@ final class LoginController: UIViewController {
         // 네비게이션바 보이게하기
         self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // 모든 키보드 내리기
+        self.view.endEditing(true)
+    }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         // 뷰가 사라지면 텍스트필드의 텍스트를 모드 없앰
-        [self.emailTF,
-         self.passwordTF].forEach { tf in
-            tf.text = nil
-        }
+        self.emailTF.text = nil
+        self.passwordTF.text = nil
         self.formValidation()
     }
 }
@@ -128,12 +130,12 @@ extension LoginController {
     
     // MARK: - UI 설정
     private func configureUI() {
+        // 배경 색상 설정
         self.view.backgroundColor = UIColor.blue_base
-//        self.navigationItem.title = "로그인"
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         self.navTitle.text = "이메일 로그인"
-        
+        // '아이디가 없으신가요?' 버튼 <- 스택뷰 간격 넓히기
         self.stackView.setCustomSpacing(15, after: self.loginLbl)
         
         [self.containerView,

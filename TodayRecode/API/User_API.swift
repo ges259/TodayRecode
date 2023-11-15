@@ -70,7 +70,6 @@ struct User_API {
                     completion(.failure(error))
                     return
                 }
-                print("형식 업데이트 성공")
                 completion(.success(()))
             }
     }
