@@ -58,7 +58,6 @@
 		5FAF543D2ADA907100BD849C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAF543C2ADA907100BD849C /* Constants.swift */; };
 		5FCA1F372AE5700D00A9DB5B /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */; };
 		5FD436922AE2DB9B00CA79AD /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */; };
-		5FF24B702AFE21AC003E2497 /* JGProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 5FF24B6F2AFE21AC003E2497 /* JGProgressHUD */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -117,7 +116,6 @@
 				5F6EECF22ADA70470046E686 /* FirebaseDatabase in Frameworks */,
 				5F6EECF62ADA70470046E686 /* FirebaseStorage in Frameworks */,
 				5F7A02832ADAD06D00128DC4 /* BSImagePicker in Frameworks */,
-				5FF24B702AFE21AC003E2497 /* JGProgressHUD in Frameworks */,
 				5F9DBAC72B027F6C004B0916 /* FSCalendar in Frameworks */,
 				5F6EECF02ADA70470046E686 /* FirebaseAuth in Frameworks */,
 				5F6EECF42ADA70470046E686 /* FirebaseFirestore in Frameworks */,
@@ -308,7 +306,6 @@
 				5F7A02792ADAD00A00128DC4 /* SnapKit */,
 				5F7A027F2ADAD04700128DC4 /* PanModal */,
 				5F7A02822ADAD06D00128DC4 /* BSImagePicker */,
-				5FF24B6F2AFE21AC003E2497 /* JGProgressHUD */,
 				5F9DBAC62B027F6C004B0916 /* FSCalendar */,
 			);
 			productName = TodayRecode;
@@ -344,7 +341,6 @@
 				5F7A02782ADAD00A00128DC4 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				5F7A027E2ADAD04700128DC4 /* XCRemoteSwiftPackageReference "PanModal" */,
 				5F7A02812ADAD06D00128DC4 /* XCRemoteSwiftPackageReference "BSImagePicker" */,
-				5FF24B6E2AFE21AC003E2497 /* XCRemoteSwiftPackageReference "JGProgressHUD" */,
 				5F9DBAC52B027F6C004B0916 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 			);
 			productRefGroup = 5F4B66792ADA3452004FE62E /* Products */;
@@ -538,6 +534,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -666,14 +663,6 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		5FF24B6E2AFE21AC003E2497 /* XCRemoteSwiftPackageReference "JGProgressHUD" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/JonasGessner/JGProgressHUD.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -716,11 +705,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5F9DBAC52B027F6C004B0916 /* XCRemoteSwiftPackageReference "FSCalendar" */;
 			productName = FSCalendar;
-		};
-		5FF24B6F2AFE21AC003E2497 /* JGProgressHUD */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5FF24B6E2AFE21AC003E2497 /* XCRemoteSwiftPackageReference "JGProgressHUD" */;
-			productName = JGProgressHUD;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

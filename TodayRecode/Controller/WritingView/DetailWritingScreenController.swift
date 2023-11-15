@@ -68,7 +68,7 @@ final class DetailWritingScreenController: UIViewController {
         distribution: .fill)
     
     /// 기록 확인 버튼
-    private let recodeShowBtn: UIButton = UIButton.buttonWithImage(
+    private let recordShowBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.recodeShow,
         tintColor: UIColor.white,
         backgroundColor: UIColor.blue_Point)
@@ -319,8 +319,8 @@ extension DetailWritingScreenController {
             view.clipsToBounds = true
             view.layer.cornerRadius = 10
         }
-        self.recodeShowBtn.clipsToBounds = true
-        self.recodeShowBtn.layer.cornerRadius = 65 / 2
+        self.recordShowBtn.clipsToBounds = true
+        self.recordShowBtn.layer.cornerRadius = 65 / 2
     }
     
     
@@ -329,7 +329,7 @@ extension DetailWritingScreenController {
     private func configureAutoLayout() {
         // ********** addSubViews 설정 **********
         [self.scrollView,
-         self.recodeShowBtn].forEach { view in
+         self.recordShowBtn].forEach { view in
             self.view.addSubview(view)
         }
         self.diaryTextView.addSubview(self.placeholderLbl)
@@ -403,8 +403,9 @@ extension DetailWritingScreenController {
             make.top.equalToSuperview().offset(10)
         }
         // 기록 확인 버튼 설정
-        self.recodeShowBtn.snp.makeConstraints { make in
-            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-17)
+        self.recordShowBtn.snp.makeConstraints { make in
+//            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-17)
+            make.bottom.equalTo(self.view.keyboardLayoutGuide.snp.bottom).offset(-40)
             make.trailing.equalToSuperview().offset(-17)
             make.width.height.equalTo(65)
         }
@@ -418,7 +419,7 @@ extension DetailWritingScreenController {
     
     // MARK: - 액션 설정
     private func configureAction() {
-        self.recodeShowBtn.addTarget(self, action: #selector(self.recodeShowBtnTapped), for: .touchUpInside)
+        self.recordShowBtn.addTarget(self, action: #selector(self.recodeShowBtnTapped), for: .touchUpInside)
         self.keyboardDownBtn.addTarget(self, action: #selector(self.keyboardDownBtnTapped), for: .touchUpInside)
         self.cameraBtn.addTarget(self, action: #selector(self.cameraBtnTapped), for: .touchUpInside)
         self.albumBtn.addTarget(self, action: #selector(self.albumBtnTapped), for: .touchUpInside)
@@ -427,8 +428,8 @@ extension DetailWritingScreenController {
         
         
         // MARK: - Fix
-//        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-//        navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
     
     
@@ -593,15 +594,91 @@ extension DetailWritingScreenController {
     
     // MARK: - 화면 나가기 버튼
     @objc private func leftNavBtnTapped() {
-        // 노티피케이션 삭제
-        NotificationCenter.default.removeObserver(self)
+        
         // 뒤로가기
         self.navigationController?.popViewController(animated: true)
+        self.popViewController()
+    }
+}
+    
+    
+    
+
+
+    
+
+
+
+
+// MARK: - 액션
+    
+extension DetailWritingScreenController {
+    
+    // MARK: - 노티피케이션 액션
+    /// 화면 내리기 + 스택뷰 간격 설정
+    private func keyboardStateChanged(keyboard_Up: Bool,
+                                      keyboardSize: CGFloat) {
+        // ********** 키보드 올리는 상황 **********
+        if keyboard_Up {
+            // 아이폰 종류 확인
+            self.stackViewHeight?.constant = UIDevice.current.isiPhoneSE
+            ? -(keyboardSize + 10) // se or 8
+            : -(keyboardSize - 20) // 10이상
+            
+            self.recordShowBtn.frame.origin.y -= keyboardSize - 30
+            
+            
+            
+            self.dateView.alpha = 0
+            self.dateView.isHidden = true
+            
+        // ********** 키보드 내리는 상황 **********
+        } else {
+            self.stackViewHeight?.constant = -10
+            
+            self.recordShowBtn.frame.origin.y += keyboardSize - 30
+            
+            self.dateView.alpha = 1
+            self.dateView.isHidden = false
+        }
+        self.view.layoutIfNeeded()
+        
+        // ********** 모든 상황 **********
+        // 네비게이션 타이틀(String) 설정
+        self.setNavTitle(date: self.todayDate ?? Date(),
+                         keyboard_Up: keyboard_Up)
+        // 키보드 상태 바뀜 표시
+        self.keyboardShow.toggle()
+    }
+    
+    // MARK: - 네비게이션 타이틀 재설정
+    /// 선택된 날짜에 따라 네비게이션 타이틀을 설정하는 메서드
+    private func setNavTitle(date: Date = Date(), keyboard_Up: Bool) {
+        let navEnum: NavTitleSetEnum = .M월d일
+        
+        let navMainTitle: String = self.detailViewMode == .diary
+        ? navEnum.diary_String
+        : navEnum.record_String
+        
+        if keyboard_Up {
+            self.navTitle.attributedText = self.configureNavTitle(
+                navMainTitle,
+                navTitleSetEnum: navEnum,
+                date: date)
+        } else {
+            self.navTitle.text = navMainTitle
+        }
+    }
+    
+    
+    // MARK: - 뒤로갈 때 실행되는 액션
+    private func popViewController() {
+        // 노티피케이션 삭제
+        NotificationCenter.default.removeObserver(self)
         
         if !self.willDeleteImage.isEmpty {
             ImageUploader.shared.deleteImage(imageUrl: self.willDeleteImage)
         }
-        
         
         // 현재 모드 확인
         guard let mode = self.detailViewMode else { return }
@@ -632,69 +709,6 @@ extension DetailWritingScreenController {
             ? self.createOrUpdate
             : self.imageUpload()
             break
-        }
-    }
-}
-    
-    
-    
-
-
-    
-
-
-
-
-// MARK: - 액션
-    
-extension DetailWritingScreenController {
-    
-    // MARK: - 노티피케이션 액션
-    /// 화면 내리기 + 스택뷰 간격 설정
-    private func keyboardStateChanged(keyboard_Up: Bool,
-                                      keyboardSize: CGFloat) {
-        // ********** 키보드 올리는 상황 **********
-        if keyboard_Up {
-            // 아이폰 종류 확인
-            self.stackViewHeight?.constant = UIDevice.current.isiPhoneSE
-            ? -(keyboardSize + 10) // se or 8
-            : -(keyboardSize - 20) // 10이상
-            
-            self.dateView.alpha = 0
-            self.dateView.isHidden = true
-            
-        // ********** 키보드 내리는 상황 **********
-        } else {
-            self.stackViewHeight?.constant = -10
-            self.dateView.alpha = 1
-            self.dateView.isHidden = false
-        }
-        self.view.layoutIfNeeded()
-        
-        // ********** 모든 상황 **********
-        // 네비게이션 타이틀(String) 설정
-        self.setNavTitle(date: self.todayDate ?? Date(),
-                         keyboard_Up: keyboard_Up)
-        // 키보드 상태 바뀜 표시
-        self.keyboardShow.toggle()
-    }
-    
-    // MARK: - 네비게이션 타이틀 재설정
-    /// 선택된 날짜에 따라 네비게이션 타이틀을 설정하는 메서드
-    private func setNavTitle(date: Date = Date(), keyboard_Up: Bool) {
-        let navEnum: NavTitleSetEnum = .M월d일
-        
-        let navMainTitle: String = self.detailViewMode == .diary
-        ? navEnum.diary_String
-        : navEnum.record_String
-        
-        if keyboard_Up {
-            self.navTitle.attributedText = self.configureNavTitle(
-                navMainTitle,
-                navTitleSetEnum: navEnum,
-                date: date)
-        } else {
-            self.navTitle.text = navMainTitle
         }
     }
     
@@ -1073,10 +1087,19 @@ extension DetailWritingScreenController {
 
 
 
-// MARK: - Fix
-//extension DetailWritingScreenController: UIGestureRecognizerDelegate {
-//    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-//        return navigationController?.viewControllers.count ?? 0 > 1
-//    }
-//}
 
+
+
+
+
+
+
+// MARK: - 스와이프로 뒤로가기
+extension DetailWritingScreenController: UIGestureRecognizerDelegate {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer)
+    -> Bool {
+        
+        self.popViewController()
+        return navigationController?.viewControllers.count ?? 0 > 1
+    }
+}

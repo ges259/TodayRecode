@@ -9,36 +9,25 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
-    
-//    private var checkUser: () {
-//        // user가 있는지 없는지 확인
-//        return User_API.shared.checkUser
-//        // 있다면 -> 탭바 설정
-//        ? self.configureTabBar()
-//        // 없다면 -> 로그인 선택 창으로 이동
-//        : self.goToSelectALoginController()
-//    }
-    
-
-    
-    // 스플래시 화면
-    // 얼럿창 취소 버튼
-    
-    
-    
-    
-    
     // MARK: - 라이프사이클
     override func viewDidLoad() {
         super.viewDidLoad()
         // 로그인이 되어있는 상태인지 확인
-        self.checkUser()
+        
         // 탭바 설정
         self.configureUI()
         self.configureTabBar()
     }
-    
-    
+    init(checkUser: Bool) {
+        super.init(nibName: nil, bundle: nil)
+        
+        _ = checkUser // user가 있는지 없는지 확인
+        ? self.fetchUser_API() // 있다면 -> 탭바 설정
+        : self.goToSelectALoginController() // 없다면 -> 로그인 선택 창으로 이동
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     
     
@@ -112,17 +101,7 @@ final class TabBarController: UITabBarController {
     
     
     
-    // MARK: - 유저가 있는지 확인
-    private func checkUser() {
-        // user가 있는지 없는지 확인
-        if User_API.shared.checkUser {
-            // 있다면 -> 탭바 설정
-            self.fetchUser_API()
-        } else {
-            // 없다면 -> 로그인 선택 창으로 이동
-            self.goToSelectALoginController()
-        }
-    }
+
     
 
     

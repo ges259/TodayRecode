@@ -58,7 +58,7 @@ extension UIViewController {
     func customAlert(alertStyle: UIAlertController.Style = .actionSheet,
                      withTitle title: String,
                      message: String? = nil,
-                     cancelBtnColor: UIColor = UIColor.alertCancelBlack,
+                     cancelBtnColor: UIColor = UIColor.lightGray,
                      
                      firstBtnName: String? = nil,
                      firstBtnColor: UIColor = UIColor.black,
@@ -101,16 +101,16 @@ extension UIViewController {
         // ********** 타이틀 **********
         let titleString = self.alertTitleAndFont(
             title: title,
-            font: .systemFont(ofSize: 14))
+            font: .systemFont(ofSize: 15))
         alertController.setValue(titleString, forKey: "attributedTitle")
         
         // ********** 메시지 **********
         if let message = message {
-            let messageString = self.alertTitleAndFont(title: message,
-                                                       font: .systemFont(ofSize: 10))
+            let messageString = self.alertTitleAndFont(
+                title: message,
+                font: .systemFont(ofSize: 12))
             alertController.setValue(messageString, forKey: "attributedMessage")
         }
-        
         // ********** 화면이동 **********
         present(alertController, animated: true) //보여줘
     }
@@ -130,12 +130,15 @@ extension UIViewController {
     
     
     // MARK: - 얼럿 타이틀 및 폰트 설정
-    private func alertTitleAndFont(title: String, font: UIFont) -> NSAttributedString {
+    private func alertTitleAndFont(title: String,
+                                   font: UIFont)
+    -> NSAttributedString {
         return NSAttributedString(
             string: title,
             attributes: [ //타이틀 폰트사이즈랑 글씨
                 NSAttributedString.Key.font : font,
                 NSAttributedString.Key.foregroundColor : UIColor.alertTitleGray])
+                
     }
     
     
@@ -144,9 +147,10 @@ extension UIViewController {
     
     // MARK: - 커스텀 얼럿 액션 설정
     private func customAlertAction(style: UIAlertAction.Style,
-                           title: String,
-                           color: UIColor,
-                           completion: (() -> Void)? = nil) -> UIAlertAction{
+                                   title: String,
+                                   color: UIColor,
+                                   completion: (() -> Void)? = nil)
+    -> UIAlertAction{
         let second = UIAlertAction(
             title: title,
             style: style) { _ in completion?() }

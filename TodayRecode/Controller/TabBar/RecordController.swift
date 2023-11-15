@@ -129,7 +129,7 @@ final class RecordController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.fetchRecords_API()
+//        self.fetchRecords_API()
         self.configureUI()          // UI 설정
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
