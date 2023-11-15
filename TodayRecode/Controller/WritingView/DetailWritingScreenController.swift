@@ -74,10 +74,6 @@ final class DetailWritingScreenController: UIViewController {
         backgroundColor: UIColor.blue_Point)
     
     // 악세서리 뷰
-    /// 카메라 버튼
-    private let cameraBtn: UIButton = UIButton.buttonWithImage(
-        image: UIImage.camera,
-        tintColor: UIColor.btnGrayColor)
     /// 앨범 버튼
     private let albumBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.album,
@@ -88,8 +84,7 @@ final class DetailWritingScreenController: UIViewController {
         textColor: UIColor.btnGrayColor)
     /// 스택뷰
     private lazy var horizontalStackView: UIStackView = UIStackView.configureStackView(
-        arrangedSubviews: [self.cameraBtn,
-                           self.albumBtn,
+        arrangedSubviews: [self.albumBtn,
                            self.dateLbl],
         axis: .horizontal,
         spacing: 12,
@@ -378,10 +373,6 @@ extension DetailWritingScreenController {
             make.top.equalTo(self.diaryTextView).offset(18)
             make.leading.equalTo(self.diaryTextView).offset(14)
         }
-        // 카메라 버튼
-        self.cameraBtn.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
-        }
         // 앨범 버튼
         self.albumBtn.snp.makeConstraints { make in
             make.width.height.equalTo(30)
@@ -419,15 +410,12 @@ extension DetailWritingScreenController {
     
     // MARK: - 액션 설정
     private func configureAction() {
+        // 셀렉터 설정
         self.recordShowBtn.addTarget(self, action: #selector(self.recodeShowBtnTapped), for: .touchUpInside)
         self.keyboardDownBtn.addTarget(self, action: #selector(self.keyboardDownBtnTapped), for: .touchUpInside)
-        self.cameraBtn.addTarget(self, action: #selector(self.cameraBtnTapped), for: .touchUpInside)
         self.albumBtn.addTarget(self, action: #selector(self.albumBtnTapped), for: .touchUpInside)
         
-        
-        
-        
-        // MARK: - Fix
+        // 스와이프로 뒤로가기 설정
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
@@ -574,10 +562,6 @@ extension DetailWritingScreenController {
     /// 키보드 내리기 버튼을 누르면 텍스트뷰 resign
     @objc private func keyboardDownBtnTapped() {
         self.diaryTextView.resignFirstResponder()
-    }
-    /// 카메라 버튼을 누르면
-    @objc private func cameraBtnTapped() {
-        print(#function)
     }
     /// 앨범 버튼을 누르면 이미지피커로 넘어간다.
     @objc private func albumBtnTapped() {

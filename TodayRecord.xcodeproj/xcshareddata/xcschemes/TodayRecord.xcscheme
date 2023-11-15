@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5F4B66772ADA3452004FE62E"
-               BuildableName = "TodayRecode.app"
-               BlueprintName = "TodayRecode"
-               ReferencedContainer = "container:TodayRecode.xcodeproj">
+               BuildableName = "TodayRecord.app"
+               BlueprintName = "TodayRecord"
+               ReferencedContainer = "container:TodayRecord.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -44,9 +44,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5F4B66772ADA3452004FE62E"
-            BuildableName = "TodayRecode.app"
-            BlueprintName = "TodayRecode"
-            ReferencedContainer = "container:TodayRecode.xcodeproj">
+            BuildableName = "TodayRecord.app"
+            BlueprintName = "TodayRecord"
+            ReferencedContainer = "container:TodayRecord.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -73,9 +73,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5F4B66772ADA3452004FE62E"
-            BuildableName = "TodayRecode.app"
-            BlueprintName = "TodayRecode"
-            ReferencedContainer = "container:TodayRecode.xcodeproj">
+            BuildableName = "TodayRecord.app"
+            BlueprintName = "TodayRecord"
+            ReferencedContainer = "container:TodayRecord.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -52,10 +52,10 @@
 		5F9A7D942AF0052800F9B10A /* Record_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D932AF0052800F9B10A /* Record_API.swift */; };
 		5F9A7D962AF0052F00F9B10A /* User_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D952AF0052F00F9B10A /* User_API.swift */; };
 		5F9A7D982AF02E9500F9B10A /* Auth_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D972AF02E9500F9B10A /* Auth_API.swift */; };
-		5F9DBAC72B027F6C004B0916 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 5F9DBAC62B027F6C004B0916 /* FSCalendar */; };
 		5FAA76402ADBA8220024B810 /* RecordTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA763F2ADBA8220024B810 /* RecordTableViewCell.swift */; };
 		5FAA76422ADC13340024B810 /* RecordTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA76412ADC13340024B810 /* RecordTableView.swift */; };
 		5FAF543D2ADA907100BD849C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAF543C2ADA907100BD849C /* Constants.swift */; };
+		5FBC6D832B05219700803E87 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 5FBC6D822B05219700803E87 /* FSCalendar */; };
 		5FCA1F372AE5700D00A9DB5B /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */; };
 		5FD436922AE2DB9B00CA79AD /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */; };
 /* End PBXBuildFile section */
@@ -70,7 +70,7 @@
 		5F39E0372AE175DA00E5623C /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		5F3E3FD22AF8BD7D00B1F36B /* UIDevice+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Ext.swift"; sourceTree = "<group>"; };
 		5F3E3FD42AF9363D00B1F36B /* NoRecordDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoRecordDataView.swift; sourceTree = "<group>"; };
-		5F4B66782ADA3452004FE62E /* TodayRecode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodayRecode.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F4B66782ADA3452004FE62E /* TodayRecord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodayRecord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F4B667B2ADA3452004FE62E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5F4B667D2ADA3452004FE62E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		5F4B667F2ADA3452004FE62E /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -116,9 +116,9 @@
 				5F6EECF22ADA70470046E686 /* FirebaseDatabase in Frameworks */,
 				5F6EECF62ADA70470046E686 /* FirebaseStorage in Frameworks */,
 				5F7A02832ADAD06D00128DC4 /* BSImagePicker in Frameworks */,
-				5F9DBAC72B027F6C004B0916 /* FSCalendar in Frameworks */,
 				5F6EECF02ADA70470046E686 /* FirebaseAuth in Frameworks */,
 				5F6EECF42ADA70470046E686 /* FirebaseFirestore in Frameworks */,
+				5FBC6D832B05219700803E87 /* FSCalendar in Frameworks */,
 				5F7A027A2ADAD00A00128DC4 /* SnapKit in Frameworks */,
 				5F7A02802ADAD04700128DC4 /* PanModal in Frameworks */,
 			);
@@ -138,7 +138,7 @@
 		5F4B66792ADA3452004FE62E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5F4B66782ADA3452004FE62E /* TodayRecode.app */,
+				5F4B66782ADA3452004FE62E /* TodayRecord.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -285,9 +285,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5F4B66772ADA3452004FE62E /* TodayRecode */ = {
+		5F4B66772ADA3452004FE62E /* TodayRecord */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5F4B668C2ADA3455004FE62E /* Build configuration list for PBXNativeTarget "TodayRecode" */;
+			buildConfigurationList = 5F4B668C2ADA3455004FE62E /* Build configuration list for PBXNativeTarget "TodayRecord" */;
 			buildPhases = (
 				5F4B66742ADA3452004FE62E /* Sources */,
 				5F4B66752ADA3452004FE62E /* Frameworks */,
@@ -297,7 +297,7 @@
 			);
 			dependencies = (
 			);
-			name = TodayRecode;
+			name = TodayRecord;
 			packageProductDependencies = (
 				5F6EECEF2ADA70470046E686 /* FirebaseAuth */,
 				5F6EECF12ADA70470046E686 /* FirebaseDatabase */,
@@ -306,10 +306,10 @@
 				5F7A02792ADAD00A00128DC4 /* SnapKit */,
 				5F7A027F2ADAD04700128DC4 /* PanModal */,
 				5F7A02822ADAD06D00128DC4 /* BSImagePicker */,
-				5F9DBAC62B027F6C004B0916 /* FSCalendar */,
+				5FBC6D822B05219700803E87 /* FSCalendar */,
 			);
 			productName = TodayRecode;
-			productReference = 5F4B66782ADA3452004FE62E /* TodayRecode.app */;
+			productReference = 5F4B66782ADA3452004FE62E /* TodayRecord.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -327,7 +327,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5F4B66732ADA3452004FE62E /* Build configuration list for PBXProject "TodayRecode" */;
+			buildConfigurationList = 5F4B66732ADA3452004FE62E /* Build configuration list for PBXProject "TodayRecord" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -341,13 +341,13 @@
 				5F7A02782ADAD00A00128DC4 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				5F7A027E2ADAD04700128DC4 /* XCRemoteSwiftPackageReference "PanModal" */,
 				5F7A02812ADAD06D00128DC4 /* XCRemoteSwiftPackageReference "BSImagePicker" */,
-				5F9DBAC52B027F6C004B0916 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				5FBC6D812B05219700803E87 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 			);
 			productRefGroup = 5F4B66792ADA3452004FE62E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5F4B66772ADA3452004FE62E /* TodayRecode */,
+				5F4B66772ADA3452004FE62E /* TodayRecord */,
 			);
 		};
 /* End PBXProject section */
@@ -534,7 +534,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -563,7 +563,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ges.TodayRecode;
+				PRODUCT_BUNDLE_IDENTIFIER = ges.TodayRecord;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -591,7 +591,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ges.TodayRecode;
+				PRODUCT_BUNDLE_IDENTIFIER = ges.TodayRecord;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -602,7 +602,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5F4B66732ADA3452004FE62E /* Build configuration list for PBXProject "TodayRecode" */ = {
+		5F4B66732ADA3452004FE62E /* Build configuration list for PBXProject "TodayRecord" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5F4B668A2ADA3455004FE62E /* Debug */,
@@ -611,7 +611,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5F4B668C2ADA3455004FE62E /* Build configuration list for PBXNativeTarget "TodayRecode" */ = {
+		5F4B668C2ADA3455004FE62E /* Build configuration list for PBXNativeTarget "TodayRecord" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5F4B668D2ADA3455004FE62E /* Debug */,
@@ -655,7 +655,7 @@
 				minimumVersion = 3.0.0;
 			};
 		};
-		5F9DBAC52B027F6C004B0916 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+		5FBC6D812B05219700803E87 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/WenchaoD/FSCalendar";
 			requirement = {
@@ -701,9 +701,9 @@
 			package = 5F7A02812ADAD06D00128DC4 /* XCRemoteSwiftPackageReference "BSImagePicker" */;
 			productName = BSImagePicker;
 		};
-		5F9DBAC62B027F6C004B0916 /* FSCalendar */ = {
+		5FBC6D822B05219700803E87 /* FSCalendar */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5F9DBAC52B027F6C004B0916 /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			package = 5FBC6D812B05219700803E87 /* XCRemoteSwiftPackageReference "FSCalendar" */;
 			productName = FSCalendar;
 		};
 /* End XCSwiftPackageProductDependency section */
