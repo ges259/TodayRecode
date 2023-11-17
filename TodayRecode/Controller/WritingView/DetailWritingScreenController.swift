@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import PanModal
+
 import BSImagePicker
 import Photos
 
@@ -43,7 +44,7 @@ final class DetailWritingScreenController: UIViewController {
     lazy var diaryTextView: UITextView = {
         let tv = UITextView.configureTV(fontSize: 14)
         tv.delegate = self
-        tv.backgroundColor = UIColor.customWhite5
+        tv.backgroundColor = UIColor.white_Base
         tv.textContainerInset = UIEdgeInsets(top: 18, left: 10, bottom: 18, right: 10)
         tv.isScrollEnabled = false
         // 인풋 악세사리뷰 넣기 -> 키보드가 올라올 때 같이 올라옴
@@ -78,11 +79,11 @@ final class DetailWritingScreenController: UIViewController {
     /// 앨범 버튼
     private let albumBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.album,
-        tintColor: UIColor.btnGrayColor)
+        tintColor: UIColor.gray_Accessoroy)
     /// 날짜 레이블
     private lazy var dateLbl: UILabel = UILabel.configureLbl(
         font: UIFont.systemFont(ofSize: 13),
-        textColor: UIColor.btnGrayColor)
+        textColor: UIColor.gray_Accessoroy)
     /// 스택뷰
     private lazy var horizontalStackView: UIStackView = UIStackView.configureStackView(
         arrangedSubviews: [self.albumBtn,
@@ -95,7 +96,7 @@ final class DetailWritingScreenController: UIViewController {
     /// 키보드 내리기 버튼
     private let keyboardDownBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.keyboardDown,
-        tintColor: UIColor.btnGrayColor)
+        tintColor: UIColor.gray_Accessoroy)
     
     /// 키보드가 올라오면 보이는 악세서리 컨테이너뷰
     private lazy var accessoryCustomView: UIView = {
@@ -116,16 +117,16 @@ final class DetailWritingScreenController: UIViewController {
         
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
-        
+
         imagePicker.settings.theme.selectionFillColor = .white
-        imagePicker.settings.theme.selectionStrokeColor = .black
-        
+        imagePicker.settings.theme.selectionStrokeColor = .lightGray
+
         imagePicker.settings.preview.enabled = true
-        
+
         // 버튼 설정
         imagePicker.title = "이미지 선택"
         imagePicker.doneButtonTitle = "선택완료"
-        
+
         imagePicker.doneButton.tintColor = UIColor.black
         imagePicker.cancelButton.tintColor = UIColor.black
         
@@ -298,7 +299,7 @@ extension DetailWritingScreenController {
     // MARK: - UI 설정
     private func configreUI() {
         // 배경 색상 설정
-        self.view.backgroundColor = UIColor.blue_base
+        self.view.backgroundColor = UIColor.blue_Base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         // 네비게이션 타이틀(String) 설정
@@ -857,7 +858,7 @@ extension DetailWritingScreenController {
     private func createRecord_API() {
         // 텍스트뷰가 빈칸인 경우 생성X
         // 오늘 날짜 및 타입 - 옵셔널바인딩
-        guard self.diaryTextView.text == ""
+        guard self.diaryTextView.text != ""
                 || !self.addedImages.isEmpty,
               let date = self.todayDate, // 날짜 가져오기
               let writing_Type = self.detailViewMode else { return }

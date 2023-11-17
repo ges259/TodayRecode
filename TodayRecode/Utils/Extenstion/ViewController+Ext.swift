@@ -58,13 +58,13 @@ extension UIViewController {
     func customAlert(alertStyle: UIAlertController.Style = .actionSheet,
                      withTitle title: String,
                      message: String? = nil,
-                     cancelBtnColor: UIColor = UIColor.lightGray,
+                     cancelBtnColor: UIColor = UIColor.alert_Cancel,
                      
                      firstBtnName: String? = nil,
-                     firstBtnColor: UIColor = UIColor.black,
+                     firstBtnColor: UIColor = UIColor.alert_Title,
                      
                      secondBtnName: String? = nil,
-                     secondBtnColor: UIColor = UIColor.black,
+                     secondBtnColor: UIColor = UIColor.alert_Title,
                      
                      completion: @escaping (Int) -> Void) {
         // ********** 얼럿창 만들기 **********
@@ -108,21 +108,17 @@ extension UIViewController {
         if let message = message {
             let messageString = self.alertTitleAndFont(
                 title: message,
-                font: .systemFont(ofSize: 12))
+                font: .systemFont(ofSize: 13))
             alertController.setValue(messageString, forKey: "attributedMessage")
         }
+        
         // ********** 화면이동 **********
         present(alertController, animated: true) //보여줘
     }
     
     
-    // MARK: - API 실패 시 얼럿창 띄우기
-    func apiFail_Alert() {
-        self.customAlert(
-            alertStyle: .alert,
-            withTitle: "오류",
-            message: "다시 시도해 주세요.") { _ in }
-    }
+
+    
     
     
     
@@ -137,8 +133,17 @@ extension UIViewController {
             string: title,
             attributes: [ //타이틀 폰트사이즈랑 글씨
                 NSAttributedString.Key.font : font,
-                NSAttributedString.Key.foregroundColor : UIColor.alertTitleGray])
+                NSAttributedString.Key.foregroundColor : UIColor.alert_Title])
                 
+    }
+    
+    
+    // MARK: - API 실패 시 얼럿창 띄우기
+    func apiFail_Alert() {
+        self.customAlert(
+            alertStyle: .alert,
+            withTitle: "오류",
+            message: "다시 시도해 주세요.") { _ in }
     }
     
     
@@ -204,6 +209,7 @@ extension UIViewController {
     
     
     // MARK: - 이메일 및 비밀번호 형식
+    // 이메일이 형식에 맞는지 확인
     func isValidEmail(testStr: String?) -> Bool {
         
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
@@ -211,6 +217,7 @@ extension UIViewController {
         let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
         return emailTest.evaluate(with: testStr)
     }
+    /// 비밀번호가 6자리 이상인지 체크하는 메서드
     func isValidPassword(pw: String?) -> Bool{
         if let hasPassword = pw{
             if hasPassword.count < 6 {

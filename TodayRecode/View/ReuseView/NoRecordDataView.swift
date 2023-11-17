@@ -11,16 +11,18 @@ import SnapKit
 final class NoRecordDataView: UIView {
     
     // MARK: - 레이아웃
+    /// 텍스트
     private lazy var noDataLbl: UILabel = UILabel.navTitleLbl(
         font: .systemFont(ofSize: 15))
     
+    /// 플러스버튼 이미지
     private lazy var plusBtn: UIImageView = {
         let img = UIImageView()
         img.tintColor = .blue_Point
         return img
     }()
-    
-    
+        
+    /// 스택뷰
     private lazy var stackView: UIStackView = UIStackView.configureStackView(
         arrangedSubviews: [self.plusBtn,
                            self.noDataLbl],
@@ -33,6 +35,7 @@ final class NoRecordDataView: UIView {
     
     
 
+    
     
     
     
@@ -53,23 +56,23 @@ final class NoRecordDataView: UIView {
     
     
     
+    
+    
+    
+    
     // MARK: - 레이블의 텍스트 설정
     /// NodataEnum에 따라 레이블의 텍스트를 바꿈
     private func configureUI(nodataEnum: NoDataEnum) {
         self.noDataLbl.text = nodataEnum.lblString
         self.plusBtn.image = nodataEnum.systemImg
         
-        self.backgroundColor = .customWhite5
+        self.backgroundColor = .white_Base
         
         self.clipsToBounds = true
         self.layer.cornerRadius = 10
         
         self.isHidden = true
     }
-    
-    
-    
-    
     
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout(nodataEnum: NoDataEnum) {

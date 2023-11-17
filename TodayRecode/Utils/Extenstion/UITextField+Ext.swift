@@ -26,7 +26,7 @@ extension UITextField {
         tf.font = UIFont.systemFont(ofSize: 14)
         
         // set background color
-        tf.backgroundColor = UIColor.customWhite5
+        tf.backgroundColor = UIColor.white_Base
         
         // set placeholder
         tf.attributedPlaceholder = NSAttributedString(

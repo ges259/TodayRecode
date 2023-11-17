@@ -14,7 +14,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     /// 이미지뷰
     lazy var imageView: UIImageView = {
         let img = UIImageView()
-        img.backgroundColor = UIColor.customWhite5
+        img.backgroundColor = UIColor.white_Base
         img.contentMode = .scaleAspectFill
         return img
     }()
@@ -26,7 +26,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     // ********** DiaryList **********
     /// 이미지뷰 위를 덮는 white 색상 뷰
     private lazy var whiteCustomView: UIView = UIView.backgroundView(
-        color: UIColor.customWhite5)
+        color: UIColor.white_Base)
     /// 날짜 레이블
     lazy var dateLbl: UILabel = {
         let lbl = UILabel.configureLbl(

@@ -15,7 +15,7 @@ final class SettingController: UIViewController {
     
     /// 유저의 정보를 담을 뷰
     private lazy var userContainerView: UIView = UIView.backgroundView(
-        color: UIColor.customWhite5)
+        color: UIColor.white_Base)
     
     /// 유저 이미지
     private lazy var userImgView: UIImageView = {
@@ -54,7 +54,7 @@ final class SettingController: UIViewController {
         title: "로그아웃",
         titleColor: UIColor.red,
         font: UIFont.boldSystemFont(ofSize: 15),
-        backgroundColor: UIColor.customWhite5)
+        backgroundColor: UIColor.white_Base)
     
     
     
@@ -116,7 +116,7 @@ extension SettingController {
     // MARK: - UI 설정
     private func configureUI() {
         // 배경 색상 설정
-        self.view.backgroundColor = UIColor.blue_base
+        self.view.backgroundColor = UIColor.blue_Base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         self.navTitle.text = "설정"
@@ -366,6 +366,7 @@ extension SettingController: UITableViewDelegate, UITableViewDataSource {
                    numberOfRowsInSection section: Int) -> Int {
         return 2
     }
+    
     // 섹션의 개수
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1

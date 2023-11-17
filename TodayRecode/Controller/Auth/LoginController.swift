@@ -12,7 +12,7 @@ final class LoginController: UIViewController {
     
     // MARK: - 레이아웃
     private lazy var containerView: UIView = UIView.backgroundView(
-        color: UIColor.customWhite5)
+        color: UIColor.white_Base)
     
     /// "로그인" 레이블
     private lazy var loginLbl: UILabel = UILabel.configureLbl(
@@ -45,7 +45,7 @@ final class LoginController: UIViewController {
             title: "로그인",
             titleColor: UIColor.white,
             font: UIFont.boldSystemFont(ofSize: 20),
-            backgroundColor: UIColor.customblue1)
+            backgroundColor: UIColor.blue_Lightly)
             btn.isEnabled = false
         return btn
     }()
@@ -131,7 +131,7 @@ extension LoginController {
     // MARK: - UI 설정
     private func configureUI() {
         // 배경 색상 설정
-        self.view.backgroundColor = UIColor.blue_base
+        self.view.backgroundColor = UIColor.blue_Base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         self.navTitle.text = "이메일 로그인"
@@ -235,7 +235,7 @@ extension LoginController {
         }
         // 텍스트필드에 빈칸이 있을 때
         self.logInBtn.isEnabled = false
-        self.logInBtn.backgroundColor = UIColor.customblue1
+        self.logInBtn.backgroundColor = UIColor.blue_Lightly
     }
     
     

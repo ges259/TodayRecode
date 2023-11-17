@@ -84,8 +84,7 @@ struct ImageUploader {
             URLSession.shared.dataTask(with: url) { data, response, error in
                 
                 // 에러가 생겼다면
-                if let error = error {
-                    print("Failed to load image with error", error.localizedDescription)
+                if let _ = error {
                     return
                 }
                 // image url 데이터가 있는 지 확인

@@ -18,7 +18,7 @@ final class CalendarView: UIView {
         calendar.delegate = self
         calendar.dataSource = self
         // 배경 색상 설정
-        calendar.backgroundColor = .customWhite5
+        calendar.backgroundColor = .white_Base
         
         // ----- 주(월/화/수/~~) -----
         // 한글로 표시
@@ -40,13 +40,13 @@ final class CalendarView: UIView {
         // 이벤트 - 선택된 날짜 색깔
         calendar.appearance.eventSelectionColor = UIColor.clear
         
-        // 찾았다
+        // 찾았다?
         calendar.appearance.borderRadius = .zero
         
         // 선택된 날짜의 색상
         calendar.appearance.selectionColor = UIColor.blue_Point
         // 오늘 날짜 생상
-        calendar.appearance.todayColor = UIColor.customblue1
+        calendar.appearance.todayColor = UIColor.blue_Lightly
         // 오늘 날짜 타이틀 생상
         calendar.appearance.titleTodayColor = .black
         
@@ -59,6 +59,9 @@ final class CalendarView: UIView {
     
     /// 달력의 높이 제약
     private var calendarHeight: NSLayoutConstraint?
+    
+    
+    
     
     
     
@@ -88,11 +91,18 @@ final class CalendarView: UIView {
     
     
     
+    
+    
+    
+    
+    
+    
+    
     // MARK: - 라이프사이클
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.configureAutoLayout()
+        self.configureAutoLayout() // 오토레이아웃 설정
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -101,6 +111,12 @@ final class CalendarView: UIView {
     
     
  
+
+
+
+
+
+
 
 // MARK: - 화면 설정
 
@@ -124,6 +140,8 @@ extension CalendarView {
 
 
 
+
+
 // MARK: - 액션
 
 extension CalendarView {
@@ -136,26 +154,18 @@ extension CalendarView {
         : self.calendar.setScope(.month, animated: true)
     }
     
-    
-    
     // MARK: - 현재 달력의 상태 리턴
     func currentCalendarScope() -> FSCalendarScope {
         return self.calendar.scope
     }
     
-    
+    // MARK: - 달력의 형식 설정
     func configureDateFormat() {
         self.calendar.firstWeekday = Format.dateFormat_Static == 0
         ? 1 // 일요일 시작
         : 2 // 월요일 시작
     }
 }
-
-
-
-
-
-
 
 
 
@@ -193,7 +203,6 @@ extension CalendarView: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDele
             -> 찾은 인덱스로 이동 ( moveToItem(index:_) )
          */
         // dateLabel에 선택된 날짜 띄우기
-        print(#function)
          self.delegate?.selectDate(date: date)
     }
     

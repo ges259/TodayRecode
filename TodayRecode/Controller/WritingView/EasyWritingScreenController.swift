@@ -196,14 +196,13 @@ extension EasyWritingScreenController {
         }
         // 텍스트뷰
         self.recordTextView.translatesAutoresizingMaskIntoConstraints = false
-        self.textViewHeight = self.self.recordTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 80)
+        self.textViewHeight = self.self.recordTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 70)
         self.textViewHeight?.isActive = true
         // 상단 스택뷰
         self.topStackView.snp.makeConstraints { make in
             make.top.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
             make.height.greaterThanOrEqualTo(60)
-            make.height.lessThanOrEqualTo(200)
         }
         // 플레이스 홀더
         self.placeholderLbl.snp.makeConstraints { make in
@@ -214,7 +213,6 @@ extension EasyWritingScreenController {
         self.containerView.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
             make.height.greaterThanOrEqualTo(50)
-            make.height.lessThanOrEqualTo(500)
         }
         self.touchGestureView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
@@ -358,24 +356,24 @@ extension EasyWritingScreenController {
     
     // MARK: - 텍스트뷰 높이 설정
     private func configureTextViewHeight(height: CGFloat) {
-        // 높이가 200이하라면
-        if height < 200 {
+        // 높이가 250이하라면
+        if height < 210 {
             // 텍스트뷰의 제약이 80이상이 아니라면 -> 제약이 변경된 상태라면
-            if self.textViewHeight?.constant != 80 {
+            if self.textViewHeight?.constant != 70 {
                 // 텍스트뷰의 높이 제약 변경
-                self.textViewHeight?.constant = 80
+                self.textViewHeight?.constant = 70
                 self.view.layoutIfNeeded()
                 // 스크롤이 불가능하도록 설정
                 self.recordTextView.isScrollEnabled = false
             }
             
-        } else {
-            // 텍스트뷰가 스크롤이 불가능할 때 -> 텍스트뷰의 높이 제약을 바꿈 (여러번 불리는 것 방지)
-            if self.recordTextView.isScrollEnabled == false {
-                // 텍스트뷰의 높이 제약 변경
-                self.textViewHeight?.constant = height
-                self.view.layoutIfNeeded()
-            }
+            
+        // 높이가 300 이상 + 텍스트뷰가 스크롤이 불가능할 때
+            // -> 텍스트뷰의 높이 제약을 바꿈 (여러번 불리는 것 방지)
+        } else if self.recordTextView.isScrollEnabled == false {
+            // 텍스트뷰의 높이 제약 변경
+            self.textViewHeight?.constant = height
+            self.view.layoutIfNeeded()
             // 스크롤이 가능하도록 설정
             self.recordTextView.isScrollEnabled = true
         }

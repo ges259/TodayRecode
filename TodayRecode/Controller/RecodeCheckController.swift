@@ -44,7 +44,7 @@ final class RecodeCheckController: UIViewController {
         let view = NoRecordDataView(
             frame: .zero,
             nodataEnum: .record_Check)
-            view.backgroundColor = .customWhite5
+            view.backgroundColor = .white_Base
         return view
     }()
     

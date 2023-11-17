@@ -148,7 +148,7 @@ extension DiaryListController {
     // MARK: - UI 설정
     private func configureUI() {
         // 배경 색상 설정
-        self.view.backgroundColor = UIColor.blue_base
+        self.view.backgroundColor = UIColor.blue_Base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         // 네비게이션 타이틀(String) 설정

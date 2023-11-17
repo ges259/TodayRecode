@@ -60,7 +60,7 @@ extension SettingTableViewCell {
     
     // MARK: - UI 설정
     private func configureUI() {
-        self.backgroundColor = UIColor.customWhite5
+        self.backgroundColor = UIColor.white_Base
         self.selectionStyle = .none
     }
     

@@ -16,7 +16,7 @@ final class SignUpController: UIViewController {
     private lazy var navTitle: UILabel = UILabel.navTitleLbl()
     
     private lazy var containerView: UIView = UIView.backgroundView(
-        color: UIColor.customWhite5)
+        color: UIColor.white_Base)
     
     /// "회원가입" 레이블
     private lazy var signUpLbl: UILabel = UILabel.configureLbl(
@@ -66,7 +66,7 @@ final class SignUpController: UIViewController {
             title: "회원가입",
             titleColor: UIColor.white,
             font: UIFont.systemFont(ofSize: 20),
-            backgroundColor: UIColor.customblue1)
+            backgroundColor: UIColor.blue_Lightly)
             btn.isEnabled = false
         return btn
     }()
@@ -155,7 +155,7 @@ extension SignUpController {
     // MARK: - UI 설정
     private func configureUI() {
         // 배경 색상 설정
-        self.view.backgroundColor = UIColor.blue_base
+        self.view.backgroundColor = UIColor.blue_Base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         self.navTitle.text = "회원가입"
@@ -259,7 +259,7 @@ extension SignUpController {
         }
         // 텍스트필드가 빈칸이 없을 때
         self.signUpBtn.isEnabled = false
-        self.signUpBtn.backgroundColor = UIColor.customblue1
+        self.signUpBtn.backgroundColor = UIColor.blue_Lightly
     }
 }
 

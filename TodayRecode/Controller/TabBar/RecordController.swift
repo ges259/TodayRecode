@@ -120,7 +120,7 @@ final class RecordController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-//        self.fetchRecords_API()     // 오늘 기록 가져오기
+        self.fetchRecords_API()     // 오늘 기록 가져오기
         self.configureUI()          // UI 설정
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
@@ -162,10 +162,11 @@ final class RecordController: UIViewController {
 // MARK: - 화면 설정
 
 extension RecordController {
+    
     // MARK: - UI 설정
     private func configureUI() {
         // 배경 색상 설정
-        self.view.backgroundColor = UIColor.blue_base
+        self.view.backgroundColor = UIColor.blue_Base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
         // 네비게이션 타이틀(String) 설정
