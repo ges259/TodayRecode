@@ -134,7 +134,7 @@ extension LoginController {
         self.view.backgroundColor = UIColor.blue_Base
         // 네비게이션 타이틀뷰(View) 설정
         self.navigationItem.titleView = self.navTitle
-        self.navTitle.text = "이메일 로그인"
+        self.navTitle.text = "로그인"
         // '아이디가 없으신가요?' 버튼 <- 스택뷰 간격 넓히기
         self.stackView.setCustomSpacing(15, after: self.loginLbl)
         
@@ -310,7 +310,7 @@ extension LoginController {
               let password = self.passwordTF.text
         else { return }
         
-        Auth_API.shared.login(
+        Auth_API.shared.emailLogin(
             email: email,
             password: password) { result in
                 switch result {

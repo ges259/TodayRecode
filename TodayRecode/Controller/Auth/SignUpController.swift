@@ -340,7 +340,7 @@ extension SignUpController {
         else { return }
         
         // 회원가입
-        Auth_API.shared.signUp(
+        Auth_API.shared.emailSignUp(
             userName: userName,
             email: email,
             password: password) { result in

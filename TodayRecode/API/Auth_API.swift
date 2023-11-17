@@ -14,8 +14,29 @@ struct Auth_API {
     
     typealias AuthCompletion = (Result<Void, Error>) -> Void
     
+    // MARK: - 로그아웃
+    func logout(completion: @escaping AuthCompletion) {
+        do {
+            // 로그아웃
+            try Auth.auth().signOut()
+            // 로그아웃 성공
+            completion(.success(()))
+        } catch {
+            // 로그아웃 실패
+            completion(.failure(error))
+        }
+    }
+    
+    
+    
+    
+    
+    // MARK: - 이메일
+    
+    
+    
     // MARK: - 회원가입
-    func signUp(userName: String,
+    func emailSignUp(userName: String,
                 email: String,
                 password: String,
                 completion: @escaping AuthCompletion) {
@@ -49,7 +70,7 @@ struct Auth_API {
     
     
     // MARK: - 로그인
-    func login(email: String,
+    func emailLogin(email: String,
                password: String,
                completion: @escaping AuthCompletion) {
         // 로그인
@@ -66,16 +87,11 @@ struct Auth_API {
     
     
     
-    // MARK: - 로그아웃
-    func logout(completion: @escaping AuthCompletion) {
-        do {
-            // 로그아웃
-            try Auth.auth().signOut()
-            // 로그아웃 성공
-            completion(.success(()))
-        } catch {
-            // 로그아웃 실패
-            completion(.failure(error))
-        }
-    }
+
+    
+    
+    // MARK: - 애플 로그인
+
+    
+    
 }

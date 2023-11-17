@@ -21,15 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // 네비게이션 바 설정
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationBarAppearance.backgroundColor = UIColor.blue_Base
+        
         //
         let navBar = UINavigationBar.appearance()
+        // 네비게이션 이미지의 색상을 검정색으로 변경
         navBar.tintColor = UIColor.black
-        // 상태바_불투명하게 설정
-//        navBar.standardAppearance = navigationBarAppearance
-//        navBar.scrollEdgeAppearance = navigationBarAppearance
-//        navBar.compactAppearance = navigationBarAppearance
-        
-        
         return true
     }
     

@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import AuthenticationServices
+//import CryptoKit
 
 final class SelectALoginMethodController: UIViewController {
     
@@ -151,7 +153,7 @@ extension SelectALoginMethodController {
 // MARK: - 액션
 extension SelectALoginMethodController {
     @objc private func appleLoginTapped() {
-        print(#function)
+        self.startSignInWithAppleFlow()
     }
     @objc private func googleLoginTapped() {
         print(#function)
