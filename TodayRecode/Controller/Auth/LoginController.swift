@@ -280,16 +280,22 @@ extension LoginController {
     }
     
     // MARK: - 얼럿창 띄우기
-    private func alert_LoginFail(authEnum: AuthEnum) {
-        let stringArray = authEnum.alert_StringArray
+    private func alert_LoginFail(authEnum: AuthAlertEnum) {
+//        let stringArray = authEnum.alert_StringArray
         // 커스텀 얼럿창 띄우기
-        self.customAlert(
-            alertStyle: .alert,
-            withTitle: stringArray[0],
-            message: stringArray[1]) { _ in
-                self.logInBtn.isEnabled = true
-                return
-            }
+//        self.customAlert(
+//            alertStyle: .alert,
+//            withTitle: stringArray[0],
+//            message: stringArray[1]) { _ in
+//                self.logInBtn.isEnabled = true
+//                return
+//            }
+        // MARK: - Delete
+        
+        self.customAlert(alertEnum: authEnum) { _ in
+            self.logInBtn.isEnabled = true
+            return
+        }
     }
 }
 
@@ -321,7 +327,7 @@ extension LoginController {
                     // 로그인에 실패했다면
                 case .failure(_):
                     // 커스텀 얼럿창 띄우기
-                    self.alert_LoginFail(authEnum: .unknownError)
+                    self.alert_LoginFail(authEnum: .loginFail)
                 }
         }
     }

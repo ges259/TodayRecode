@@ -24,6 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //
         let navBar = UINavigationBar.appearance()
+        // 스크롤해도 네비게이션바의 색상이 달라지지 않음
+        navBar.standardAppearance = navigationBarAppearance
         // 네비게이션 이미지의 색상을 검정색으로 변경
         navBar.tintColor = UIColor.black
         return true

@@ -55,6 +55,7 @@ extension TabBarController {
             selectedImg: UIImage.recode_fill,
             rootController: RecordController())
         
+        
         let today = Date.dateReturn_Custom(todayFormat: .d)
         // 일기 목록 화면
         // 오늘 날짜 가져오기 -> 오늘 날짜에 따라 탭바 이미지 다르게 설정
@@ -177,5 +178,7 @@ extension TabBarController: AuthenticationDelegate {
         self.selectedIndex = 0
         // 뒤로가기 (기록 화면으로 이동)
         self.dismiss(animated: true)
+        // 로그인했다는 표시 -> RecordController에서 fetch진행
+        DataUpdate.login = true
     }
 }

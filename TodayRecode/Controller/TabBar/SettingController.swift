@@ -220,7 +220,7 @@ extension SettingController {
                 break
             // 로그아웃에 실패했다면
             case .failure(_):
-                self.apiFail_Alert()
+                self.customAlert(alertEnum: .logoutFail) { _ in }
                 break
             }
         }
@@ -239,7 +239,11 @@ extension SettingController {
                 break
                 
             case .failure(_):
-                self.apiFail_Alert()
+                if settingTableEnum == .dateFormat {
+                    self.customAlert(alertEnum: .dateformatChangeError) { _ in }
+                } else {
+                    self.customAlert(alertEnum: .timeformatChangeError) { _ in }
+                }
                 break
             }
         }
@@ -272,13 +276,12 @@ extension SettingController {
     // MARK: - 로그아웃 버튼 얼럿 액션
     /// 로그아웃 버튼이 눌리면 얼럿창을 띄움
     @objc private func logoutBtnTapped() {
-        self.customAlert(
-            withTitle: "정말 로그아웃 하시겠습니까?",
-            firstBtnName: "로그아웃",
-            firstBtnColor: UIColor.red) { _ in
-                // 로그아웃 _ API
-                self.logout_API()
-            }
+        self.customAlert(alertStyle: .actionSheet,
+                         alertEnum: .logout,
+                         firstBtnColor: .red) { _ in
+            // 로그아웃 _ API
+            self.logout_API()
+        }
     }
     
     // MARK: - 로그인 선택창 이동
@@ -287,6 +290,7 @@ extension SettingController {
         let controller = SelectALoginMethodController()
             // 델리게이트 설정
             controller.delegate = self.tabBarController as? TabBarController
+            controller.revokeToken()
         let vc = UINavigationController(rootViewController: controller)
             vc.modalPresentationStyle = .fullScreen
         self.present(vc, animated: true)
@@ -318,6 +322,8 @@ extension SettingController {
             at: [IndexPath(row: settingTableEnum.rawValue,
                            section: 0)],
             with: .automatic)
+        // 로딩뷰 내리기
+        self.showLoading(false)
     }
     
     // MARK: - 전역변수 업데이트
@@ -394,16 +400,18 @@ extension SettingController: UITableViewDelegate, UITableViewDataSource {
                    didSelectRowAt indexPath: IndexPath) {
         
         guard let settingTableEnum = SettingTableEnum(rawValue: indexPath.row) else { return }
-        // 얼럿창에 표시될 선택된 셀에 맞는 문자열 배열 가져오기
-        let alertStringArray = settingTableEnum.alertStringArray
         
-        // 얼럿창 띄우기
-        self.customAlert(
-            withTitle: alertStringArray[0],
-            firstBtnName: alertStringArray[1],
-            secondBtnName: alertStringArray[2]) { index in
-                // 선택된 결과 DB저장
-                self.formatChanged(settingTableEnum, index: index)
-            }
+        let alertEnum: AuthAlertEnum
+        = settingTableEnum == .dateFormat
+        ? .dateFormat
+        : .timeFormat
+        
+        self.customAlert(alertStyle: .actionSheet,
+                         alertEnum: alertEnum) { index in
+            // 다른 화면으로 이동 못 하도록 로딩뷰 띄우기
+            self.showLoading(true)
+            // 선택된 결과 DB저장
+            self.formatChanged(settingTableEnum, index: index)
+        }
     }
 }

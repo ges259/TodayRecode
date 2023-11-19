@@ -114,11 +114,26 @@ final class DiaryListController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        DataUpdate.dataUpdateStart = true
+
         // 날짜 형식이 바뀌었다면 -> 캘린더 리로드
         if Format.dateFormat_Diary_Date {
             self.calendar.configureDateFormat()
             Format.dateFormat_Diary_Date = false
         }
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // 데이터가 생성 or 업데이트 되었다면
+        if DataUpdate.imageDataUpdate {
+            // 다른 화면으로 이동 못 하도록 로딩뷰 띄우기
+            self.showLoading(true)
+            DataUpdate.imageDataUpdate = false
+        }
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        DataUpdate.dataUpdateStart = false
     }
 }
 
@@ -355,7 +370,7 @@ extension DiaryListController {
                 break
                 
             case .failure(_):
-                self.apiFail_Alert()
+                self.customAlert(alertEnum: .fetchError) { _ in }
                 break
             }
         }
@@ -453,8 +468,9 @@ extension DiaryListController: DetailWritingScreenDelegate {
             self.moveToItem(date: record.date)
             
         } else {
-            self.apiFail_Alert()
+            self.customAlert(alertEnum: .createError) { _ in }
         }
+        self.showLoading(false)
     }
     
     func updateRecord(record: Record?) {
@@ -466,8 +482,9 @@ extension DiaryListController: DetailWritingScreenDelegate {
                                                            section: 0)])
             
         } else {
-            self.apiFail_Alert()
+            self.customAlert(alertEnum: .updateError) { _ in }
         }
+        self.showLoading(false)
     }
     
     func deleteRecord(success: Bool) {
@@ -486,7 +503,7 @@ extension DiaryListController: DetailWritingScreenDelegate {
                     selectedDate: self.diaryArray[nextIndex].date)
             }
         } else {
-            self.apiFail_Alert()
+            self.customAlert(alertEnum: .deleteError) { _ in }
         }
     }
 }

@@ -48,9 +48,13 @@
 		5F7A02832ADAD06D00128DC4 /* BSImagePicker in Frameworks */ = {isa = PBXBuildFile; productRef = 5F7A02822ADAD06D00128DC4 /* BSImagePicker */; };
 		5F7A02852ADAD3D700128DC4 /* Color+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */; };
 		5F8A0EA52AE6B1AC00C7AF2C /* RecodeCheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8A0EA42AE6B1AC00C7AF2C /* RecodeCheckController.swift */; };
+		5F9134872B090CDD00A95109 /* SwiftJWT in Frameworks */ = {isa = PBXBuildFile; productRef = 5F9134862B090CDD00A95109 /* SwiftJWT */; };
+		5F9134892B09235E00A95109 /* AuthKey_79R8A2F3JK.p8 in Resources */ = {isa = PBXBuildFile; fileRef = 5F9134882B09235E00A95109 /* AuthKey_79R8A2F3JK.p8 */; };
+		5F91348C2B092ADC00A95109 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5F91348B2B092ADC00A95109 /* Alamofire */; };
 		5F9A7D942AF0052800F9B10A /* Record_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D932AF0052800F9B10A /* Record_API.swift */; };
 		5F9A7D962AF0052F00F9B10A /* User_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D952AF0052F00F9B10A /* User_API.swift */; };
 		5F9A7D982AF02E9500F9B10A /* Auth_API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9A7D972AF02E9500F9B10A /* Auth_API.swift */; };
+		5FA432452B0812090013776B /* JGProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 5FA432442B0812090013776B /* JGProgressHUD */; };
 		5FAA76402ADBA8220024B810 /* RecordTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA763F2ADBA8220024B810 /* RecordTableViewCell.swift */; };
 		5FAA76422ADC13340024B810 /* RecordTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA76412ADC13340024B810 /* RecordTableView.swift */; };
 		5FAF543D2ADA907100BD849C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAF543C2ADA907100BD849C /* Constants.swift */; };
@@ -98,6 +102,7 @@
 		5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Ext.swift"; sourceTree = "<group>"; };
 		5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Ext.swift"; sourceTree = "<group>"; };
 		5F8A0EA42AE6B1AC00C7AF2C /* RecodeCheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeCheckController.swift; sourceTree = "<group>"; };
+		5F9134882B09235E00A95109 /* AuthKey_79R8A2F3JK.p8 */ = {isa = PBXFileReference; lastKnownFileType = file; path = AuthKey_79R8A2F3JK.p8; sourceTree = SOURCE_ROOT; };
 		5F9A7D932AF0052800F9B10A /* Record_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record_API.swift; sourceTree = "<group>"; };
 		5F9A7D952AF0052F00F9B10A /* User_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User_API.swift; sourceTree = "<group>"; };
 		5F9A7D972AF02E9500F9B10A /* Auth_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth_API.swift; sourceTree = "<group>"; };
@@ -121,8 +126,11 @@
 				5F7A02832ADAD06D00128DC4 /* BSImagePicker in Frameworks */,
 				5F6EECF02ADA70470046E686 /* FirebaseAuth in Frameworks */,
 				5F6EECF42ADA70470046E686 /* FirebaseFirestore in Frameworks */,
+				5F91348C2B092ADC00A95109 /* Alamofire in Frameworks */,
 				5FBC6D832B05219700803E87 /* FSCalendar in Frameworks */,
 				5F7A027A2ADAD00A00128DC4 /* SnapKit in Frameworks */,
+				5FA432452B0812090013776B /* JGProgressHUD in Frameworks */,
+				5F9134872B090CDD00A95109 /* SwiftJWT in Frameworks */,
 				5F7A02802ADAD04700128DC4 /* PanModal in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -160,6 +168,7 @@
 				5F4B66842ADA3455004FE62E /* Assets.xcassets */,
 				5F4B66862ADA3455004FE62E /* LaunchScreen.storyboard */,
 				5F4B66892ADA3455004FE62E /* Info.plist */,
+				5F9134882B09235E00A95109 /* AuthKey_79R8A2F3JK.p8 */,
 				5FB37F462B07C9F600DD107C /* GoogleService-Info.plist */,
 			);
 			path = TodayRecode;
@@ -223,6 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */,
+				5FB37F442B07AEF900DD107C /* ViewController+Apple.swift */,
 				5F785B832ADEA7DF00955C4A /* UIView+Ext.swift */,
 				5F785B852ADEA7F200955C4A /* UITextView+Ext.swift */,
 				5F2F5AE62AE99A0600F117FC /* UITextField+Ext.swift */,
@@ -233,7 +243,6 @@
 				5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */,
 				5F0803452AEC206800A52C3E /* Date+Ext.swift */,
 				5F3E3FD22AF8BD7D00B1F36B /* UIDevice+Ext.swift */,
-				5FB37F442B07AEF900DD107C /* ViewController+Apple.swift */,
 			);
 			path = Extenstion;
 			sourceTree = "<group>";
@@ -312,6 +321,9 @@
 				5F7A027F2ADAD04700128DC4 /* PanModal */,
 				5F7A02822ADAD06D00128DC4 /* BSImagePicker */,
 				5FBC6D822B05219700803E87 /* FSCalendar */,
+				5FA432442B0812090013776B /* JGProgressHUD */,
+				5F9134862B090CDD00A95109 /* SwiftJWT */,
+				5F91348B2B092ADC00A95109 /* Alamofire */,
 			);
 			productName = TodayRecode;
 			productReference = 5F4B66782ADA3452004FE62E /* TodayRecord.app */;
@@ -347,6 +359,9 @@
 				5F7A027E2ADAD04700128DC4 /* XCRemoteSwiftPackageReference "PanModal" */,
 				5F7A02812ADAD06D00128DC4 /* XCRemoteSwiftPackageReference "BSImagePicker" */,
 				5FBC6D812B05219700803E87 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				5FA432432B0812090013776B /* XCRemoteSwiftPackageReference "JGProgressHUD" */,
+				5F9134852B090CDD00A95109 /* XCRemoteSwiftPackageReference "Swift-JWT" */,
+				5F91348A2B092ADC00A95109 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = 5F4B66792ADA3452004FE62E /* Products */;
 			projectDirPath = "";
@@ -362,6 +377,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F9134892B09235E00A95109 /* AuthKey_79R8A2F3JK.p8 in Resources */,
 				5F4B66882ADA3455004FE62E /* LaunchScreen.storyboard in Resources */,
 				5F4B66852ADA3455004FE62E /* Assets.xcassets in Resources */,
 				5FB37F472B07C9F700DD107C /* GoogleService-Info.plist in Resources */,
@@ -676,6 +692,30 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		5F9134852B090CDD00A95109 /* XCRemoteSwiftPackageReference "Swift-JWT" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Kitura/Swift-JWT";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+		5F91348A2B092ADC00A95109 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		5FA432432B0812090013776B /* XCRemoteSwiftPackageReference "JGProgressHUD" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/JonasGessner/JGProgressHUD.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		5FBC6D812B05219700803E87 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/WenchaoD/FSCalendar";
@@ -721,6 +761,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5F7A02812ADAD06D00128DC4 /* XCRemoteSwiftPackageReference "BSImagePicker" */;
 			productName = BSImagePicker;
+		};
+		5F9134862B090CDD00A95109 /* SwiftJWT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5F9134852B090CDD00A95109 /* XCRemoteSwiftPackageReference "Swift-JWT" */;
+			productName = SwiftJWT;
+		};
+		5F91348B2B092ADC00A95109 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5F91348A2B092ADC00A95109 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		5FA432442B0812090013776B /* JGProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5FA432432B0812090013776B /* XCRemoteSwiftPackageReference "JGProgressHUD" */;
+			productName = JGProgressHUD;
 		};
 		5FBC6D822B05219700803E87 /* FSCalendar */ = {
 			isa = XCSwiftPackageProductDependency;

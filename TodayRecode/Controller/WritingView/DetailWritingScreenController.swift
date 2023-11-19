@@ -112,9 +112,13 @@ final class DetailWritingScreenController: UIViewController {
         let imagePicker = ImagePickerController()
         
         imagePicker.modalPresentationStyle = .fullScreen
-        // 최대 5개 선택 가능
-        imagePicker.settings.selection.max = 5
         
+        
+        // 최대 선택할 수 있는 개수 설정
+        imagePicker.settings.selection.max
+        = self.detailViewMode == .diary
+        ? 5 // 일기라면 -> 최대 5개 선택 가능
+        : 3 // 기록이라면 -> 최대 3개 선택 가능
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
 
@@ -122,13 +126,15 @@ final class DetailWritingScreenController: UIViewController {
         imagePicker.settings.theme.selectionStrokeColor = .lightGray
 
         imagePicker.settings.preview.enabled = true
-
         // 버튼 설정
         imagePicker.title = "이미지 선택"
         imagePicker.doneButtonTitle = "선택완료"
-
+        // 버튼 글자 색상
         imagePicker.doneButton.tintColor = UIColor.black
         imagePicker.cancelButton.tintColor = UIColor.black
+        
+        imagePicker.settings.theme.backgroundColor = UIColor.blue_Base
+//        imagePicker.settings.selection.unselectOnReachingMax = true
         
         return imagePicker
     }()
@@ -250,7 +256,6 @@ final class DetailWritingScreenController: UIViewController {
             selector: #selector(self.keyboardWillHide(_:)),
             name: UIResponder.keyboardWillHideNotification,
             object: nil)
-
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -270,6 +275,10 @@ final class DetailWritingScreenController: UIViewController {
         super.viewDidDisappear(animated)
         // 화면을 나가면 키보드 내리기
         self.diaryTextView.resignFirstResponder()
+        
+        if DataUpdate.dataUpdateStart {
+            self.popViewController()
+        }
     }
 }
     
@@ -539,31 +548,30 @@ extension DetailWritingScreenController {
     // MARK: - 기록 삭제 버튼
     @objc internal func deleteBtnTapped() {
         // 얼럿창 띄우기
-        self.customAlert(
-            withTitle: "정말 삭제 하시겠습니까?",
-            firstBtnName: "삭제하기",
-            firstBtnColor: UIColor.red) { _ in
-                // 레코드 데이터가 있다면
-                // 플러스 버튼으로 들어온 경우 X
-                if self.selectedRecord != nil {
-                    self.deleteRecord_API()
-                }
-                // 뒤로가기
-                self.navigationController?.popViewController(animated: true)
+        self.customAlert(alertStyle: .actionSheet,
+                         alertEnum: .deleteRecord,
+                         firstBtnColor: .red) { _ in
+            // 레코드 데이터가 있다면
+            // 플러스 버튼으로 들어온 경우 X
+            if self.selectedRecord != nil {
+                self.deleteRecord_API()
             }
+            // 뒤로가기
+            self.navigationController?.popViewController(animated: true)
+        }
     }
-    
-    
     
     // MARK: - 버튼 액션
     /// 키보드 내리기 버튼을 누르면 텍스트뷰 resign
     @objc private func keyboardDownBtnTapped() {
         self.diaryTextView.resignFirstResponder()
     }
+    
     /// 앨범 버튼을 누르면 이미지피커로 넘어간다.
     @objc private func albumBtnTapped() {
         self.imagePickerAction()
     }
+    
     /// 기록 확인 버튼을 누르면 오늘 기록을 볼 수 있다.
     @objc private func recodeShowBtnTapped() {
         let recodeCheckVC = RecodeCheckController(recordArray: self.todayRecords)
@@ -577,7 +585,7 @@ extension DetailWritingScreenController {
         // 뒤로가기
         self.navigationController?.popViewController(animated: true)
         // 데이터 저장
-        self.popViewController()
+//        self.popViewController()
     }
 }
     
@@ -654,7 +662,6 @@ extension DetailWritingScreenController {
         }
     }
     
-    
     // MARK: - 뒤로갈 때 실행되는 액션
     private func popViewController() {
         // 노티피케이션 삭제
@@ -665,6 +672,15 @@ extension DetailWritingScreenController {
             ImageUploader.shared.deleteImage(imageDictionary: self.willDeleteImage)
         }
         
+        // 저장할(추가된) 이미지가 있다면
+        if !self.addedImages.isEmpty {
+            // 이미지가 바뀌면 시간이 오래걸리기 때문에 -> 로딩뷰를 띄우기 위한 설정
+            DataUpdate.imageDataUpdate = true
+            // 이미지 업로드 -> 생성 또는 업데이트
+            self.imageUpload()
+            return
+        }
+        
         // 현재 모드 확인
         guard let mode = self.detailViewMode else { return }
         // 스위치문
@@ -672,17 +688,13 @@ extension DetailWritingScreenController {
             // 플러스버튼을 통해 들어온 경우
         case .record_plusBtn:
             // 생성
-            _ = self.addedImages.isEmpty
-            ? self.createRecord_API()
-            : self.imageUpload()
+            self.createRecord_API()
             break
             
             // 셀을 통해 들어온 경우
         case .record_CellTapped:
             // 업데이트
-            _ = self.addedImages.isEmpty
-            ? self.updateRecord_API()
-            : self.imageUpload()
+            self.updateRecord_API()
             break
             
             // 일기목록화면을 통해 들어온 경우
@@ -690,9 +702,7 @@ extension DetailWritingScreenController {
             // 오늘인 경우만 저장
             guard self.isToday else { return }
             // 생성 or 업데이트
-            _ = self.addedImages.isEmpty
-            ? self.createOrUpdate
-            : self.imageUpload()
+            self.createOrUpdate
             break
         }
     }
@@ -733,9 +743,7 @@ extension DetailWritingScreenController {
     // MARK: - 콜렉션뷰 이미지 개수 제한
     private func limit5Image_Alert() {
         DispatchQueue.main.async {
-            self.customAlert(
-                alertStyle: .alert,
-                withTitle: "이미지는 5개를 넘을 수 없습니다.") { _ in }
+            self.customAlert(alertEnum: .limit5Image) { _ in }
         }
     }
     
@@ -887,7 +895,7 @@ extension DetailWritingScreenController {
             case .success(let recordArray):
                 self.todayRecords = recordArray
             case .failure(_):
-                self.apiFail_Alert()
+                self.customAlert(alertEnum: .fetchError) { _ in }
                 break
             }
         }
@@ -1092,8 +1100,6 @@ extension DetailWritingScreenController {
 extension DetailWritingScreenController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer)
     -> Bool {
-        // 데이터 저장
-        self.popViewController()
         return navigationController?.viewControllers.count ?? 0 > 1
     }
 }

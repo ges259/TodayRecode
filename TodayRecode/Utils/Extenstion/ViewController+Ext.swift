@@ -7,8 +7,35 @@
 
 import UIKit
 import Photos
+import JGProgressHUD
 
 extension UIViewController {
+    
+    static let hud = JGProgressHUD(style: .dark)
+    /// 테이블뷰 / 콜렉션뷰의 리로드를 기다리는 동안 -> 화면을 터치 못하도록 설정
+    func showLoading(_ show: Bool) {
+        DispatchQueue.main.async {
+            if show {
+                UIViewController.hud.show(in: self.view, animated: true)
+                self.tabBarIsEnabled(false)
+            } else {
+                UIViewController.hud.dismiss(animated: true)
+                self.tabBarIsEnabled(true)
+            }
+        }
+    }
+    
+    /// 탭바를 사용할 수 없게 / 있게 만드는 메서드
+    private func tabBarIsEnabled(_ isEnabled: Bool) {
+        let tabBarItemsArray = self.tabBarController?.tabBar.items
+        tabBarItemsArray?.forEach({ item in
+            item.isEnabled = isEnabled
+        })
+    }
+    
+    
+    
+    
     
     // MARK: - 네비게이션 타이틀 설정
     func configureNavTitle(_ currentController: String,
@@ -24,16 +51,16 @@ extension UIViewController {
         
         if navTitleSetEnum == .yyyy년M월 {
             // 달력의 현재 년도와 올해 년도가
-                // 같으면 -> 몇 월인지만 표시
-                // 다르면 -> 몇 년도 몇 월인지 까지 표시
+            // 같으면 -> 몇 월인지만 표시
+            // 다르면 -> 몇 년도 몇 월인지 까지 표시
             dateString = selectedDate[0] == currentYear
             ? selectedDate[1]
             : "\(selectedDate[0]) \(selectedDate[1])"
             
         } else {
             // 달력의 현재 년도와 올해 년도가
-                // 같으면 -> 몇 월인지만 표시
-                // 다르면 -> 몇 년도 몇 월인지 까지 표시
+            // 같으면 -> 몇 월인지만 표시
+            // 다르면 -> 몇 년도 몇 월인지 까지 표시
             dateString = selectedDate[0] == currentYear
             ? "\(selectedDate[1]) \(selectedDate[2])"
             : "\(selectedDate[0]) \(selectedDate[1]) \(selectedDate[2])"
@@ -53,115 +80,6 @@ extension UIViewController {
     
     
     
-    
-    // MARK: - 커스텀 얼럿창
-    func customAlert(alertStyle: UIAlertController.Style = .actionSheet,
-                     withTitle title: String,
-                     message: String? = nil,
-                     cancelBtnColor: UIColor = UIColor.alert_Cancel,
-                     
-                     firstBtnName: String? = nil,
-                     firstBtnColor: UIColor = UIColor.alert_Title,
-                     
-                     secondBtnName: String? = nil,
-                     secondBtnColor: UIColor = UIColor.alert_Title,
-                     
-                     completion: @escaping (Int) -> Void) {
-        // ********** 얼럿창 만들기 **********
-        let alertController = UIAlertController(
-            title: "",
-            message: message,
-            preferredStyle: alertStyle)
-        
-        // ********** 취소 버튼 **********
-        let cancelAction = self.customAlertAction(
-            style: .cancel,
-            title: "취소",
-            color: cancelBtnColor)
-        alertController.addAction(cancelAction)
-        
-        // ********** 첫번째 버튼 **********
-        if let firstBtnName = firstBtnName {
-            let first = self.customAlertAction(
-                style: .default,
-                title: firstBtnName,
-                color: firstBtnColor) { completion(0) }
-            alertController.addAction(first)
-        }
-        
-        // ********** 두번째 버튼 **********
-        if let secondBtnName = secondBtnName {
-            let second = self.customAlertAction(
-                style: .default,
-                title: secondBtnName,
-                color: secondBtnColor) { completion(1) }
-            alertController.addAction(second)
-        }
-        
-        // ********** 타이틀 **********
-        let titleString = self.alertTitleAndFont(
-            title: title,
-            font: .systemFont(ofSize: 15))
-        alertController.setValue(titleString, forKey: "attributedTitle")
-        
-        // ********** 메시지 **********
-        if let message = message {
-            let messageString = self.alertTitleAndFont(
-                title: message,
-                font: .systemFont(ofSize: 13))
-            alertController.setValue(messageString, forKey: "attributedMessage")
-        }
-        
-        // ********** 화면이동 **********
-        present(alertController, animated: true) //보여줘
-    }
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    // MARK: - 얼럿 타이틀 및 폰트 설정
-    private func alertTitleAndFont(title: String,
-                                   font: UIFont)
-    -> NSAttributedString {
-        return NSAttributedString(
-            string: title,
-            attributes: [ //타이틀 폰트사이즈랑 글씨
-                NSAttributedString.Key.font : font,
-                NSAttributedString.Key.foregroundColor : UIColor.alert_Title])
-                
-    }
-    
-    
-    // MARK: - API 실패 시 얼럿창 띄우기
-    func apiFail_Alert() {
-        self.customAlert(
-            alertStyle: .alert,
-            withTitle: "오류",
-            message: "다시 시도해 주세요.") { _ in }
-    }
-    
-    
-    
-    
-    
-    // MARK: - 커스텀 얼럿 액션 설정
-    private func customAlertAction(style: UIAlertAction.Style,
-                                   title: String,
-                                   color: UIColor,
-                                   completion: (() -> Void)? = nil)
-    -> UIAlertAction{
-        let second = UIAlertAction(
-            title: title,
-            style: style) { _ in completion?() }
-        second.setValue(color, forKey: "titleTextColor")
-        return second
-    }
     
     
     
@@ -190,9 +108,9 @@ extension UIViewController {
                     height: selectedAssets[i].pixelHeight),
                 contentMode: .aspectFill,
                 options: option) {
-                (result, info) in
-                thumbnail = result!
-            }
+                    (result, info) in
+                    thumbnail = result!
+                }
             
             let data = thumbnail.jpegData(compressionQuality: 1)
             let newImage = UIImage(data: data!)
@@ -225,5 +143,92 @@ extension UIViewController {
             }
         }
         return true
+    }
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - 커스텀 얼럿창
+    func customAlert(alertStyle: UIAlertController.Style = .alert,
+                     alertEnum: AuthAlertEnum,
+                     firstBtnColor: UIColor = UIColor.alert_Title,
+                     secondBtnColor: UIColor = UIColor.alert_Title,
+                     completion: @escaping (Int) -> Void) {
+        
+        let stringArray: [String] = alertEnum.alert_StringArray
+        
+        // ********** 얼럿창 만들기 **********
+        let alertController = UIAlertController(
+            title: "",
+            message: nil,
+            preferredStyle: alertStyle)
+        
+        // ********** 취소 버튼 **********
+        let cancelAction = self.customAlertAction(
+            style: .cancel,
+            title: "취소",
+            color: UIColor.alert_Cancel)
+        alertController.addAction(cancelAction)
+        
+        // ********** 첫번째 버튼 **********
+        if stringArray[2] != "" {
+            let first = self.customAlertAction(
+                style: .default,
+                title: stringArray[2],
+                color: firstBtnColor) { completion(0) }
+            alertController.addAction(first)
+        }
+        
+        // ********** 두번째 버튼 **********
+        if stringArray[3] != "" {
+            let second = self.customAlertAction(
+                style: .default,
+                title: stringArray[3],
+                color: secondBtnColor) { completion(1) }
+            alertController.addAction(second)
+        }
+        
+        // ********** 타이틀 **********
+        let titleString = self.alertTitleAndFont(
+            title: stringArray[0],
+            font: .systemFont(ofSize: 15))
+        alertController.setValue(titleString, forKey: "attributedTitle")
+        
+        // ********** 메시지 **********
+        if stringArray[1] != "" {
+            let messageString = self.alertTitleAndFont(
+                title: stringArray[1],
+                font: .systemFont(ofSize: 13))
+            alertController.setValue(messageString, forKey: "attributedMessage")
+        }
+        
+        // ********** 화면이동 **********
+        present(alertController, animated: true) //보여줘
+    }
+    // MARK: - 얼럿 타이틀 및 폰트 설정
+    private func alertTitleAndFont(title: String,
+                                   font: UIFont)
+    -> NSAttributedString {
+        return NSAttributedString(
+            string: title,
+            attributes: [ //타이틀 폰트사이즈랑 글씨
+                NSAttributedString.Key.font : font,
+                NSAttributedString.Key.foregroundColor : UIColor.alert_Title])
+        
+    }
+    // MARK: - 커스텀 얼럿 액션 설정
+    private func customAlertAction(style: UIAlertAction.Style,
+                                   title: String,
+                                   color: UIColor,
+                                   completion: (() -> Void)? = nil)
+    -> UIAlertAction{
+        let second = UIAlertAction(
+            title: title,
+            style: style) { _ in completion?() }
+        second.setValue(color, forKey: "titleTextColor")
+        return second
     }
 }

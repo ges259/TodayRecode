@@ -162,7 +162,7 @@ enum SettingTableEnum: Int {
                     "일요일 시작",
                     "월요일 시작"]
         case .timeFormat:
-            return ["날짜 형식을 선택해주세요",
+            return ["시간 형식을 선택해주세요",
                     "12시간 형식: PM 2:00",
                     "24시간 형식: 14:00"]
         }
@@ -189,28 +189,117 @@ enum SettingTableEnum: Int {
 
 
 
-enum AuthEnum {
+// MARK: - 얼럿 텍스트
+enum AuthAlertEnum {
+    // Alert Caution
+    case logout // 로그아웃 ~ 1
+    case deleteRecord // 기록 삭제 ~ 1
+    case limit5Image // 이미지 5개 ~ 0
+    case timeFormat // 시간 형식 ~ 2
+    case dateFormat // 날짜 형식 ~ 2
+    
+    // API Fail
+    case fetchError
+    case deleteError
+    case updateError
+    case createError
+    case timeformatChangeError
+    case dateformatChangeError
+    
+    // Auth Fail
     case emailFormatError
     case password6Error
-    case passwordIsNotSameError
+    case passwordIsNotSame
     case unknownError
     case loginFail
     case signupFail
+    case logoutFail
+    
+
     
     var alert_StringArray: [String] {
         switch self {
+            // ********** Alert Caution **********
+        case .logout: return ["정말 로그아웃 하시겠습니까?",
+                              "",
+                              "로그아웃",
+                              ""]
+            
+        case .deleteRecord: return ["정말 삭제하시겠습니까?",
+                                    "",
+                                    "삭제하기",
+                                    ""]
+            
+        case .limit5Image: return ["이미지는 5개를 넘을 수 없습니다.",
+                                   "",
+                                   "",
+                                   ""]
+        case .timeFormat: return ["시간 형식을 선택해주세요",
+                                  "",
+                                  "12시간 형식: PM 2:00",
+                                  "24시간 형식: 14:00"]
+            
+        case .dateFormat: return ["일주일 시작일을 선택해주세요",
+                                  "",
+                                  "일요일 시작",
+                                  "월요일 시작"]
+            // ********** API Fail **********
+        case .fetchError: return ["데이터를 가져오는데 실패했습니다.",
+                                  "",
+                                  "",
+                                  ""]
+        case .deleteError: return ["데이터를 삭제하는데 실패했습니다.",
+                                   "",
+                                   "",
+                                   ""]
+        case .updateError: return ["데이터를 수정하는데 실패했습니다.",
+                                   "",
+                                   "",
+                                   ""]
+        case .createError: return ["데이터를 생성하는데 실패했습니다.",
+                                   "",
+                                   "",
+                                   ""]
+        case .timeformatChangeError: return ["시간 형식을 변경하는데 실패했습니다.",
+                                             "",
+                                             "",
+                                             ""]
+        case .dateformatChangeError: return ["날짜 형식을 변경하는데 실패했습니다.",
+                                             "",
+                                             "",
+                                             ""]
+        
+            
+            
+            // ********** Auth Fail **********
         case .emailFormatError: return ["이메일 형식이 올바르지 않습니다.",
-                                        "이메일을 다시 입력해 주세요"]
-        case .password6Error: return ["비밀번호는 6자리 이상 입력해 주세요.",
-                                      "비밀번호를 다시 입력해 주세요"]
-        case .passwordIsNotSameError: return ["비밀번호가 일치하지 않습니다.",
-                                         "비밀번호를 정확히 입력해 주세요."]
+                                        "이메일을 다시 입력해 주세요",
+                                        "",
+                                        ""]
+        case .password6Error: return ["비밀번호를 6자리 이상 입력해 주세요.",
+                                      "",
+                                      "",
+                                      ""]
+        case .passwordIsNotSame: return ["비밀번호가 일치하지 않습니다.",
+                                         "비밀번호를 정확히 입력해 주세요.",
+                                         "",
+                                         ""]
         case .unknownError: return ["알 수 없는 에러",
-                                    "다시 시도해 주세요"]
+                                    "다시 시도해 주세요",
+                                    "",
+                                    ""]
         case .loginFail: return ["로그인에 실패하였습니다.",
-                                 "아이디와 비밀번호를 정확히 입력해 주세요."]
+                                 "아이디와 비밀번호를 정확히 입력해 주세요.",
+                                 "",
+                                 ""]
         case .signupFail: return ["회원가입에 실패하였습니다.",
-                                  "아이디와 비밀번호를 정확히 입력해 주세요."]
+                                  "아이디와 비밀번호를 정확히 입력해 주세요.",
+                                  "",
+                                  ""]
+        case .logoutFail: return ["로그아웃에 실패하였습니다.",
+                                  "",
+                                  "",
+                                  ""]
         }
     }
 }

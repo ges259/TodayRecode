@@ -300,7 +300,7 @@ extension SignUpController {
         if self.passwordTF.text == self.passwordCheckTF.text {
             return true
         }
-        self.alert_SignupFail(signupEnum: .passwordIsNotSameError)
+        self.alert_SignupFail(signupEnum: .passwordIsNotSame)
         return false
     }
     
@@ -308,16 +308,22 @@ extension SignUpController {
     
     
     // MARK: - 얼럿창 띄우기
-    private func alert_SignupFail(signupEnum: AuthEnum) {
-        let stringArray = signupEnum.alert_StringArray
+    private func alert_SignupFail(signupEnum: AuthAlertEnum) {
+//        let stringArray = signupEnum.alert_StringArray
         // 커스텀 얼럿창 띄우기
-        self.customAlert(
-            alertStyle: .alert,
-            withTitle: stringArray[0],
-            message: stringArray[1]) { _ in
-                self.signUpBtn.isEnabled = true
-                return
-            }
+//        self.customAlert(
+//            alertStyle: .alert,
+//            withTitle: stringArray[0],
+//            message: stringArray[1]) { _ in
+//                self.signUpBtn.isEnabled = true
+//                return
+//            }
+        
+        // MARK: - Delete
+        self.customAlert(alertEnum: signupEnum) { _ in
+            self.signUpBtn.isEnabled = true
+            return
+        }
     }
 }
 
@@ -350,7 +356,7 @@ extension SignUpController {
                     self.delegate?.authenticationComplete()
                     
                 case .failure(_):
-                    self.alert_SignupFail(signupEnum: .unknownError)
+                    self.alert_SignupFail(signupEnum: .signupFail)
                     break
                 }
             }

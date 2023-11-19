@@ -120,13 +120,19 @@ final class RecordController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.fetchRecords_API()     // 오늘 기록 가져오기
         self.configureUI()          // UI 설정
         self.configureAutoLayout()  // 오토레이아웃 설정
         self.configureAction()      // 액션 설정
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        DataUpdate.dataUpdateStart = true
+        // 새로 로그인했다면
+        if DataUpdate.login {
+            // 오늘 기록 가져오기
+            self.fetchRecords_API()
+            DataUpdate.login = false
+        }
         // 시간 형식이 바뀌었다면 -> 테이블뷰 리로드
         if Format.dateFormat_Record_Time {
             self.tableView.reloadData()
@@ -137,6 +143,19 @@ final class RecordController: UIViewController {
             self.calendar.configureDateFormat()
             Format.dateFormat_Record_Date = false
         }
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // 데이터가 생성 or 업데이트 되었다면
+        if DataUpdate.imageDataUpdate {
+            // 다른 화면으로 이동 못 하도록 로딩뷰 띄우기
+            self.showLoading(true)
+            DataUpdate.imageDataUpdate = false
+        }
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        DataUpdate.dataUpdateStart = false
     }
 }
     
@@ -298,7 +317,8 @@ extension RecordController {
             case .success(let recordArray):
                 self.fetchCell(recordArray: recordArray)
             case .failure(_):
-                self.apiFail_Alert()
+                self.customAlert(alertStyle: .alert,
+                                 alertEnum: .fetchError) { _ in }
                 break
             }
         }
@@ -316,7 +336,8 @@ extension RecordController {
                 self.deleteCell()
                 break
             case .failure(_):
-                self.apiFail_Alert()
+                self.customAlert(alertStyle: .alert,
+                                 alertEnum: .deleteError) { _ in }
                 break
             }
         }
@@ -349,6 +370,7 @@ extension RecordController {
         self.tableView.insertRows(
             at: [IndexPath(row: 0, section: 0)],
             with: .none)
+        self.showLoading(false)
     }
     
     // MARK: - 셀 업데이트
@@ -365,6 +387,7 @@ extension RecordController {
         self.tableView.reloadRows(at: [IndexPath(row: self.currentIndex,
                                                  section: 0)],
                                   with: .automatic)
+        self.showLoading(false)
     }
     
     // MARK: - 셀 삭제
@@ -717,7 +740,8 @@ extension RecordController: EasyWritingScreenDelegate {
             
         // record가 없다면 == 데이터 생성에 실패했다면
         } else {
-            self.apiFail_Alert()
+            self.customAlert(alertStyle: .alert,
+                             alertEnum: .createError) { _ in }
         }
     }
 }
@@ -733,7 +757,10 @@ extension RecordController: DetailWritingScreenDelegate {
             self.addRecord(record: record)
         // record가 없다면 == 데이터 생성에 실패했다면
         } else {
-            self.apiFail_Alert()
+            self.customAlert(alertStyle: .alert,
+                             alertEnum: .createError) { _ in
+                self.showLoading(false)
+            }
         }
     }
     
@@ -741,15 +768,23 @@ extension RecordController: DetailWritingScreenDelegate {
         // record가 있다면 == 데이터 업데이트에 성공했다면
         if let record = record {
             self.updateCell(record: record)
+            
+            
         // record가 없다면 == 데이터 업데이트에 실패했다면
         } else {
-            self.apiFail_Alert()
+            self.customAlert(alertStyle: .alert,
+                             alertEnum: .updateError) { _ in
+                self.showLoading(false)
+            }
         }
     }
     
     func deleteRecord(success: Bool) {
         _ = success
-        ? self.deleteCell() // True == 삭제 성공
-        : self.apiFail_Alert() // False == 삭제 성공
+        // True == 삭제 성공
+        ? self.deleteCell()
+        // False == 삭제 실패
+        : self.customAlert(alertStyle: .alert,
+                           alertEnum: .deleteError) { _ in }
     }
 }

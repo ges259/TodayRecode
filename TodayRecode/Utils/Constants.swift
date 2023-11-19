@@ -11,7 +11,9 @@ import FirebaseFirestore
 /// 날짜 및 시간의 형식을 결정하는 전역 변수들을 관리
 enum Format {
     // ********** 현재 형식을 알려주는 전역 변수 **********
+    /// 시간 형식
     static var timeFormat_Static: Int = 0
+    /// 날짜 형식
     static var dateFormat_Static: Int = 0
 
     // ********** 데이터 형식이 변했다는 것을 알려주는 전역 변수 **********
@@ -28,10 +30,23 @@ enum Format {
 // MARK: - 유저 데이터
 /// 유저의 정보 및 이미지를 관리
 enum UserData {
-    // ********** 유저 데이터 **********
+    /// 유저 데이터
     static var user: User?
-    // ********** 이미지 캐시 전역 변수 **********
+    /// 이미지 캐시 전역 변수
     static var imageCache = [String: UIImage]()
+}
+
+
+
+enum DataUpdate {
+    // ********** 로그인 **********
+    /// 로그아웃 후 다시 다른 아이디로 로그인했을 때 fetch가 되지 않는 버그 (임시 해결)
+    static var login: Bool = true
+    // ********** 데이터 업데이트 **********
+    /// 이미지 데이터를 생성 or 업데이트를 할 때 -> 시간이 오래걸리기 때문에 로딩뷰를 띄움
+    static var imageDataUpdate: Bool = false
+    /// 상세 작성 화면에서 기록 화면으로 (pop)할 때만 데이터를 업데이트할 수 있도록 해주는 전역 변수
+    static var dataUpdateStart: Bool = false
 }
 
 
@@ -68,4 +83,17 @@ enum Identifier {
     static let recodeTableCell: String = "RecodeTableViewCell"
     static let imageListCollectionViewCell: String = "DiaryListCollectionViewCell"
     static let settingTableCell: String = "SettingTableCell"
+}
+
+
+enum UserDefault_Apple {
+    static let client_secret: String = "AppleClientSecret"
+    static let bundleID: String  = "ges.TodayRecord"
+    static let authCodeString: String = "theAuthorizationCode"
+    
+    static let apple_Key_ID: String = "79R8A2F3JK"
+    static let apple_Team_ID: String = "63D86GVH6K"
+    static let aud: String = "https://appleid.apple.com"
+    static let keyPath: String = "AuthKey_79R8A2F3JK"
+    static let p8: String = "p8"
 }

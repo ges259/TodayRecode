@@ -156,11 +156,44 @@ extension SelectALoginMethodController {
         self.startSignInWithAppleFlow()
     }
     @objc private func googleLoginTapped() {
-        print(#function)
+        
+        
+        
+
+        
+        
+        
     }
     @objc private func emailLoginTapped() {
         let vc = LoginController()
         vc.delegate = self.delegate
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    // code == 로그인 시 얻는 토큰
+    // caf895788604a4a81944db255e5220d5b.0.rrtuu.q1nPjxTMfSAbH2Y3aLX7Gw
+    // client_secret == jwt 생성
+    // token == refresh_token (get~로 얻음)
+    func revokeToken() {
+        let jwtString = self.makeJWT()
+    
+        guard let taCode = UserDefaults.standard.string(forKey: UserDefault_Apple.authCodeString) else { return }
+        
+        self.getAppleRefreshToken(code: taCode, completionHandler: { output in
+            let clientSecret = jwtString
+            if let refreshToken = output{
+                // api 통신
+                self.revokeAppleToken(clientSecret: clientSecret, token: refreshToken) {
+                    print("Apple revoke token Success")
+                }
+                
+                
+            }else{
+                let dialog = UIAlertController(title: "error", message: "회원탈퇴 실패", preferredStyle: .alert)
+                let okayAction = UIAlertAction(title: "확인", style: .cancel)
+                dialog.addAction(okayAction)
+                self.present(dialog, animated: true, completion: nil)
+            }
+        })
     }
 }
