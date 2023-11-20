@@ -102,7 +102,7 @@
 		5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Ext.swift"; sourceTree = "<group>"; };
 		5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Ext.swift"; sourceTree = "<group>"; };
 		5F8A0EA42AE6B1AC00C7AF2C /* RecodeCheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeCheckController.swift; sourceTree = "<group>"; };
-		5F9134882B09235E00A95109 /* AuthKey_79R8A2F3JK.p8 */ = {isa = PBXFileReference; lastKnownFileType = file; path = AuthKey_79R8A2F3JK.p8; sourceTree = SOURCE_ROOT; };
+		5F9134882B09235E00A95109 /* AuthKey_79R8A2F3JK.p8 */ = {isa = PBXFileReference; lastKnownFileType = text; path = AuthKey_79R8A2F3JK.p8; sourceTree = SOURCE_ROOT; };
 		5F9A7D932AF0052800F9B10A /* Record_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record_API.swift; sourceTree = "<group>"; };
 		5F9A7D952AF0052F00F9B10A /* User_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User_API.swift; sourceTree = "<group>"; };
 		5F9A7D972AF02E9500F9B10A /* Auth_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth_API.swift; sourceTree = "<group>"; };

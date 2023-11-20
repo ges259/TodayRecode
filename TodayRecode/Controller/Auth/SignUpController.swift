@@ -308,7 +308,7 @@ extension SignUpController {
     
     
     // MARK: - 얼럿창 띄우기
-    private func alert_SignupFail(signupEnum: AuthAlertEnum) {
+    private func alert_SignupFail(signupEnum: AlertEnum) {
 //        let stringArray = signupEnum.alert_StringArray
         // 커스텀 얼럿창 띄우기
 //        self.customAlert(

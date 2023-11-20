@@ -280,19 +280,9 @@ extension LoginController {
     }
     
     // MARK: - 얼럿창 띄우기
-    private func alert_LoginFail(authEnum: AuthAlertEnum) {
-//        let stringArray = authEnum.alert_StringArray
-        // 커스텀 얼럿창 띄우기
-//        self.customAlert(
-//            alertStyle: .alert,
-//            withTitle: stringArray[0],
-//            message: stringArray[1]) { _ in
-//                self.logInBtn.isEnabled = true
-//                return
-//            }
-        // MARK: - Delete
-        
-        self.customAlert(alertEnum: authEnum) { _ in
+    private func alert_LoginFail(authEnum: AlertEnum) {
+        self.customAlert(alertStyle: .alert,
+                         alertEnum: authEnum) { _ in
             self.logInBtn.isEnabled = true
             return
         }

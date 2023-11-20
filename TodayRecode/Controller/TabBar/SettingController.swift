@@ -50,24 +50,28 @@ final class SettingController: UIViewController {
         return tableView
     }()
     
-    private lazy var logoutBtn: UIButton = UIButton.buttonWithTitle(
-        title: "로그아웃",
-        titleColor: UIColor.red,
-        font: UIFont.boldSystemFont(ofSize: 15),
-        backgroundColor: UIColor.white_Base)
+    private lazy var logoutBtn: UIButton = UIButton.buttonWithImgAndTitle(.logout)
     
+    private lazy var deleteAccountBtn: UIButton = UIButton.buttonWithImgAndTitle(.deleteAccount)
+    
+    
+    private lazy var horizontalBtnStackView: UIStackView = UIStackView.configureStackView(
+        arrangedSubviews: [self.logoutBtn,
+                           self.deleteAccountBtn],
+        axis: .horizontal,
+        spacing: 5,
+        alignment: .fill,
+        distribution: .fill)
     
     
     private lazy var containerStackView: UIStackView = UIStackView.configureStackView(
         arrangedSubviews: [self.userContainerView,
                            self.tableView,
-                           self.logoutBtn],
+                           self.horizontalBtnStackView],
         axis: .vertical,
         spacing: 10,
         alignment: .fill,
         distribution: .fill)
-    
-    
     
     
     
@@ -96,6 +100,7 @@ final class SettingController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        dump(UserData.user)
         self.configureData()
     }
 }
@@ -128,7 +133,8 @@ extension SettingController {
         // 코너 레디어스
         [self.userContainerView,
          self.tableView,
-         self.logoutBtn].forEach { view in
+         self.logoutBtn,
+         self.deleteAccountBtn].forEach { view in
             view.clipsToBounds = true
             view.layer.cornerRadius = 10
         }
@@ -159,10 +165,6 @@ extension SettingController {
         self.userContainerView.snp.makeConstraints { make in
             make.height.equalTo(100)
         }
-        /// 로그아웃 버튼
-        self.logoutBtn.snp.makeConstraints { make in
-            make.height.equalTo(50)
-        }
         /// 컨테이너 스택뷰
         self.containerStackView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(10)
@@ -174,6 +176,8 @@ extension SettingController {
     // MARK: - 액션 설정
     private func configureAction() {
         self.logoutBtn.addTarget(self, action: #selector(self.logoutBtnTapped), for: .touchUpInside)
+        
+        self.deleteAccountBtn.addTarget(self, action: #selector(self.deleteAccountBtnTapped), for: .touchUpInside)
     }
     
     // MARK: - 유저 정보 설정
@@ -216,7 +220,7 @@ extension SettingController {
             switch result {
             // 로그아웃에 성공했다면
             case .success():
-                self.goToSelectALoginController()
+                self.goToSelectALoginController(.logout)
                 break
             // 로그아웃에 실패했다면
             case .failure(_):
@@ -240,9 +244,9 @@ extension SettingController {
                 
             case .failure(_):
                 if settingTableEnum == .dateFormat {
-                    self.customAlert(alertEnum: .dateformatChangeError) { _ in }
+                    self.customAlert(alertEnum: .dateformatChangeFail) { _ in }
                 } else {
-                    self.customAlert(alertEnum: .timeformatChangeError) { _ in }
+                    self.customAlert(alertEnum: .timeformatChangeFail) { _ in }
                 }
                 break
             }
@@ -269,7 +273,7 @@ extension SettingController {
 
 
 
-// MARK: - 로그아웃 액션
+// MARK: - 버튼 액션
 
 extension SettingController {
     
@@ -284,18 +288,70 @@ extension SettingController {
         }
     }
     
+    
+    // MARK: - 회원 탈퇴 버튼 액션
+    @objc private func deleteAccountBtnTapped() {
+        self.customAlert(alertStyle: .actionSheet,
+                         alertEnum: .deletedAccount,
+                         firstBtnColor: .red) { _ in
+            
+            // 현재 로그인 방식이 무엇인지 가져오기
+            // 회원 탈퇴
+            if let loginMethod = UserData.user?.loginMethod {
+                print(loginMethod)
+                switch loginMethod {
+                case LoginMethod.email.description:
+                    
+                    Auth_API.shared.deleteEmailAccount { result in
+                        switch result {
+                        case .success():
+                            self.goToSelectALoginController(.logout)
+                        case .failure(_):
+                            self.customAlert(alertEnum: .unknownError) { _ in }
+                        }
+                    }
+                    break
+                    
+                case LoginMethod.apple.description:
+                    self.goToSelectALoginController(.deleteAccount)
+                    break
+                    
+                    
+                default:
+                    self.customAlert(alertEnum: .unknownError) { _ in }
+                    break
+                }
+                
+            
+                
+            // 로그아웃
+            } else {
+                self.goToSelectALoginController(.logout)
+            }
+        }
+    }
+    
+    
     // MARK: - 로그인 선택창 이동
     /// 로그아웃에 성공하면 -> 로그인 선택창으로 이동
-    private func goToSelectALoginController() {
+    private func goToSelectALoginController(_ btnEnum: ConfigurationBtnEnum) {
         let controller = SelectALoginMethodController()
             // 델리게이트 설정
             controller.delegate = self.tabBarController as? TabBarController
-            controller.revokeToken()
+        
         let vc = UINavigationController(rootViewController: controller)
             vc.modalPresentationStyle = .fullScreen
+        // 회원 탈퇴 버튼이 눌리면 -> 회원 탈퇴
+        if btnEnum == .deleteAccount {
+            controller.deleteUser()
+        }
         self.present(vc, animated: true)
     }
 }
+
+
+
+
 
 
 
@@ -401,7 +457,7 @@ extension SettingController: UITableViewDelegate, UITableViewDataSource {
         
         guard let settingTableEnum = SettingTableEnum(rawValue: indexPath.row) else { return }
         
-        let alertEnum: AuthAlertEnum
+        let alertEnum: AlertEnum
         = settingTableEnum == .dateFormat
         ? .dateFormat
         : .timeFormat

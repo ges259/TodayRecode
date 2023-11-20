@@ -154,20 +154,6 @@ enum SettingTableEnum: Int {
         }
     }
     
-    /// 얼럿창을 띄우면 나올 텍스트 배열
-    var alertStringArray: [String] {
-        switch self {
-        case .dateFormat:
-            return ["일주일 시작일을 선택해주세요",
-                    "일요일 시작",
-                    "월요일 시작"]
-        case .timeFormat:
-            return ["시간 형식을 선택해주세요",
-                    "12시간 형식: PM 2:00",
-                    "24시간 형식: 14:00"]
-        }
-    }
-    
     var timeOption: String {
         switch Format.timeFormat_Static {
         case 0: return "12시간 형식: PM 2:00"
@@ -189,22 +175,50 @@ enum SettingTableEnum: Int {
 
 
 
+enum ConfigurationBtnEnum {
+    case logout
+    case deleteAccount
+    
+    var btnTitle: String {
+        switch self {
+        case .logout: return "로그아웃"
+        case .deleteAccount: return "회원탈퇴"
+        }
+    }
+    
+    var btnImage: UIImage? {
+        switch self {
+        case .logout: return UIImage.checkmark
+        case .deleteAccount: return UIImage.deleteBtn
+        }
+    }
+}
+
+
+
+
+
 // MARK: - 얼럿 텍스트
-enum AuthAlertEnum {
+enum AlertEnum {
     // Alert Caution
-    case logout // 로그아웃 ~ 1
-    case deleteRecord // 기록 삭제 ~ 1
-    case limit5Image // 이미지 5개 ~ 0
-    case timeFormat // 시간 형식 ~ 2
-    case dateFormat // 날짜 형식 ~ 2
+    case logout // 로그아웃
+    case deletedAccount // 회원탈퇴
+    case deleteRecord // 기록 삭제
+    case limit5Image // 이미지 5개
+    case timeFormat // 시간 형식
+    case dateFormat // 날짜 형식
     
     // API Fail
     case fetchError
     case deleteError
     case updateError
     case createError
-    case timeformatChangeError
-    case dateformatChangeError
+    case timeformatChangeFail
+    case dateformatChangeFail
+    
+    // Revoke Token
+    case deleteAccountFail
+    case deleteAccountSuccess
     
     // Auth Fail
     case emailFormatError
@@ -216,7 +230,7 @@ enum AuthAlertEnum {
     case logoutFail
     
 
-    
+    /// 얼럿창에 쓸 텍스트 배열
     var alert_StringArray: [String] {
         switch self {
             // ********** Alert Caution **********
@@ -224,12 +238,14 @@ enum AuthAlertEnum {
                               "",
                               "로그아웃",
                               ""]
-            
+        case .deletedAccount: return ["회원 탈퇴",
+                                      "회원 탈퇴 시, 다시 로그인을 하는 과정이 필요합니다.\n계속 진행하시겠습니까?",
+                                      "회원 탈퇴",
+                                      ""]
         case .deleteRecord: return ["정말 삭제하시겠습니까?",
                                     "",
                                     "삭제하기",
                                     ""]
-            
         case .limit5Image: return ["이미지는 5개를 넘을 수 없습니다.",
                                    "",
                                    "",
@@ -238,11 +254,12 @@ enum AuthAlertEnum {
                                   "",
                                   "12시간 형식: PM 2:00",
                                   "24시간 형식: 14:00"]
-            
         case .dateFormat: return ["일주일 시작일을 선택해주세요",
                                   "",
                                   "일요일 시작",
                                   "월요일 시작"]
+            
+            
             // ********** API Fail **********
         case .fetchError: return ["데이터를 가져오는데 실패했습니다.",
                                   "",
@@ -260,15 +277,25 @@ enum AuthAlertEnum {
                                    "",
                                    "",
                                    ""]
-        case .timeformatChangeError: return ["시간 형식을 변경하는데 실패했습니다.",
+        case .timeformatChangeFail: return ["시간 형식을 변경하는데 실패했습니다.",
                                              "",
                                              "",
                                              ""]
-        case .dateformatChangeError: return ["날짜 형식을 변경하는데 실패했습니다.",
+        case .dateformatChangeFail: return ["날짜 형식을 변경하는데 실패했습니다.",
                                              "",
                                              "",
                                              ""]
-        
+            
+            
+            // ********** Revoke Token **********
+        case .deleteAccountFail: return ["Apple 계정을 불러오지 못했습니다.",
+                                         "잠시 후 다시 시도해 주세요",
+                                         "",
+                                         ""]
+        case .deleteAccountSuccess: return ["회원 탈퇴에 성공하였습니다.",
+                                            "",
+                                            "",
+                                            ""]
             
             
             // ********** Auth Fail **********

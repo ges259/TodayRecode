@@ -30,10 +30,14 @@ enum Format {
 // MARK: - 유저 데이터
 /// 유저의 정보 및 이미지를 관리
 enum UserData {
+    static var loginMethod: String = ""
+    static var userName: String = ""
     /// 유저 데이터
     static var user: User?
     /// 이미지 캐시 전역 변수
     static var imageCache = [String: UIImage]()
+    
+    static var deleteAccount: Bool = false
 }
 
 
@@ -62,6 +66,8 @@ enum API_String {
     // 개인 설정
     static let userName: String = "userName"
     static let email: String = "email"
+    static let loginMethod: String = "loginMethod"
+    
     static let timeFormat: String = "timeFormat"
     static let dateFomat: String = "dateFormat"
     
@@ -74,7 +80,19 @@ enum API_String {
     static let user: String = "user"
     static let writing_Type: String = "writing_type"
 }
-
+enum LoginMethod {
+    case apple
+    case email
+    case none
+    
+    var description: String {
+        switch self {
+        case .apple: return "apple"
+        case .email: return "email"
+        case .none: return ""
+        }
+    }
+}
 
 
 // MARK: - Identifier

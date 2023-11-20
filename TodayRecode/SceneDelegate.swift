@@ -21,9 +21,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // 윈도우 크기 설정
         self.window = UIWindow(frame: UIScreen.main.bounds)
         // 로그인이 되어있는 상태인지 확인
-        let checkUser = User_API.shared.checkUser
+//        let checkUser = User_API.shared.checkUser
         // 뷰 컨트롤러 인스턴스 가져오기
-        let vc = TabBarController(checkUser: checkUser)
+        let vc = TabBarController()
+        
+        
         // 뿌리 뷰컨트롤러 설정
         self.window?.rootViewController = vc
         // 설정한 윈도우를 보이게 설정

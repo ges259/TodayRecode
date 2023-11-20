@@ -17,15 +17,14 @@ final class TabBarController: UITabBarController {
         self.configureUI()
         self.configureTabBar()
     }
-    init(checkUser: Bool) {
-        super.init(nibName: nil, bundle: nil)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        _ = checkUser // user가 있는지 없는지 확인
-        ? self.fetchUser_API() // 있다면 -> 탭바 설정
-        : self.goToSelectALoginController() // 없다면 -> 로그인 선택 창으로 이동
-    }
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        if User_API.shared.checkUser {
+            self.fetchUser_API() // 있다면 -> 탭바 설정
+        } else {
+            self.goToSelectALoginController()
+        }
     }
 }
     
@@ -174,6 +173,8 @@ extension TabBarController: AuthenticationDelegate {
         // 로그인 시
         // user데이터 가져오기
         self.fetchUser_API()
+        
+        
         // 기록 화면이 보이도록 설정
         self.selectedIndex = 0
         // 뒤로가기 (기록 화면으로 이동)

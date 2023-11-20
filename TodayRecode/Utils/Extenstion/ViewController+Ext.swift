@@ -68,11 +68,11 @@ extension UIViewController {
         // Mutable_Attributed_String 설정
         let attributedTitle = NSMutableAttributedString(
             string: "\(currentController)\n",
-            attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13)]
+            attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)]
         )
         attributedTitle.append(NSAttributedString(
             string: "\(dateString)",
-            attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 15)])
+            attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 17.5)])
         )
         return attributedTitle
     }
@@ -153,7 +153,7 @@ extension UIViewController {
     
     // MARK: - 커스텀 얼럿창
     func customAlert(alertStyle: UIAlertController.Style = .alert,
-                     alertEnum: AuthAlertEnum,
+                     alertEnum: AlertEnum,
                      firstBtnColor: UIColor = UIColor.alert_Title,
                      secondBtnColor: UIColor = UIColor.alert_Title,
                      completion: @escaping (Int) -> Void) {
