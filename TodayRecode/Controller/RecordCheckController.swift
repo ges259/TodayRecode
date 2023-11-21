@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import PanModal
 
-final class RecodeCheckController: UIViewController {
+final class RecordCheckController: UIViewController {
     
     // MARK: - 레이아웃
     private lazy var containerView: UIView = UIView.backgroundView(
@@ -91,10 +91,10 @@ final class RecodeCheckController: UIViewController {
 
 // MARK: - 화면 설정
 
-extension RecodeCheckController {
+extension RecordCheckController {
     
     // MARK: - UI설정
-    private func configureUI(){
+    private func configureUI() {
         // 배열의 첫번째 날짜가 있다면
         if let todayRecodes = self.todayRecordArray.first {
             //  -> 날짜 레이블에 표시
@@ -176,7 +176,7 @@ extension RecodeCheckController {
 
 
 // MARK: - 테이블뷰 데이터소스
-extension RecodeCheckController: UITableViewDataSource, UITableViewDelegate {
+extension RecordCheckController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
         
@@ -208,7 +208,7 @@ extension RecodeCheckController: UITableViewDataSource, UITableViewDelegate {
 
 
 // MARK: - 판모달 설정
-extension RecodeCheckController: PanModalPresentable {
+extension RecordCheckController: PanModalPresentable {
     /// 스크롤뷰
     var panScrollable: UIScrollView? {
         return self.tableView

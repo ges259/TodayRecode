@@ -65,15 +65,11 @@ extension UIViewController {
             ? "\(selectedDate[1]) \(selectedDate[2])"
             : "\(selectedDate[0]) \(selectedDate[1]) \(selectedDate[2])"
         }
-        // Mutable_Attributed_String 설정
-        let attributedTitle = NSMutableAttributedString(
-            string: "\(currentController)\n",
-            attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)]
-        )
-        attributedTitle.append(NSAttributedString(
-            string: "\(dateString)",
-            attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 17.5)])
-        )
+        let attributedTitle = self.customAttributedTitle(
+            firstTitle: "\(currentController)\n",
+            firstFont: UIFont.systemFont(ofSize: 13.5),
+            secondTitle: dateString,
+            secondFont: UIFont.boldSystemFont(ofSize: 17))
         return attributedTitle
     }
     
@@ -81,9 +77,33 @@ extension UIViewController {
     
     
     
-    
-    
-    
+    // MARK: - Attributed_Title
+    func customAttributedTitle(firstTitle: String,
+                               firstFont: UIFont,
+                               secondTitle: String,
+                               secondFont: UIFont,
+                               setSpacing: CGFloat? = nil)
+    -> NSMutableAttributedString {
+        // Mutable_Attributed_String 설정
+        let attributedTitle = NSMutableAttributedString(
+            string: firstTitle,
+            attributes: [NSAttributedString.Key.font: firstFont]
+        )
+        attributedTitle.append(NSAttributedString(
+            string: secondTitle,
+            attributes: [NSAttributedString.Key.font : secondFont])
+        )
+        
+        if let height = setSpacing {
+            let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.lineSpacing = height
+            attributedTitle.addAttribute(
+                NSAttributedString.Key.paragraphStyle,
+                value: paragraphStyle,
+                range: NSMakeRange(0, attributedTitle.length))
+        }
+        return attributedTitle
+    }
     
     
     
@@ -167,9 +187,13 @@ extension UIViewController {
             preferredStyle: alertStyle)
         
         // ********** 취소 버튼 **********
+        let cancelBtnTitle = stringArray[2] != ""
+        ? "취소"
+        : "확인"
+        
         let cancelAction = self.customAlertAction(
             style: .cancel,
-            title: "취소",
+            title: cancelBtnTitle,
             color: UIColor.alert_Cancel)
         alertController.addAction(cancelAction)
         

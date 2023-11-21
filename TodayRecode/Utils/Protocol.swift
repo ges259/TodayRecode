@@ -18,6 +18,9 @@ protocol AccessoryViewDelegate: AnyObject {
 }
 
 
+protocol DeleteAccountCheckDelegate: AnyObject {
+    func accountDelete(mode: LoginMethod)
+}
 
 
 

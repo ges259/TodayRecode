@@ -20,11 +20,10 @@ final class TabBarController: UITabBarController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if User_API.shared.checkUser {
-            self.fetchUser_API() // 있다면 -> 탭바 설정
-        } else {
-            self.goToSelectALoginController()
-        }
+        // 유저가 있는지 확인
+        User_API.shared.checkUser
+        ? self.fetchUser_API() // 있다면 -> 탭바 설정
+        :self.goToSelectALoginController() // 없다면 -> 로그인 선택 창으로 이동
     }
 }
     

@@ -76,6 +76,29 @@ enum NavTitleSetEnum {
     }
 }
 
+enum LoginMethod {
+    case apple
+    case email
+    
+    var description: String {
+        switch self {
+        case .apple: return "apple"
+        case .email: return "email"
+        }
+    }
+    var labelText: String {
+        switch self {
+        case .apple: return "•  탈퇴하기 전 다시 로그인하는 과정이 필요합니다."
+        case .email: return "•  아래의 텍스트필드에 비밀번호를 정확히 입력해 주세요."
+        }
+    }
+    var btnColor: UIColor? {
+        switch self {
+        case .apple: return UIColor.blue_Point
+        case .email: return UIColor.blue_Lightly
+        }
+    }
+}
 
 
 

@@ -16,8 +16,11 @@ extension UIColor {
     static let blue_Base: UIColor = UIColor.rgb(red: 204, green: 224, blue: 255)
     // 포인트 색상
     static let blue_Point: UIColor = UIColor.rgb(red: 135, green: 196, blue: 255)
+    static let blue_setting: UIColor = UIColor.rgb(red: 57, green: 167, blue: 255)
+    
+    
     // 캘린더 오늘 표시 and 로그인버튼 비활성화 상태
-    static let blue_Lightly: UIColor = UIColor.systemBlue.withAlphaComponent(0.2)
+    static let blue_Lightly: UIColor = UIColor.systemBlue.withAlphaComponent(0.15)
     
     
     // 라이트모드/다크모드

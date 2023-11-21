@@ -288,49 +288,31 @@ extension SettingController {
         }
     }
     
-    
     // MARK: - 회원 탈퇴 버튼 액션
     @objc private func deleteAccountBtnTapped() {
-        self.customAlert(alertStyle: .actionSheet,
-                         alertEnum: .deletedAccount,
-                         firstBtnColor: .red) { _ in
-            
-            // 현재 로그인 방식이 무엇인지 가져오기
-            // 회원 탈퇴
-            if let loginMethod = UserData.user?.loginMethod {
-                print(loginMethod)
-                switch loginMethod {
-                case LoginMethod.email.description:
-                    
-                    Auth_API.shared.deleteEmailAccount { result in
-                        switch result {
-                        case .success():
-                            self.goToSelectALoginController(.logout)
-                        case .failure(_):
-                            self.customAlert(alertEnum: .unknownError) { _ in }
-                        }
-                    }
-                    break
-                    
-                case LoginMethod.apple.description:
-                    self.goToSelectALoginController(.deleteAccount)
-                    break
-                    
-                    
-                default:
-                    self.customAlert(alertEnum: .unknownError) { _ in }
-                    break
-                }
-                
-            
-                
-            // 로그아웃
-            } else {
-                self.goToSelectALoginController(.logout)
-            }
+        
+        let deleteAccountCheckVC: DeleteAccountCheckController?
+        
+        // 현재 로그인 방식 옵셔널 바인딩
+        guard let loginMethod = UserData.user?.loginMethod else { return }
+        // 로그인 방식에 따라 deleteAccountCheckVC의 UI및 내용이 달라진다.
+        switch loginMethod {
+        case LoginMethod.email.description:
+            deleteAccountCheckVC = DeleteAccountCheckController(mode: .email)
+        case LoginMethod.apple.description:
+            deleteAccountCheckVC = DeleteAccountCheckController(mode: .apple)
+        default:
+            deleteAccountCheckVC = DeleteAccountCheckController(mode: .email)
+        }
+        
+        // deleteAccountCheckVC로 이동
+        if let recodeCheckVC = deleteAccountCheckVC {
+            recodeCheckVC.delegate = self
+            recodeCheckVC.modalPresentationStyle = .overFullScreen
+            // 화면 전환 (판모달 사용)
+            self.presentPanModal(recodeCheckVC)
         }
     }
-    
     
     // MARK: - 로그인 선택창 이동
     /// 로그아웃에 성공하면 -> 로그인 선택창으로 이동
@@ -469,5 +451,20 @@ extension SettingController: UITableViewDelegate, UITableViewDataSource {
             // 선택된 결과 DB저장
             self.formatChanged(settingTableEnum, index: index)
         }
+    }
+}
+
+
+
+
+
+
+
+extension SettingController: DeleteAccountCheckDelegate {
+    func accountDelete(mode: LoginMethod) {
+        self.dismiss(animated: true)
+        mode == .apple
+        ? self.goToSelectALoginController(.deleteAccount)
+        : self.goToSelectALoginController(.logout)
     }
 }

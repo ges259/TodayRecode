@@ -16,6 +16,7 @@
 		5F39E0382AE175DA00E5623C /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F39E0372AE175DA00E5623C /* ImageCollectionViewCell.swift */; };
 		5F3E3FD32AF8BD7D00B1F36B /* UIDevice+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F3E3FD22AF8BD7D00B1F36B /* UIDevice+Ext.swift */; };
 		5F3E3FD52AF9363D00B1F36B /* NoRecordDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F3E3FD42AF9363D00B1F36B /* NoRecordDataView.swift */; };
+		5F4599E02B0C165F00E17AA1 /* DeleteAccountCheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4599DF2B0C165F00E17AA1 /* DeleteAccountCheckController.swift */; };
 		5F4B667C2ADA3452004FE62E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B667B2ADA3452004FE62E /* AppDelegate.swift */; };
 		5F4B667E2ADA3452004FE62E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B667D2ADA3452004FE62E /* SceneDelegate.swift */; };
 		5F4B66802ADA3452004FE62E /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B667F2ADA3452004FE62E /* TabBarController.swift */; };
@@ -47,7 +48,7 @@
 		5F7A02802ADAD04700128DC4 /* PanModal in Frameworks */ = {isa = PBXBuildFile; productRef = 5F7A027F2ADAD04700128DC4 /* PanModal */; };
 		5F7A02832ADAD06D00128DC4 /* BSImagePicker in Frameworks */ = {isa = PBXBuildFile; productRef = 5F7A02822ADAD06D00128DC4 /* BSImagePicker */; };
 		5F7A02852ADAD3D700128DC4 /* Color+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */; };
-		5F8A0EA52AE6B1AC00C7AF2C /* RecodeCheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8A0EA42AE6B1AC00C7AF2C /* RecodeCheckController.swift */; };
+		5F8A0EA52AE6B1AC00C7AF2C /* RecordCheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8A0EA42AE6B1AC00C7AF2C /* RecordCheckController.swift */; };
 		5F9134872B090CDD00A95109 /* SwiftJWT in Frameworks */ = {isa = PBXBuildFile; productRef = 5F9134862B090CDD00A95109 /* SwiftJWT */; };
 		5F9134892B09235E00A95109 /* AuthKey_79R8A2F3JK.p8 in Resources */ = {isa = PBXBuildFile; fileRef = 5F9134882B09235E00A95109 /* AuthKey_79R8A2F3JK.p8 */; };
 		5F91348C2B092ADC00A95109 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5F91348B2B092ADC00A95109 /* Alamofire */; };
@@ -75,6 +76,7 @@
 		5F39E0372AE175DA00E5623C /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		5F3E3FD22AF8BD7D00B1F36B /* UIDevice+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Ext.swift"; sourceTree = "<group>"; };
 		5F3E3FD42AF9363D00B1F36B /* NoRecordDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoRecordDataView.swift; sourceTree = "<group>"; };
+		5F4599DF2B0C165F00E17AA1 /* DeleteAccountCheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountCheckController.swift; sourceTree = "<group>"; };
 		5F4B66782ADA3452004FE62E /* TodayRecord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodayRecord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F4B667B2ADA3452004FE62E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5F4B667D2ADA3452004FE62E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -101,7 +103,7 @@
 		5F785B8F2ADED33A00955C4A /* DateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateView.swift; sourceTree = "<group>"; };
 		5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Ext.swift"; sourceTree = "<group>"; };
 		5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Ext.swift"; sourceTree = "<group>"; };
-		5F8A0EA42AE6B1AC00C7AF2C /* RecodeCheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecodeCheckController.swift; sourceTree = "<group>"; };
+		5F8A0EA42AE6B1AC00C7AF2C /* RecordCheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCheckController.swift; sourceTree = "<group>"; };
 		5F9134882B09235E00A95109 /* AuthKey_79R8A2F3JK.p8 */ = {isa = PBXFileReference; lastKnownFileType = text; path = AuthKey_79R8A2F3JK.p8; sourceTree = SOURCE_ROOT; };
 		5F9A7D932AF0052800F9B10A /* Record_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record_API.swift; sourceTree = "<group>"; };
 		5F9A7D952AF0052F00F9B10A /* User_API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User_API.swift; sourceTree = "<group>"; };
@@ -209,7 +211,8 @@
 		5F6EECDA2ADA3E360046E686 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				5F8A0EA42AE6B1AC00C7AF2C /* RecodeCheckController.swift */,
+				5F4599DF2B0C165F00E17AA1 /* DeleteAccountCheckController.swift */,
+				5F8A0EA42AE6B1AC00C7AF2C /* RecordCheckController.swift */,
 				5FE7C6A02ADEDDFC00BF9785 /* TabBar */,
 				5FE7C6A12ADEDE0700BF9785 /* WritingView */,
 				5FE7C69F2ADEDDDA00BF9785 /* Auth */,
@@ -395,6 +398,7 @@
 				5FB37F452B07AEF900DD107C /* ViewController+Apple.swift in Sources */,
 				5F26CA4C2AF0E2640019CDE2 /* Record.swift in Sources */,
 				5F785B902ADED33A00955C4A /* DateView.swift in Sources */,
+				5F4599E02B0C165F00E17AA1 /* DeleteAccountCheckController.swift in Sources */,
 				5FCA1F372AE5700D00A9DB5B /* CalendarView.swift in Sources */,
 				5F7A02772ADAC8F100128DC4 /* ViewController+Ext.swift in Sources */,
 				5F7A02852ADAD3D700128DC4 /* Color+Ext.swift in Sources */,
@@ -407,7 +411,7 @@
 				5F6EECE12ADA40200046E686 /* SettingController.swift in Sources */,
 				5F07BF0D2AE11B7A00C471B4 /* UIStackView+Ext.swift in Sources */,
 				5F2F5AE72AE99A0600F117FC /* UITextField+Ext.swift in Sources */,
-				5F8A0EA52AE6B1AC00C7AF2C /* RecodeCheckController.swift in Sources */,
+				5F8A0EA52AE6B1AC00C7AF2C /* RecordCheckController.swift in Sources */,
 				5F785B842ADEA7E000955C4A /* UIView+Ext.swift in Sources */,
 				5F6EECDF2ADA40170046E686 /* DetailWritingScreenController.swift in Sources */,
 				5F6EECE72ADA41380046E686 /* SignUpController.swift in Sources */,

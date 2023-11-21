@@ -78,9 +78,6 @@ struct Auth_API {
                     completion(.failure(error))
                     return
                 }
-//                UserDefaults.standard.set("email", forKey: UserData.loginMethod)
-                
-                
                 // 회원가입 성공
                 completion(.success(()))
             }
@@ -101,7 +98,6 @@ struct Auth_API {
                 completion(.failure(error))
                 return
             }
-//            UserDefaults.standard.set("email", forKey: UserData.loginMethod)
             // 로그인 성공
             completion(.success(()))
         }
@@ -114,15 +110,27 @@ struct Auth_API {
     
     // MARK: - 이메일 사용자 재인증
     // 애플 로그인의 경우 ViewController+Ext에 재인증이 있음
-    func deleteEmailAccount(completion: @escaping AuthCompletion) {
-        
-        
-        
-        
-//        let credential = EmailAuthProvider.credential(withEmail: <#T##String#>,
-//                                                      password: <#T##String#>)
+    func deleteEmailAccount(password: String?,
+                            completion: @escaping AuthCompletion) {
         
 
+        guard let user = Auth.auth().currentUser,
+              let email = UserData.user?.email,
+              let password = password
+        else { return }
+        
+        let credential: AuthCredential = EmailAuthProvider.credential(withEmail: email, password: password)
+
+        // re authenticate the user
+        user.reauthenticate(with: credential) { (authDataResult, error) in
+            if let error = error {
+                // An error happened.
+                completion(.failure(error))
+            } else {
+                // Use `user` property of result to check is successful.
+                completion(.success(()))
+            }
+        }
     }
     
     
@@ -134,7 +142,10 @@ struct Auth_API {
         User_API.shared.deleteUserData()
         
         if let user = Auth.auth().currentUser {
-
+            
+            
+            
+            
             user.delete { error in
                 if let error = error {
                     print("Firebase Error : ",error)

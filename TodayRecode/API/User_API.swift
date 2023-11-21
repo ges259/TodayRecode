@@ -14,7 +14,7 @@ struct User_API {
     
     
     
-//    // MARK: - 유저가 있는지 확인
+    // MARK: - 유저가 있는지 확인
     var checkUser: Bool {
         // user가 있는지 없는지 체크
         return Auth.auth().currentUser?.uid == nil

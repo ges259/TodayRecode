@@ -574,7 +574,7 @@ extension DetailWritingScreenController {
     
     /// 기록 확인 버튼을 누르면 오늘 기록을 볼 수 있다.
     @objc private func recodeShowBtnTapped() {
-        let recodeCheckVC = RecodeCheckController(recordArray: self.todayRecords)
+        let recodeCheckVC = RecordCheckController(recordArray: self.todayRecords)
             recodeCheckVC.modalPresentationStyle = .overFullScreen
         // 화면 전환
         self.presentPanModal(recodeCheckVC)
@@ -584,8 +584,6 @@ extension DetailWritingScreenController {
     @objc private func leftNavBtnTapped() {
         // 뒤로가기
         self.navigationController?.popViewController(animated: true)
-        // 데이터 저장
-//        self.popViewController()
     }
 }
     

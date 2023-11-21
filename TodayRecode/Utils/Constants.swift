@@ -80,19 +80,6 @@ enum API_String {
     static let user: String = "user"
     static let writing_Type: String = "writing_type"
 }
-enum LoginMethod {
-    case apple
-    case email
-    case none
-    
-    var description: String {
-        switch self {
-        case .apple: return "apple"
-        case .email: return "email"
-        case .none: return ""
-        }
-    }
-}
 
 
 // MARK: - Identifier

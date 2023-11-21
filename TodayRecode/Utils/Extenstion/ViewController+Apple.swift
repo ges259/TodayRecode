@@ -12,6 +12,7 @@ import SwiftJWT
 import Alamofire
 
 fileprivate var currentNonce: String?
+
 extension SelectALoginMethodController {
 
     
@@ -87,7 +88,6 @@ extension SelectALoginMethodController {
                 }
             }
         }
-
         return result
     }
 }
@@ -98,7 +98,20 @@ extension SelectALoginMethodController {
 
 
 
-// MARK: - 델리게이트 - 필수 메서드
+
+
+// MARK: - 로그인 - 필수 메서드1
+extension SelectALoginMethodController :
+    ASAuthorizationControllerPresentationContextProviding {
+    // ********** 필수 메서드 2 **********
+    // 실패 후 동작
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+    }
+}
+
+
+// MARK: - 로그인 - 필수 메서드2
 extension SelectALoginMethodController: ASAuthorizationControllerDelegate {
     // ********** 필수 메서드 1 **********
     // 성공 후 동작
@@ -109,6 +122,14 @@ extension SelectALoginMethodController: ASAuthorizationControllerDelegate {
             
             if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
                 
+                // ********** 회원 탈퇴 **********
+                if UserData.deleteAccount {
+                    self.reAuth(appleIDCredential: appleIDCredential)
+                    return
+                }
+                
+                
+                // ********** 로그인 **********
                 // 애플 로그인 유저의 고유값 ID (ProviderID)
                 let userID = appleIDCredential.user
                 
@@ -144,7 +165,7 @@ extension SelectALoginMethodController: ASAuthorizationControllerDelegate {
               let appleIDToken = appleIDCredential.identityToken,
               let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
             // 로그인 실패
-            self.customAlert(alertEnum: .deleteAccountFail) { _ in }
+            self.deleteAccount_Alert()
             return
         }
         
@@ -154,34 +175,59 @@ extension SelectALoginMethodController: ASAuthorizationControllerDelegate {
             rawNonce: nonce,
             fullName: appleIDCredential.fullName)
         
-        
         // Sign in with Firebase.
         Auth.auth().signIn(with: credential) { (authResult, error) in
             if let _ = error  {
                 // 로그인 실패
-                self.customAlert(alertEnum: .deleteAccountFail) { _ in }
+                self.deleteAccount_Alert()
                 return
             }
-            // ********** 회원 탈퇴 **********
-            if UserData.deleteAccount {
-                // 토큰 없애기
-                self.deleteToken(appleIDCredential: appleIDCredential)
-                // 유저 데이터 삭제 + 회원 탈퇴
-                Auth_API.shared.deleteFirebaseAccount { _ in }
-                
-                // 회원 탈퇴 과정이 끝났다고 표시
+            // 회원가입이라면
+            if signUp {
+                // -> 유저데이터 생성
+                self.saveAppleUserData(appleIDCredential)
+            }
+            // 성공 - 화면 이동
+            self.delegate?.authenticationComplete()
+        }
+    }
+    
+    
+    
+    // MARK: - 사용자 재인증(- 회원 탈퇴)
+    private func reAuth(appleIDCredential: ASAuthorizationAppleIDCredential) {
+        let user = Auth.auth().currentUser
+        guard let nonce = currentNonce,
+              let appleIDToken = appleIDCredential.identityToken,
+              let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+            // 로그인 실패
+            self.deleteAccount_Alert()
+            return
+        }
+        
+        // Initialize a Firebase credential, including the user's full name.
+        let credential = OAuthProvider.appleCredential(
+            withIDToken: idTokenString,
+            rawNonce: nonce,
+            fullName: appleIDCredential.fullName)
+        
+        user?.reauthenticate(with: credential) { result, error in
+            if let _ = error {
+                // An error happened.
+                print("error")
+                self.deleteAccount_Alert()
+                return
+            }
+            
+            // User re-authenticated.
+            // 회원 탈퇴 과정이 끝났다고 표시
+            UserData.deleteAccount = false
+            // 토큰 없애기
+            self.deleteToken(appleIDCredential: appleIDCredential)
+            // 유저 데이터 삭제 + 회원 탈퇴
+            Auth_API.shared.deleteFirebaseAccount { _ in
                 UserData.deleteAccount = false
-                
-                
-            // ********** 로그인 **********
-            } else {
-                // 회원가입이라면
-                if signUp {
-                    // -> 유저데이터 생성
-                    self.saveAppleUserData(appleIDCredential)
-                }
-                // 성공 - 화면 이동
-                self.delegate?.authenticationComplete()
+                print("success")
             }
         }
     }
@@ -220,14 +266,7 @@ extension SelectALoginMethodController: ASAuthorizationControllerDelegate {
 
 
 
-extension SelectALoginMethodController :
-    ASAuthorizationControllerPresentationContextProviding {
-    // ********** 필수 메서드 2 **********
-    // 실패 후 동작
-    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        return self.view.window!
-    }
-}
+
 
 
 
@@ -297,7 +336,6 @@ extension SelectALoginMethodController {
 
         let jwtSigner = JWTSigner.es256(privateKey: privateKey)
         let signedJWT = try! myJWT.sign(using: jwtSigner)
-        UserDefaults.standard.set(signedJWT, forKey: UserDefault_Apple.client_secret)
         return signedJWT
     }
     
@@ -306,19 +344,15 @@ extension SelectALoginMethodController {
     
     
     
-    // MARK: - 클라이언트_리프레시 토큰
+    // MARK: - 클라이언트_리프레시 토큰_API
     // client_refreshToken
     // 발급받은 JWT를 포함하여 token을 Generate.
     // UserDefaults를 활용하여 Authorization code와 client_secret을 저장.
     func getAppleRefreshToken(client_secret: String,
                               code: String,
                               completionHandler: @escaping (String?) -> Void) {
-        // JWT가져오기
-        guard let secret = UserDefaults.standard.string(forKey: UserDefault_Apple.client_secret) else { return }
-        
-        
         // url 생성
-        let url = "https://appleid.apple.com/auth/token?client_id=ges.TodayRecord&client_secret=\(secret)&code=\(code)&grant_type=authorization_code"
+        let url = "https://appleid.apple.com/auth/token?client_id=ges.TodayRecord&client_secret=\(client_secret)&code=\(code)&grant_type=authorization_code"
         
         // header 설정
         let header: HTTPHeaders = ["Content-Type": "application/x-www-form-urlencoded"]
@@ -330,14 +364,13 @@ extension SelectALoginMethodController {
                    headers: header)
         .validate(statusCode: 200..<500)
         .responseData { response in
-            
             switch response.result {
             case .success(let output):
                 let decoder = JSONDecoder()
                 if let decodedData = try? decoder.decode(AppleTokenResponse.self, from: output){
                     // 실패 - 리프레시 토큰이 없다면
                     if decodedData.refresh_token == nil {
-                        self.customAlert(alertEnum: .deleteAccountFail) { _ in }
+                        self.deleteAccount_Alert()
                         
                     // 성공 - 리프레시 토큰이 있다면
                     } else {
@@ -346,16 +379,46 @@ extension SelectALoginMethodController {
                 }
 
             case .failure(_):
-                
                 //로그아웃 후 재로그인하여
-                self.customAlert(alertEnum: .deleteAccountFail) { _ in }
+                self.deleteAccount_Alert()
             }
         }
     }
     
+    // MARK: - 토큰 삭제
+    private func deleteToken(appleIDCredential: ASAuthorizationAppleIDCredential) {
+        
+        // authorization code를 갖고 있는 변수
+        if  let authorizationCode = appleIDCredential.authorizationCode,
+            let authCodeString = String(data: authorizationCode,
+                                        encoding: .utf8) {
+            
+            let jwtString = self.makeJWT()
+            
+            // 리프레시 토큰 가져오기
+            self.getAppleRefreshToken(client_secret: jwtString,
+                                      code: authCodeString) { output in
+                
+                // 토큰이 있다면
+                if let refreshToken = output {
+                    // revoke token을 가져오기 위한 -> api 통신
+                    self.revokeAppleToken(clientSecret: jwtString,
+                                          token: refreshToken) {
+                        // 회원 탈퇴 성공
+                        self.customAlert(alertEnum: .deleteAccountSuccess) { _ in }
+                        return
+                    }
+                    
+                // 토큰이 없다면
+                }else{
+                    // 회원 탈퇴 실패
+                    self.deleteAccount_Alert()
+                }
+            }
+        }
+    }
     
-    
-    // MARK: - revokeToken (취소 토큰)
+    // MARK: - 취소 토큰_API
     func revokeAppleToken(clientSecret: String,
                           token: String,
                           completionHandler: @escaping () -> Void) {
@@ -389,13 +452,14 @@ extension SelectALoginMethodController {
 
 
 
-// MARK: - 계정 삭제 코드
+
 extension SelectALoginMethodController {
     // code == 로그인 시 얻는 토큰
     // caf895788604a4a81944db255e5220d5b.0.rrtuu.q1nPjxTMfSAbH2Y3aLX7Gw
     // client_secret == jwt 생성
     // token == refresh_token (get~로 얻음)
     
+    // MARK: - 계정 삭제 코드
     // 한번 발급된 authorizationCode는 1번만 사용될 수 있으며 5분간 유효
     // -> 그렇기 때문에 회원 탈퇴할 때 로그인 과정을 한 번 거쳐야 함
     func deleteUser() {
@@ -424,36 +488,11 @@ extension SelectALoginMethodController {
     }
     
     
-    private func deleteToken(appleIDCredential: ASAuthorizationAppleIDCredential) {
-        
-        // authorization code를 갖고 있는 변수
-        if  let authorizationCode = appleIDCredential.authorizationCode,
-            let authCodeString = String(data: authorizationCode,
-                                        encoding: .utf8) {
-            
-            let jwtString = self.makeJWT()
-            
-            // 리프레시 토큰 가져오기
-            self.getAppleRefreshToken(client_secret: jwtString,
-                                      code: authCodeString) { output in
-                
-                // 토큰이 있다면
-                if let refreshToken = output {
-                    // revoke token을 가져오기 위한 -> api 통신
-                    self.revokeAppleToken(clientSecret: jwtString,
-                                          token: refreshToken) {
-                        // 회원 탈퇴 성공
-                        self.customAlert(alertEnum: .deleteAccountSuccess) { _ in }
-                        return
-                    }
-                    
-                // 토큰이 없다면
-                }else{
-                    
-                    // 회원 탈퇴 실패
-                    self.customAlert(alertEnum: .deleteAccountFail) { _ in }
-                }
-            }
+    
+    // MARK: - 계정 삭제 실패 얼럿창
+    func deleteAccount_Alert() {
+        self.customAlert(alertEnum: .deleteAccountFail) { _ in
+            UserData.deleteAccount = false
         }
     }
 }
