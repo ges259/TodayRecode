@@ -16,7 +16,6 @@ final class RecordTableViewCell: UITableViewCell {
         let lbl = UILabel.configureLbl(
             font: UIFont.systemFont(ofSize: 13),
             textColor: UIColor.black)
-        
             lbl.numberOfLines = 3
         return lbl
     }()
@@ -97,8 +96,6 @@ extension RecordTableViewCell {
         self.selectionStyle = .none
     }
     
-    
-    
     // MARK: - 오토레이아웃 설정
     private func configureLayout() {
         // ********** addSubview 설정 **********
@@ -106,7 +103,6 @@ extension RecordTableViewCell {
          self.stackView].forEach { view in
             self.addSubview(view)
         }
-        
         // ********** 오토레이아웃 설정 **********
         // 이미지
         self.recodeImage.snp.makeConstraints { make in
@@ -145,21 +141,6 @@ extension RecordTableViewCell {
 
 extension RecordTableViewCell {
     
-    // MARK: - 본문 내용 설정
-    private func setContext(context: String) -> NSMutableAttributedString {
-        let attrString = NSMutableAttributedString(string: context)
-
-        let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineSpacing = 3
-
-            attrString.addAttribute(
-                NSAttributedString.Key.paragraphStyle,
-                value: paragraphStyle,
-                range: NSMakeRange(0, attrString.length))
-        
-        return attrString
-    }
-    
     // MARK: - 이미지 설정
     private func loadImage(record: Record) {
         // 이미지가 있다면
@@ -197,8 +178,11 @@ extension RecordTableViewCell {
     func settingContext(record: Record?) {
         // 옵셔널 바인딩
         guard let record = record else { return }
-        // 본문 내용 설정
-        self.contextTextLbl.attributedText = self.setContext(context: record.context)
+        // 본문 내용 설정 (+간격 추가)
+        self.contextTextLbl.attributedText = NSMutableAttributedString.setSpacing(
+            context: record.context,
+            setSpacing: 3)
+        
         // 시간 레이블 설정
         self.timeLabel.text = Date.DateLabelString(date: record.date)
         // 이미지가 설정

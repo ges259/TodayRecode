@@ -100,7 +100,6 @@ final class SettingController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        dump(UserData.user)
         self.configureData()
     }
 }
@@ -151,8 +150,8 @@ extension SettingController {
         // 유저 이미지
         self.userImgView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(15)
-            make.width.equalTo(55)
-            make.height.equalTo(50)
+            make.width.equalTo(50)
+            make.height.equalTo(45)
             make.centerY.equalToSuperview()
         }
         // 유저 스택뷰
@@ -165,6 +164,9 @@ extension SettingController {
         self.userContainerView.snp.makeConstraints { make in
             make.height.equalTo(100)
         }
+        self.horizontalBtnStackView.snp.makeConstraints { make in
+            make.height.equalTo(65)
+        }
         /// 컨테이너 스택뷰
         self.containerStackView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(10)
@@ -176,7 +178,6 @@ extension SettingController {
     // MARK: - 액션 설정
     private func configureAction() {
         self.logoutBtn.addTarget(self, action: #selector(self.logoutBtnTapped), for: .touchUpInside)
-        
         self.deleteAccountBtn.addTarget(self, action: #selector(self.deleteAccountBtnTapped), for: .touchUpInside)
     }
     
@@ -316,24 +317,22 @@ extension SettingController {
     
     // MARK: - 로그인 선택창 이동
     /// 로그아웃에 성공하면 -> 로그인 선택창으로 이동
-    private func goToSelectALoginController(_ btnEnum: ConfigurationBtnEnum) {
-        let controller = SelectALoginMethodController()
+    private func goToSelectALoginController(
+        _ btnEnum: ConfigurationBtnEnum,
+        deleteAccount: LoginMethod? = nil) {
+            let controller = SelectALoginMethodController()
             // 델리게이트 설정
             controller.delegate = self.tabBarController as? TabBarController
-        
-        let vc = UINavigationController(rootViewController: controller)
+            
+            let vc = UINavigationController(rootViewController: controller)
             vc.modalPresentationStyle = .fullScreen
-        // 회원 탈퇴 버튼이 눌리면 -> 회원 탈퇴
-        if btnEnum == .deleteAccount {
-            controller.deleteUser()
+            // 회원 탈퇴 버튼이 눌리면 -> 회원 탈퇴
+            if btnEnum == .deleteAccount {
+                controller.startSignInWithAppleFlow()
+            }
+            self.present(vc, animated: true)
         }
-        self.present(vc, animated: true)
-    }
 }
-
-
-
-
 
 
 
@@ -460,11 +459,15 @@ extension SettingController: UITableViewDelegate, UITableViewDataSource {
 
 
 
+
+
+
+// MARK: - 회원탈퇴뷰_델리게이트
 extension SettingController: DeleteAccountCheckDelegate {
     func accountDelete(mode: LoginMethod) {
         self.dismiss(animated: true)
         mode == .apple
         ? self.goToSelectALoginController(.deleteAccount)
-        : self.goToSelectALoginController(.logout)
+        : self.goToSelectALoginController(.logout, deleteAccount: .email)
     }
 }

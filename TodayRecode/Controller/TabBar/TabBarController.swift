@@ -13,23 +13,28 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // 탭바 설정
-        self.configureUI()
-        self.configureTabBar()
+        self.configureUI() // UI 설정
+        self.configureTabBar() // 탭바 설정
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         // 유저가 있는지 확인
         User_API.shared.checkUser
-        ? self.fetchUser_API() // 있다면 -> 탭바 설정
-        :self.goToSelectALoginController() // 없다면 -> 로그인 선택 창으로 이동
+        // 있다면 -> 탭바 설정
+        ? self.fetchUser_API()
+        // 없다면 -> 로그인 선택 창으로 이동
+        : self.goToSelectALoginController()
     }
 }
     
     
     
     
+
+
+
+
+
     
 // MARK: - 화면 설정
 
@@ -52,8 +57,7 @@ extension TabBarController {
             unselectedImg: UIImage.recode,
             selectedImg: UIImage.recode_fill,
             rootController: RecordController())
-        
-        
+        // 시,분,초 0으로 만듦
         let today = Date.dateReturn_Custom(todayFormat: .d)
         // 일기 목록 화면
         // 오늘 날짜 가져오기 -> 오늘 날짜에 따라 탭바 이미지 다르게 설정
@@ -105,7 +109,7 @@ extension TabBarController {
     }
     
     // MARK: - 로그인 선택창 이동 액션
-    private func goToSelectALoginController() {
+    func goToSelectALoginController() {
         DispatchQueue.main.async {
             // 유저가 없다면 -> 로그인 선택 화면으로 이동
             let controller = SelectALoginMethodController()
@@ -172,7 +176,6 @@ extension TabBarController: AuthenticationDelegate {
         // 로그인 시
         // user데이터 가져오기
         self.fetchUser_API()
-        
         
         // 기록 화면이 보이도록 설정
         self.selectedIndex = 0

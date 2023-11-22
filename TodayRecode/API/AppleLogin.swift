@@ -8,14 +8,13 @@
 import AuthenticationServices   // 애플 로그인 관련 라이브러리
 import CryptoKit                // 해시값 추가
 import FirebaseAuth             // 파이어베이스 로그인 관련 라이브러리
-import SwiftJWT
-import Alamofire
+import SwiftJWT                 // JWT생성 라이브러리
+import Alamofire                // API관련 라이브러리
 
 fileprivate var currentNonce: String?
 
 extension SelectALoginMethodController {
 
-    
     // MARK: - 로그인 시작
     /// Apple로 로그인을 시작할 메서드 (버튼이 눌리면 호출 됨)
     func startSignInWithAppleFlow() {
@@ -41,14 +40,7 @@ extension SelectALoginMethodController {
         authorizationController.performRequests()
     }
 
-
-    
-    
-    
-    
-    
-    
-    // MARK: - 난수 생성
+    // MARK: - 해시값 얻기
     private func sha256(_ input: String) -> String {
         let inputData = Data(input.utf8)
         let hashedData = SHA256.hash(data: inputData)
@@ -59,6 +51,8 @@ extension SelectALoginMethodController {
         return hashString
     }
     // Adapted from https://auth0.com/docs/api-auth/tutorials/nonce#generate-a-cryptographically-random-nonce
+    
+    // MARK: - 난수 생성
     private func randomNonceString(length: Int = 32) -> String {
 
         precondition(length > 0)
@@ -110,10 +104,13 @@ extension SelectALoginMethodController :
     }
 }
 
-
 // MARK: - 로그인 - 필수 메서드2
 extension SelectALoginMethodController: ASAuthorizationControllerDelegate {
     // ********** 필수 메서드 1 **********
+    // code == 로그인 시 얻는 토큰
+        // ex) caf895788604a4a81944db255e5220d5b.0.rrtuu.q1nPjxTMfSAbH2Y3aLX7Gw
+    // client_secret == jwt 생성
+    // token == refresh_token (get~로 얻음)
     // 성공 후 동작
     // controller로 인증 정보 값을 받게 되면은, idToken 값을 받음
     func authorizationController(
@@ -124,6 +121,8 @@ extension SelectALoginMethodController: ASAuthorizationControllerDelegate {
                 
                 // ********** 회원 탈퇴 **********
                 if UserData.deleteAccount {
+                    // 회원 탈퇴 과정이 끝났다고 표시
+                    UserData.deleteAccount = false
                     self.reAuth(appleIDCredential: appleIDCredential)
                     return
                 }
@@ -150,8 +149,6 @@ extension SelectALoginMethodController: ASAuthorizationControllerDelegate {
                 }
             }
         }
-    
-    
     
     // MARK: - 애플 로그인
     // nonce
@@ -191,76 +188,7 @@ extension SelectALoginMethodController: ASAuthorizationControllerDelegate {
             self.delegate?.authenticationComplete()
         }
     }
-    
-    
-    
-    // MARK: - 사용자 재인증(- 회원 탈퇴)
-    private func reAuth(appleIDCredential: ASAuthorizationAppleIDCredential) {
-        let user = Auth.auth().currentUser
-        guard let nonce = currentNonce,
-              let appleIDToken = appleIDCredential.identityToken,
-              let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-            // 로그인 실패
-            self.deleteAccount_Alert()
-            return
-        }
-        
-        // Initialize a Firebase credential, including the user's full name.
-        let credential = OAuthProvider.appleCredential(
-            withIDToken: idTokenString,
-            rawNonce: nonce,
-            fullName: appleIDCredential.fullName)
-        
-        user?.reauthenticate(with: credential) { result, error in
-            if let _ = error {
-                // An error happened.
-                print("error")
-                self.deleteAccount_Alert()
-                return
-            }
-            
-            // User re-authenticated.
-            // 회원 탈퇴 과정이 끝났다고 표시
-            UserData.deleteAccount = false
-            // 토큰 없애기
-            self.deleteToken(appleIDCredential: appleIDCredential)
-            // 유저 데이터 삭제 + 회원 탈퇴
-            Auth_API.shared.deleteFirebaseAccount { _ in
-                UserData.deleteAccount = false
-                print("success")
-            }
-        }
-    }
-    
-    
-    
-    // MARK: - 유저 데이터 생성
-    private func saveAppleUserData(_ appleIDCredential: ASAuthorizationAppleIDCredential) {
-        // 첫 번째 로그인만 이메일 / 이름을 얻을 수 있다.
-        // 즉 두 번째 로그인부터는 email에서 걸러짐.
-        // 옵셔널 바인딩
-        guard let uid = Auth.auth().currentUser?.uid,
-              let email = appleIDCredential.email,
-              let fullName = appleIDCredential.fullName
-        else { return }
-        
-        // 풀네임 가져오기
-        let userName = "\(fullName.familyName ?? "")\(fullName.givenName ?? "")"
-        // 저장할 유저 정보 딕셔너리 만들기
-        let userDatas = [API_String.userName: userName,
-                         API_String.email: email,
-                         API_String.loginMethod: LoginMethod.apple.description]
-        // 유저 정보 데이터 생성
-        Auth_API.shared.saveUserData(uid: uid, userDatas: userDatas) { _ in }
-    }
 }
-
-
-
-
-
-
-
 
 
 
@@ -453,42 +381,65 @@ extension SelectALoginMethodController {
 
 
 
+
+
+
+
+
+
 extension SelectALoginMethodController {
-    // code == 로그인 시 얻는 토큰
-    // caf895788604a4a81944db255e5220d5b.0.rrtuu.q1nPjxTMfSAbH2Y3aLX7Gw
-    // client_secret == jwt 생성
-    // token == refresh_token (get~로 얻음)
     
-    // MARK: - 계정 삭제 코드
-    // 한번 발급된 authorizationCode는 1번만 사용될 수 있으며 5분간 유효
-    // -> 그렇기 때문에 회원 탈퇴할 때 로그인 과정을 한 번 거쳐야 함
-    func deleteUser() {
-        UserData.deleteAccount = true
+    // MARK: - 사용자 재인증(- 회원 탈퇴)
+    private func reAuth(appleIDCredential: ASAuthorizationAppleIDCredential) {
+        let user = Auth.auth().currentUser
+        guard let nonce = currentNonce,
+              let appleIDToken = appleIDCredential.identityToken,
+              let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+            // 로그인 실패
+            self.deleteAccount_Alert()
+            return
+        }
         
-        // 난수 생성
-        let nonce = randomNonceString()
-        // 난수 넣기
-        currentNonce = nonce
-
-        let appleIDProvider = ASAuthorizationAppleIDProvider()
-        let request = appleIDProvider.createRequest()
-        // request 요청을 했을 때 none가 포함되어서 릴레이 공격을 방지
-        // 추후 파베에서도 무결성 확인을 할 수 있게끔 함
-        // 유저로 부터 알 수 있는 정보들 (이름, 이메일)
-        // - request를 통해 알 수 있는 정보는 이메일과 이름으로 한정.
-        request.requestedScopes = [.fullName, .email]
-        request.nonce = sha256(nonce)
-
-        // ASAuthorizationController => 애플 로그인 시 밑에서 나오는 뷰
-        // 해당 뷰에 띄울 정보 (이름과 이메일)
-        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
-        authorizationController.delegate = self
-        authorizationController.presentationContextProvider = self
-        authorizationController.performRequests()
+        // Initialize a Firebase credential, including the user's full name.
+        let credential = OAuthProvider.appleCredential(
+            withIDToken: idTokenString,
+            rawNonce: nonce,
+            fullName: appleIDCredential.fullName)
+        
+        user?.reauthenticate(with: credential) { result, error in
+            if let _ = error {
+                // An error happened.
+                self.deleteAccount_Alert()
+                return
+            }
+            // User re-authenticated.
+            // 토큰 없애기
+            self.deleteToken(appleIDCredential: appleIDCredential)
+            // 유저 데이터 삭제 + 회원 탈퇴
+            Auth_API.shared.deleteFirebaseAccount { _ in }
+        }
     }
     
-    
-    
+    // MARK: - 유저 데이터 생성
+    private func saveAppleUserData(_ appleIDCredential: ASAuthorizationAppleIDCredential) {
+        // 첫 번째 로그인만 이메일 / 이름을 얻을 수 있다.
+        // 즉 두 번째 로그인부터는 email에서 걸러짐.
+        // 옵셔널 바인딩
+        guard let uid = Auth.auth().currentUser?.uid,
+              let email = appleIDCredential.email,
+              let fullName = appleIDCredential.fullName
+        else { return }
+        
+        // 풀네임 가져오기
+        let userName = "\(fullName.familyName ?? "")\(fullName.givenName ?? "")"
+        // 저장할 유저 정보 딕셔너리 만들기
+        let userDatas = [API_String.userName: userName,
+                         API_String.email: email,
+                         API_String.loginMethod: LoginMethod.apple.description]
+        // 유저 정보 데이터 생성
+        Auth_API.shared.saveUserData(uid: uid, userDatas: userDatas) { _ in }
+    }
+
     // MARK: - 계정 삭제 실패 얼럿창
     func deleteAccount_Alert() {
         self.customAlert(alertEnum: .deleteAccountFail) { _ in

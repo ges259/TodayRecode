@@ -101,15 +101,20 @@ final class RecordController: UIViewController {
     /// 오늘인지 아닌지 판단하는 변수
     private var isToday: Bool = true
     
+    /**
+     *** 코드 리팩토링 사항
+        - [날짜: Record] 타입의 전역변수를 만들기
+     -> 달력을 누르면 전역변수에 있는지 먼저 확인
+        -> 있으면 - 해당 데이터 사용
+        -> 없으면 - fetch_API
+     -------------> 똑같은 날을 다시 누를 때마다 호출이 되는 것을 방지
+     */
     /// 오늘이 아닌 다른 날짜를 적어둠 -> 누를 때마다 호출이 되는 상황 방지
     private var anotherDay_Date: Date?
     
     
     
     
-    
-    
-
     
     
     
@@ -216,7 +221,6 @@ extension RecordController {
         }
         self.scrollView.addSubview(self.contentView)
         self.contentView.addSubview(self.tableView)
-        
         self.scrollView.addSubview(self.noDataView)
         
         
@@ -270,8 +274,6 @@ extension RecordController {
         }
     }
     
-    
-    
     // MARK: - 액션 설정
     private func configureAction() {
         // 뷰 액션 설정
@@ -317,8 +319,7 @@ extension RecordController {
             case .success(let recordArray):
                 self.fetchCell(recordArray: recordArray)
             case .failure(_):
-                self.customAlert(alertStyle: .alert,
-                                 alertEnum: .fetchError) { _ in }
+                self.customAlert(alertEnum: .fetchError) { _ in }
                 break
             }
         }
@@ -336,8 +337,7 @@ extension RecordController {
                 self.deleteCell()
                 break
             case .failure(_):
-                self.customAlert(alertStyle: .alert,
-                                 alertEnum: .deleteError) { _ in }
+                self.customAlert(alertEnum: .deleteError) { _ in }
                 break
             }
         }
@@ -491,16 +491,12 @@ extension RecordController {
             date: date)
     }
     
-    
-    
     // MARK: - 날짜 설정 액션
     /// dateLabel에 날짜를 띄우는 메서드
     func configureDate(selectedDate: Date = Date()) {
         // 현재 달력에 선택된 날짜를 보내기
         self.dateView.configureDate(selectedDate: selectedDate)
     }
-    
-    
     
     // MARK: - 상세 작성 화면으로 이동
     /// 상세 작성 화면으로 이동
@@ -516,7 +512,7 @@ extension RecordController {
         // 기록 확인 화면에서 사용할 해당 날짜 배열
         vc.todayRecords = self.currentArray
         
-        // ********** 확장 버튼(플러스 버튼)을 통해 넘어간 경우 **********
+        // ********** 확장 버튼(플러스 버튼)을 통해 넘어가는 경우 **********
             // -> 아무 것도 적혀있지 않다면
         if easyViewString != nil {
             // 데이터를 생성할 때 사용할 날짜 넘기기
@@ -702,6 +698,7 @@ extension RecordController: UITableViewDataSource {
         // 오늘인지 아닌지 판단 + 배열 가져오기 -> 한 번에
         return self.currentArray.count
     }
+    
     /// 셀 구현
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath)
@@ -740,8 +737,7 @@ extension RecordController: EasyWritingScreenDelegate {
             
         // record가 없다면 == 데이터 생성에 실패했다면
         } else {
-            self.customAlert(alertStyle: .alert,
-                             alertEnum: .createError) { _ in }
+            self.customAlert(alertEnum: .createError) { _ in }
         }
     }
 }
@@ -757,8 +753,7 @@ extension RecordController: DetailWritingScreenDelegate {
             self.addRecord(record: record)
         // record가 없다면 == 데이터 생성에 실패했다면
         } else {
-            self.customAlert(alertStyle: .alert,
-                             alertEnum: .createError) { _ in
+            self.customAlert(alertEnum: .createError) { _ in
                 self.showLoading(false)
             }
         }
@@ -769,11 +764,9 @@ extension RecordController: DetailWritingScreenDelegate {
         if let record = record {
             self.updateCell(record: record)
             
-            
         // record가 없다면 == 데이터 업데이트에 실패했다면
         } else {
-            self.customAlert(alertStyle: .alert,
-                             alertEnum: .updateError) { _ in
+            self.customAlert(alertEnum: .updateError) { _ in
                 self.showLoading(false)
             }
         }
@@ -784,7 +777,6 @@ extension RecordController: DetailWritingScreenDelegate {
         // True == 삭제 성공
         ? self.deleteCell()
         // False == 삭제 실패
-        : self.customAlert(alertStyle: .alert,
-                           alertEnum: .deleteError) { _ in }
+        : self.customAlert(alertEnum: .deleteError) { _ in }
     }
 }

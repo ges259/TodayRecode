@@ -248,8 +248,6 @@ extension DiaryListController {
             date: date)
     }
     
-    
-    
     // MARK: - 날짜 다른 뷰로 전달
     private func deliverTheDate() {
         // Record 배열에서 날짜만 가져오기
@@ -261,8 +259,6 @@ extension DiaryListController {
         // 캘린더뷰에는 날짜 보내기 (일기를 쓴 날 표시하기 위함)
         self.calendar.diaryArray = diaryDateArray
     }
-    
-    
     
     // MARK: - 아이템 이동
     func moveToItem(date: Date, animated: Bool = true) {
@@ -282,15 +278,11 @@ extension DiaryListController {
         }
     }
     
-    
-    
     // MARK: - 플러스 버튼 액션
     @objc private func plusBtnTapped() {
         // 오늘 일기가 없다면 -> 새로 생성
         self.goToDetailWriting()
     }
-    
-    
     
     // MARK: - 상세 작성 화면 이동
     private func goToDetailWriting(index: Int? = nil) {
@@ -319,8 +311,6 @@ extension DiaryListController {
         // 화면 이동
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    
-    
     
     // MARK: - 오늘 일기를 썼는지 확인
     private func checkTodayDiary() {
@@ -453,7 +443,10 @@ extension DiaryListController: CalendarDelegate {
 
 
 // MARK: - 상세 작성 화면 델리게이트
+
 extension DiaryListController: DetailWritingScreenDelegate {
+    
+    // MARK: - 일기 생성
     func createRocord(record: Record?) {
         if let record = record {
             let last = self.diaryArray.count
@@ -473,6 +466,7 @@ extension DiaryListController: DetailWritingScreenDelegate {
         self.showLoading(false)
     }
     
+    // MARK: - 일기 업데이트
     func updateRecord(record: Record?) {
         if let record = record {
             // 콜렉션뷰 업데이트, 날짜는 변경X
@@ -487,6 +481,7 @@ extension DiaryListController: DetailWritingScreenDelegate {
         self.showLoading(false)
     }
     
+    // MARK: - 일기 삭제
     func deleteRecord(success: Bool) {
         if success {
             // 데이터 삭제

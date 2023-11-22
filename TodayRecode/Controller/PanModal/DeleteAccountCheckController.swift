@@ -39,7 +39,8 @@ final class DeleteAccountCheckController: UIViewController {
     private lazy var guideLabel: UILabel = {
         let lbl = UILabel.configureLbl(
             text: self.currentMode?.labelText,
-            font: UIFont.systemFont(ofSize: 14))
+            font: UIFont.systemFont(ofSize: 14),
+            textColor: UIColor.red)
         lbl.numberOfLines = 3
         return lbl
     }()
@@ -48,7 +49,8 @@ final class DeleteAccountCheckController: UIViewController {
     private lazy var passwordCheckTF: UITextField = {
         let tf = UITextField.authTextField(
             withPlaceholder: "비밀번호를 입력해 주세요",
-            keyboardType: .default)
+            keyboardType: .default,
+            isSecureTextEntry: true)
         tf.delegate = self
         tf.returnKeyType = .done
         return tf
@@ -113,6 +115,9 @@ final class DeleteAccountCheckController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
 }
     
     
@@ -145,11 +150,14 @@ extension DeleteAccountCheckController {
     
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
+        // ********** addSubview 설정 **********
         [self.dismissBtn,
          self.stackView,
          self.deleteAccountBtn].forEach { view in
             self.view.addSubview(view)
         }
+        
+        // ********** 오토레이아웃 설정 **********
         self.separatorView.snp.makeConstraints { make in
             make.height.equalTo(0.5)
         }
@@ -180,6 +188,7 @@ extension DeleteAccountCheckController {
     private func configureAction() {
         self.passwordCheckTF.addTarget(self, action: #selector(self.passwordCheckTFTapped), for: .editingChanged)
         self.deleteAccountBtn.addTarget(self, action: #selector(self.deleteAccountBtnTapped), for: .touchUpInside)
+        self.dismissBtn.addTarget(self, action: #selector(self.dismissBtnTapped), for: .touchUpInside)
     }
     
     // MARK: - 레이블 텍스트 설정
@@ -187,13 +196,11 @@ extension DeleteAccountCheckController {
         if self.currentMode == .apple {
             self.passwordCheckTF.isHidden = true
             self.deleteAccountBtn.isEnabled = true
-            self.guideLabel.textColor = UIColor.red
             self.guideLabel.font = UIFont.boldSystemFont(ofSize: 14)
             
         } else {
             self.passwordCheckTF.isHidden = false
             self.deleteAccountBtn.isEnabled = false
-            self.guideLabel.textColor = UIColor.darkGray
             self.guideLabel.font = UIFont.boldSystemFont(ofSize: 14)
         }
     }
@@ -208,10 +215,10 @@ extension DeleteAccountCheckController {
 
 
 
-// MARK: - 셀렉터 + 액션
+// MARK: - 셀렉터
 
 extension DeleteAccountCheckController {
-
+    
     // MARK: - 탈퇴 버튼 액션
     @objc private func deleteAccountBtnTapped() {
         // 이메일 로그인
@@ -225,9 +232,13 @@ extension DeleteAccountCheckController {
             self.customAlert(alertEnum: .password6Error) { _ in }
             return
             
-        // 애플 로그인
+            // 애플 로그인
         } else {
-            self.delegate?.accountDelete(mode: .apple)
+            self.customAlert(alertEnum: .deletedAppleAccount,
+                             firstBtnColor: UIColor.red) { _ in
+                UserData.deleteAccount = true
+                self.delegate?.accountDelete(mode: .apple)
+            }
         }
     }
     
@@ -243,6 +254,25 @@ extension DeleteAccountCheckController {
         self.deleteAccountBtn.isEnabled = false
         self.deleteAccountBtn.backgroundColor = UIColor.blue_Lightly
     }
+    
+    // MARK: - X버튼
+    @objc private func dismissBtnTapped() {
+        self.dismiss(animated: true)
+    }
+}
+    
+    
+    
+
+
+
+
+
+
+
+// MARK: - 액션
+
+extension DeleteAccountCheckController {
     
     // MARK: - 사용자 재인증
     /// 사용자 재인증
@@ -265,13 +295,18 @@ extension DeleteAccountCheckController {
     // MARK: - 이메일 계정 및 데이터 삭제
     /// 파이어베이스 계정 삭제 및 유저 데이터 삭제
     private func emailAccountDelete() {
-        Auth_API.shared.deleteFirebaseAccount { result in
-            switch result {
-            case .success(): // 성공
-                self.delegate?.accountDelete(mode: .email)
-                break
-            case .failure(_): // 실패
-                self.customAlert(alertEnum: .unknownError) { _ in }
+        // 정말 삭제할지 물어보는 얼럿창
+        self.customAlert(alertEnum: .deletedEmailAccount,
+                         firstBtnColor: UIColor.red) { _ in
+            // 계정 / 데이터 삭제
+            Auth_API.shared.deleteFirebaseAccount { result in
+                switch result {
+                case .success(): // 성공
+                    self.delegate?.accountDelete(mode: .email)
+                    break
+                case .failure(_): // 실패
+                    self.customAlert(alertEnum: .unknownError) { _ in }
+                }
             }
         }
     }
@@ -318,8 +353,12 @@ extension DeleteAccountCheckController: PanModalPresentable {
     var shortFormHeight: PanModalHeight {
         return .contentHeight(self.view.frame.size.height)
     }
-    // 배경 색
+    /// 화면 밖 - 배경 색
     var panModalBackgroundColor: UIColor {
         return #colorLiteral(red: 0.3215686275, green: 0.3221649485, blue: 0.3221649485, alpha: 0.64)
+    }
+    /// 상단 인디케이터 없애기
+    var showDragIndicator: Bool {
+        return false
     }
 }

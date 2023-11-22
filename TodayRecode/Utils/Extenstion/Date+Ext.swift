@@ -27,7 +27,7 @@ extension Date {
     
     
     
-    
+    // MARK: - 시간 표시되는 곳
     static func DateLabelString(date: Date) -> String {
         let timeFormat: TodayFormatEnum = Format.timeFormat_Static == 0
         ? .a_hmm // PM 2:00
@@ -37,15 +37,6 @@ extension Date {
             todayFormat: timeFormat,
             date: date)
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -77,9 +68,11 @@ extension Date {
     
     
     
-    ///
+    // MARK: - 시간, 분, 초 초기화
+    /// 시간, 분, 초 초기화 (달력, API)
     func reset_time(currentMonth_1: Bool = false,
-                    nextMonth_1: Bool = false) -> Date? {
+                    nextMonth_1: Bool = false)
+    -> Date? {
         // 현재 시간
         var calendar = Calendar.current
         calendar.timeZone = TimeZone.current

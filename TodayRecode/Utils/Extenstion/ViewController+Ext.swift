@@ -11,6 +11,7 @@ import JGProgressHUD
 
 extension UIViewController {
     
+    // MARK: - 로딩뷰
     static let hud = JGProgressHUD(style: .dark)
     /// 테이블뷰 / 콜렉션뷰의 리로드를 기다리는 동안 -> 화면을 터치 못하도록 설정
     func showLoading(_ show: Bool) {
@@ -95,15 +96,19 @@ extension UIViewController {
         )
         
         if let height = setSpacing {
-            let paragraphStyle = NSMutableParagraphStyle()
-                paragraphStyle.lineSpacing = height
-            attributedTitle.addAttribute(
-                NSAttributedString.Key.paragraphStyle,
-                value: paragraphStyle,
-                range: NSMakeRange(0, attributedTitle.length))
+            // 글자 간격 설정
+            return NSMutableAttributedString.setSpacing(
+                context: "",
+                attributed_String: attributedTitle,
+                setSpacing: height)
         }
         return attributedTitle
     }
+    
+
+    
+    
+    
     
     
     

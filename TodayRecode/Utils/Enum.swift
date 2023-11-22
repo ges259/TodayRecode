@@ -76,33 +76,6 @@ enum NavTitleSetEnum {
     }
 }
 
-enum LoginMethod {
-    case apple
-    case email
-    
-    var description: String {
-        switch self {
-        case .apple: return "apple"
-        case .email: return "email"
-        }
-    }
-    var labelText: String {
-        switch self {
-        case .apple: return "•  탈퇴하기 전 다시 로그인하는 과정이 필요합니다."
-        case .email: return "•  아래의 텍스트필드에 비밀번호를 정확히 입력해 주세요."
-        }
-    }
-    var btnColor: UIColor? {
-        switch self {
-        case .apple: return UIColor.blue_Point
-        case .email: return UIColor.blue_Lightly
-        }
-    }
-}
-
-
-
-
 enum NoDataEnum {
     case record_Main
     case record_Check
@@ -211,8 +184,32 @@ enum ConfigurationBtnEnum {
     
     var btnImage: UIImage? {
         switch self {
-        case .logout: return UIImage.checkmark
-        case .deleteAccount: return UIImage.deleteBtn
+        case .logout: return UIImage.logout_Img
+        case .deleteAccount: return UIImage.deleteAccount_Img
+        }
+    }
+}
+
+enum LoginMethod {
+    case apple
+    case email
+    
+    var description: String {
+        switch self {
+        case .apple: return "apple"
+        case .email: return "email"
+        }
+    }
+    var labelText: String {
+        switch self {
+        case .apple: return "•  애플 로그인은 다시 로그인하는 과정이 필요합니다."
+        case .email: return "•  비밀번호를 정확히 입력해 주세요."
+        }
+    }
+    var btnColor: UIColor? {
+        switch self {
+        case .apple: return UIColor.blue_Point
+        case .email: return UIColor.blue_Lightly
         }
     }
 }
@@ -220,12 +217,15 @@ enum ConfigurationBtnEnum {
 
 
 
-
 // MARK: - 얼럿 텍스트
 enum AlertEnum {
+    // AuthSetting
+    case albumAuth
+    
     // Alert Caution
     case logout // 로그아웃
-    case deletedAccount // 회원탈퇴
+    case deletedAppleAccount // 회원탈퇴
+    case deletedEmailAccount // 회원탈퇴
     case deleteRecord // 기록 삭제
     case limit5Image // 이미지 5개
     case timeFormat // 시간 형식
@@ -256,15 +256,24 @@ enum AlertEnum {
     /// 얼럿창에 쓸 텍스트 배열
     var alert_StringArray: [String] {
         switch self {
+        case .albumAuth: return ["설정",
+                                 "'오늘 기록'이(가) 앨범 접근 허용되어 있지않습니다. \r\n 설정화면으로 가시겠습니까?",
+                                 "확인",
+                                 ""]
+            
             // ********** Alert Caution **********
         case .logout: return ["정말 로그아웃 하시겠습니까?",
                               "",
                               "로그아웃",
                               ""]
-        case .deletedAccount: return ["회원 탈퇴",
-                                      "회원 탈퇴 시, 다시 로그인을 하는 과정이 필요합니다.\n계속 진행하시겠습니까?",
-                                      "회원 탈퇴",
-                                      ""]
+        case .deletedAppleAccount: return ["다시 로그인을 하는 과정이 필요합니다.",
+                                           "계속 진행하시겠습니까?",
+                                           "회원 탈퇴",
+                                           ""]
+        case .deletedEmailAccount: return ["정말 회원을 탈퇴하시겠습니까?",
+                                           "계정 및 모든 데이터가 삭제됩니다.",
+                                           "회원 탈퇴",
+                                           ""]
         case .deleteRecord: return ["정말 삭제하시겠습니까?",
                                     "",
                                     "삭제하기",
@@ -319,6 +328,7 @@ enum AlertEnum {
                                             "",
                                             "",
                                             ""]
+            
             
             
             // ********** Auth Fail **********

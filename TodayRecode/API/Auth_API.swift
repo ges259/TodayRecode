@@ -127,7 +127,6 @@ struct Auth_API {
                 // An error happened.
                 completion(.failure(error))
             } else {
-                // Use `user` property of result to check is successful.
                 completion(.success(()))
             }
         }
@@ -137,29 +136,18 @@ struct Auth_API {
     
     // MARK: - 회원 탈퇴
     func deleteFirebaseAccount(completion: @escaping AuthCompletion) {
-        
-        // 유저 데이터 삭제
-        User_API.shared.deleteUserData()
-        
+        // 유저가 있는지 확인
         if let user = Auth.auth().currentUser {
-            
-            
-            
-            
+            // 유저 데이터 삭제
+            User_API.shared.deleteUserData()
+            // 유저 계정 삭제
             user.delete { error in
                 if let error = error {
-                    print("Firebase Error : ",error)
-                    
-                    // MARK: - Fix
-                    
-                    
+                    completion(.failure(error))
                     return
                 }
-                print("회원탈퇴 성공!")
                 completion(.success(()))
             }
         }
     }
-    
-    
 }

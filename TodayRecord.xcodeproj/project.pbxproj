@@ -59,7 +59,8 @@
 		5FAA76402ADBA8220024B810 /* RecordTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA763F2ADBA8220024B810 /* RecordTableViewCell.swift */; };
 		5FAA76422ADC13340024B810 /* RecordTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAA76412ADC13340024B810 /* RecordTableView.swift */; };
 		5FAF543D2ADA907100BD849C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAF543C2ADA907100BD849C /* Constants.swift */; };
-		5FB37F452B07AEF900DD107C /* ViewController+Apple.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB37F442B07AEF900DD107C /* ViewController+Apple.swift */; };
+		5FB0E0222B0D6689009486E7 /* NSMutableAttributedString+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB0E0212B0D6689009486E7 /* NSMutableAttributedString+Ext.swift */; };
+		5FB37F452B07AEF900DD107C /* AppleLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB37F442B07AEF900DD107C /* AppleLogin.swift */; };
 		5FB37F472B07C9F700DD107C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5FB37F462B07C9F600DD107C /* GoogleService-Info.plist */; };
 		5FBC6D832B05219700803E87 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 5FBC6D822B05219700803E87 /* FSCalendar */; };
 		5FCA1F372AE5700D00A9DB5B /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */; };
@@ -111,8 +112,9 @@
 		5FAA763F2ADBA8220024B810 /* RecordTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordTableViewCell.swift; sourceTree = "<group>"; };
 		5FAA76412ADC13340024B810 /* RecordTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordTableView.swift; sourceTree = "<group>"; };
 		5FAF543C2ADA907100BD849C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		5FB0E0212B0D6689009486E7 /* NSMutableAttributedString+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Ext.swift"; sourceTree = "<group>"; };
 		5FB37F432B07A7C000DD107C /* TodayRecord.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TodayRecord.entitlements; sourceTree = "<group>"; };
-		5FB37F442B07AEF900DD107C /* ViewController+Apple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Apple.swift"; sourceTree = "<group>"; };
+		5FB37F442B07AEF900DD107C /* AppleLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleLogin.swift; sourceTree = "<group>"; };
 		5FB37F462B07C9F600DD107C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5FCA1F362AE5700D00A9DB5B /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		5FD436912AE2DB9B00CA79AD /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
@@ -211,11 +213,10 @@
 		5F6EECDA2ADA3E360046E686 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				5F4599DF2B0C165F00E17AA1 /* DeleteAccountCheckController.swift */,
-				5F8A0EA42AE6B1AC00C7AF2C /* RecordCheckController.swift */,
 				5FE7C6A02ADEDDFC00BF9785 /* TabBar */,
 				5FE7C6A12ADEDE0700BF9785 /* WritingView */,
 				5FE7C69F2ADEDDDA00BF9785 /* Auth */,
+				5FB0E0202B0D6465009486E7 /* PanModal */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -227,6 +228,7 @@
 				5F9A7D952AF0052F00F9B10A /* User_API.swift */,
 				5F9A7D932AF0052800F9B10A /* Record_API.swift */,
 				5F5A3ACA2AFD420E00BDA7D6 /* ImageUploader.swift */,
+				5FB37F442B07AEF900DD107C /* AppleLogin.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -235,7 +237,6 @@
 			isa = PBXGroup;
 			children = (
 				5F7A02762ADAC8F100128DC4 /* ViewController+Ext.swift */,
-				5FB37F442B07AEF900DD107C /* ViewController+Apple.swift */,
 				5F785B832ADEA7DF00955C4A /* UIView+Ext.swift */,
 				5F785B852ADEA7F200955C4A /* UITextView+Ext.swift */,
 				5F2F5AE62AE99A0600F117FC /* UITextField+Ext.swift */,
@@ -246,6 +247,7 @@
 				5F7A02842ADAD3D700128DC4 /* Color+Ext.swift */,
 				5F0803452AEC206800A52C3E /* Date+Ext.swift */,
 				5F3E3FD22AF8BD7D00B1F36B /* UIDevice+Ext.swift */,
+				5FB0E0212B0D6689009486E7 /* NSMutableAttributedString+Ext.swift */,
 			);
 			path = Extenstion;
 			sourceTree = "<group>";
@@ -257,6 +259,15 @@
 				5F6CBA302AE02A1E00960F7B /* CustomCollectionView.swift */,
 			);
 			path = CustomView;
+			sourceTree = "<group>";
+		};
+		5FB0E0202B0D6465009486E7 /* PanModal */ = {
+			isa = PBXGroup;
+			children = (
+				5F4599DF2B0C165F00E17AA1 /* DeleteAccountCheckController.swift */,
+				5F8A0EA42AE6B1AC00C7AF2C /* RecordCheckController.swift */,
+			);
+			path = PanModal;
 			sourceTree = "<group>";
 		};
 		5FE7C69E2ADEDDBE00BF9785 /* ReuseView */ = {
@@ -395,7 +406,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F2F5AE52AE9482400F117FC /* SettingTableViewCell.swift in Sources */,
-				5FB37F452B07AEF900DD107C /* ViewController+Apple.swift in Sources */,
+				5FB37F452B07AEF900DD107C /* AppleLogin.swift in Sources */,
 				5F26CA4C2AF0E2640019CDE2 /* Record.swift in Sources */,
 				5F785B902ADED33A00955C4A /* DateView.swift in Sources */,
 				5F4599E02B0C165F00E17AA1 /* DeleteAccountCheckController.swift in Sources */,
@@ -412,6 +423,7 @@
 				5F07BF0D2AE11B7A00C471B4 /* UIStackView+Ext.swift in Sources */,
 				5F2F5AE72AE99A0600F117FC /* UITextField+Ext.swift in Sources */,
 				5F8A0EA52AE6B1AC00C7AF2C /* RecordCheckController.swift in Sources */,
+				5FB0E0222B0D6689009486E7 /* NSMutableAttributedString+Ext.swift in Sources */,
 				5F785B842ADEA7E000955C4A /* UIView+Ext.swift in Sources */,
 				5F6EECDF2ADA40170046E686 /* DetailWritingScreenController.swift in Sources */,
 				5F6EECE72ADA41380046E686 /* SignUpController.swift in Sources */,

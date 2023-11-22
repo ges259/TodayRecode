@@ -35,10 +35,12 @@ final class EasyWritingScreenController: UIViewController {
     }()
     /// 텍스트뷰의 높이 제약
     private var textViewHeight: NSLayoutConstraint?
+    
     /// 확장 버튼
     private let expansionBtn: UIButton = UIButton.buttonWithImage(
         image: .expansion,
         tintColor: UIColor.lightGray)
+    
     /// 스택뷰
     private lazy var topStackView: UIStackView = UIStackView.configureStackView(
         arrangedSubviews: [self.recordTextView,

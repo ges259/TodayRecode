@@ -53,6 +53,7 @@ final class DetailWritingScreenController: UIViewController {
     }()
     /// 텍스트뷰의 높이 제약
     private var stackViewHeight: NSLayoutConstraint?
+    
     /// 플레이스홀더 레이블
     private lazy var placeholderLbl: UILabel = UILabel.configureLbl(
         text: "오늘 무슨 일이 있었지?",
@@ -80,10 +81,12 @@ final class DetailWritingScreenController: UIViewController {
     private let albumBtn: UIButton = UIButton.buttonWithImage(
         image: UIImage.album,
         tintColor: UIColor.gray_Accessoroy)
+    
     /// 날짜 레이블
     private lazy var dateLbl: UILabel = UILabel.configureLbl(
         font: UIFont.systemFont(ofSize: 13),
         textColor: UIColor.gray_Accessoroy)
+    
     /// 스택뷰
     private lazy var horizontalStackView: UIStackView = UIStackView.configureStackView(
         arrangedSubviews: [self.albumBtn,
@@ -113,12 +116,9 @@ final class DetailWritingScreenController: UIViewController {
         
         imagePicker.modalPresentationStyle = .fullScreen
         
-        
         // 최대 선택할 수 있는 개수 설정
-        imagePicker.settings.selection.max
-        = self.detailViewMode == .diary
-        ? 5 // 일기라면 -> 최대 5개 선택 가능
-        : 3 // 기록이라면 -> 최대 3개 선택 가능
+        imagePicker.settings.selection.max = 5
+        
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
 
@@ -324,8 +324,6 @@ extension DetailWritingScreenController {
         self.recordShowBtn.layer.cornerRadius = 65 / 2
     }
     
-    
-    
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         // ********** addSubViews 설정 **********
@@ -411,8 +409,6 @@ extension DetailWritingScreenController {
         }
     }
     
-    
-    
     // MARK: - 액션 설정
     private func configureAction() {
         // 셀렉터 설정
@@ -438,8 +434,6 @@ extension DetailWritingScreenController {
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
     
-    
-    
     // MARK: - 날짜 및 텍스트 설정
     /// 셀을 클릭하여 상세작성화면에 들어온 경우 데이터 설정
     private func configureData() {
@@ -449,7 +443,6 @@ extension DetailWritingScreenController {
             // 텍스트뷰에 텍스트 넣기
             self.diaryTextView.text = currentRecode.context
             self.placeholderLbl.isHidden = true
-            
             // ********** 시간 **********
             // 해당 데이터의 날짜를 저장
             self.todayDate = currentRecode.date
@@ -471,13 +464,11 @@ extension DetailWritingScreenController {
             }
             // ********** 시간 **********
             // 날짜뷰에 현재 시간 표시
-            self.dateView.configureDate()
+            self.dateView.configureDate(selectedDate: self.todayDate ?? Date())
             // 시간뷰에 기록(Record)의 시간 표시
             self.dateLbl.text = Date.DateLabelString(date: Date())
         }
     }
-    
-    
     
     // MARK: - 이미지 설정
     private func configureImage(record: Record) {
@@ -561,21 +552,24 @@ extension DetailWritingScreenController {
         }
     }
     
-    // MARK: - 버튼 액션
+    // MARK: - 키보드 내리기 버튼
     /// 키보드 내리기 버튼을 누르면 텍스트뷰 resign
     @objc private func keyboardDownBtnTapped() {
         self.diaryTextView.resignFirstResponder()
     }
     
+    // MARK: - 앨범 버튼 액션
     /// 앨범 버튼을 누르면 이미지피커로 넘어간다.
     @objc private func albumBtnTapped() {
-        self.imagePickerAction()
+        self.checkAlbumPermission()
     }
     
+    // MARK: - 기록 확인 화면 이동 버튼
     /// 기록 확인 버튼을 누르면 오늘 기록을 볼 수 있다.
     @objc private func recodeShowBtnTapped() {
         let recodeCheckVC = RecordCheckController(recordArray: self.todayRecords)
             recodeCheckVC.modalPresentationStyle = .overFullScreen
+            recodeCheckVC.todayDate = self.todayDate
         // 화면 전환
         self.presentPanModal(recodeCheckVC)
     }
@@ -702,6 +696,45 @@ extension DetailWritingScreenController {
             // 생성 or 업데이트
             self.createOrUpdate
             break
+        }
+    }
+    
+    // MARK: - 앨범 접근 권한 확인
+    func checkAlbumPermission(){
+        PHPhotoLibrary.requestAuthorization( { status in
+            switch status{
+            case .authorized:
+                // 앨범 접근이 승인된 상태
+                self.imagePickerAction()
+                break
+                
+                
+            case .denied:
+                // .denied - 앨범 접근이 불가능한 상태, 권한 변경이 가능함
+                self.AuthSettingOpen(AuthString: "앨범")
+                break
+                
+                
+            case .restricted, .notDetermined:
+                // .notDetermined - 아직 접근 여부를 결정하지 않은 상태
+                // .restricted - 앨범에 접근 불가능하고, 권한 변경이 불가능한 상태
+                self.customAlert(alertEnum: .unknownError) { _ in }
+                break
+                
+            default:
+                break
+            }
+        })
+    }
+    
+    // MARK: - 앨범 접근 권한 설정
+    func AuthSettingOpen(AuthString: String) {
+        DispatchQueue.main.async {
+            // 얼럿창 띄우기
+            self.customAlert(alertEnum: .albumAuth) { _ in
+                // 설정으로 이동
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            }
         }
     }
     
@@ -836,9 +869,11 @@ extension DetailWritingScreenController {
     
     // MARK: - 업데이트
     private func updateRecord_API() {
-        // 텍스트뷰가 처음 들어왔을 때와 비교해 바뀌지 않으면 저장X
-        // 화면에 들어올 때 데이터를 가지고 들어왔다면
-        // 타입 옵셔널바인딩 (.diary or .record_cellTapped)
+        // 1. 둘 중 하나라도 true면 업데이트
+            // (1).텍스트뷰가 처음 들어왔을 때와 비교해 바뀌지 않으면 저장X
+            // (2). 업데이트할 이미지가 있다면
+        // 2. 화면에 들어올 때 데이터를 가지고 들어왔다면
+        // 3. 타입 옵셔널바인딩 (.diary or .record_cellTapped)
         guard self.selectedRecord?.context != self.diaryTextView.text
               || self.imageIsChanged,
               let selectedRecord = selectedRecord,
@@ -862,8 +897,11 @@ extension DetailWritingScreenController {
     
     // MARK: - 생성
     private func createRecord_API() {
-        // 텍스트뷰가 빈칸인 경우 생성X
-        // 오늘 날짜 및 타입 - 옵셔널바인딩
+        // 1. 둘 중 하나라도 true면 생성
+            // (1). 텍스트뷰가 빈칸인 경우
+            // (2). 또는 이미지를 업데이트해야하는 경우
+        // 2. 오늘 날짜 - 옵셔널바인딩
+        // 3. 타입 - 옵셔널바인딩 (.diary or .record_cellTapped)
         guard self.diaryTextView.text != ""
                 || !self.addedImages.isEmpty,
               let date = self.todayDate, // 날짜 가져오기
@@ -912,9 +950,6 @@ extension DetailWritingScreenController {
             self.createOrUpdate
         }
     }
-    
-
-    
     
     // MARK: - 이미지 로드
     private func loadImage(imageUrl: [String]) {
@@ -1065,7 +1100,6 @@ extension DetailWritingScreenController {
         } else {
             index = round(index)
         }
-        
         
         // 한 페이지씩 움직일 수 있도록 설정
         // 페이지 이동 (+델리게이트)

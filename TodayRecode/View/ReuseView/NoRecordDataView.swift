@@ -58,20 +58,20 @@ final class NoRecordDataView: UIView {
     
     
     
-    
-    
     // MARK: - 레이블의 텍스트 설정
     /// NodataEnum에 따라 레이블의 텍스트를 바꿈
     private func configureUI(nodataEnum: NoDataEnum) {
-        self.noDataLbl.text = nodataEnum.lblString
-        self.plusBtn.image = nodataEnum.systemImg
-        
         self.backgroundColor = .white_Base
-        
         self.clipsToBounds = true
         self.layer.cornerRadius = 10
-        
         self.isHidden = true
+        
+        self.noDataLbl.attributedText = NSMutableAttributedString.setSpacing(
+            context: nodataEnum.lblString,
+            setSpacing: 4)
+        // attributedText를 설정한 후 다시 textAlignment를 설정해 주어야 정상 작동(?)
+        self.noDataLbl.textAlignment = .center
+        self.plusBtn.image = nodataEnum.systemImg
     }
     
     // MARK: - 오토레이아웃 설정

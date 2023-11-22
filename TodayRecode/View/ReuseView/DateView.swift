@@ -29,9 +29,7 @@ final class DateView: UIView {
         
         self.configureUI()
         self.configureAutoLayout()
-        
-        // MARK: - Fix
-        self.configureDate()
+        self.configureDate() //
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -59,8 +57,6 @@ extension DateView {
         self.layer.cornerRadius = 10
     }
     
-    
-    
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         self.addSubview(self.dateLabel)
@@ -69,8 +65,6 @@ extension DateView {
             make.centerX.centerY.equalToSuperview()
         }
     }
-    
-    
     
     // MARK: - 날짜 설정
     func configureDate(selectedDate: Date = Date()) {

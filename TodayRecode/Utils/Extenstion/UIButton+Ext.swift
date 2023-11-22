@@ -21,6 +21,7 @@ extension UIButton {
 
         return btn
     }
+    
     /// 글자가 들어간 버튼 설정
     static func buttonWithTitle(title: String,
                                 titleColor: UIColor = UIColor.black,
@@ -35,6 +36,7 @@ extension UIButton {
         return btn
     }
     
+    ///
     static func buttonWithImgAndTitle(_ buttonEnum: ConfigurationBtnEnum) -> UIButton {
         var configuration = UIButton.Configuration.plain()
         
@@ -47,7 +49,7 @@ extension UIButton {
         
         // 이미지 설정
         configuration.image = buttonEnum.btnImage
-        configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 20)
+        configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 18)
         configuration.imagePadding = 10
         // 이미지가 상단에 위치한 버튼
         configuration.imagePlacement = .top

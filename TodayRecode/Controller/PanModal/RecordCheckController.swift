@@ -54,8 +54,15 @@ final class RecordCheckController: UIViewController {
     
     
     
+    
+    
+    
     // MARK: - 프로퍼티
     var todayRecordArray = [Record]()
+    
+    lazy var todayDate: Date? = Date()
+    
+    
     
     
     
@@ -95,10 +102,9 @@ extension RecordCheckController {
     
     // MARK: - UI설정
     private func configureUI() {
-        // 배열의 첫번째 날짜가 있다면
-        if let todayRecodes = self.todayRecordArray.first {
-            //  -> 날짜 레이블에 표시
-            self.dateView.configureDate(selectedDate: todayRecodes.date)
+        // 날짜 설정
+        if let today = self.todayDate {
+            self.dateView.configureDate(selectedDate: today)
         }
         
         // cornerRadius
@@ -106,8 +112,6 @@ extension RecordCheckController {
         self.containerView.clipsToBounds = true
         self.containerView.layer.cornerRadius = 15
     }
-    
-    
     
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
@@ -151,7 +155,6 @@ extension RecordCheckController {
             make.bottom.lessThanOrEqualTo(self.view.snp.bottom)
         }
     }
-    
     
     // MARK: - 오토레이아웃 분기처리
     private func configureStackViewBottomAchor() {
@@ -234,8 +237,8 @@ extension RecordCheckController: PanModalPresentable {
     var panModalBackgroundColor: UIColor {
         return #colorLiteral(red: 0.3215686275, green: 0.3221649485, blue: 0.3221649485, alpha: 0.64)
     }
-    
-    var allowsExtendedPanScrolling: Bool {
-        return true
+    /// 상단 인디케이터 없애기
+    var showDragIndicator: Bool {
+        return false
     }
 }

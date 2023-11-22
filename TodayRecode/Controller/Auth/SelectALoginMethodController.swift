@@ -8,7 +8,6 @@
 import UIKit
 import SnapKit
 import AuthenticationServices
-//import CryptoKit
 
 final class SelectALoginMethodController: UIViewController {
     
@@ -19,19 +18,13 @@ final class SelectALoginMethodController: UIViewController {
     /// 애플 로그인 버튼
     private lazy var appleLogin: UIButton = UIButton.buttonWithTitle(
         title: "Apple로 로그인",
-        font: UIFont.systemFont(ofSize: 16),
-        backgroundColor: UIColor.white_Base)
-    
-    /// 구글 로그인 버튼
-    private lazy var googleLogin: UIButton = UIButton.buttonWithTitle(
-        title: "Google로 로그인",
-        font: UIFont.systemFont(ofSize: 16),
+        font: UIFont.systemFont(ofSize: 19),
         backgroundColor: UIColor.white_Base)
     
     /// 이메일 로그인 버튼
     private lazy var emailLogin: UIButton = UIButton.buttonWithTitle(
         title: "이메일로 로그인",
-        font: UIFont.systemFont(ofSize: 16),
+        font: UIFont.systemFont(ofSize: 19),
         backgroundColor: UIColor.white_Base)
     
     /// 스택뷰
@@ -56,7 +49,6 @@ final class SelectALoginMethodController: UIViewController {
     
     /// 버튼의 배열
     private lazy var buttonArray: [UIButton] = [self.appleLogin,
-                                                self.googleLogin,
                                                 self.emailLogin]
     
     
@@ -117,7 +109,7 @@ extension SelectALoginMethodController {
         // 버튼의 높이 설정 및 코너레디어스 설정
         self.buttonArray.forEach { btn in
             btn.snp.makeConstraints { make in
-                make.height.equalTo(50)
+                make.height.equalTo(54)
             }
             
             
@@ -136,7 +128,6 @@ extension SelectALoginMethodController {
     // MARK: - 액션 설정
     private func configureAutoAction() {
         self.appleLogin.addTarget(self, action: #selector(self.appleLoginTapped), for: .touchUpInside)
-        self.googleLogin.addTarget(self, action: #selector(self.googleLoginTapped), for: .touchUpInside)
         self.emailLogin.addTarget(self, action: #selector(self.emailLoginTapped), for: .touchUpInside)
     }
 }
@@ -151,13 +142,15 @@ extension SelectALoginMethodController {
 
 
 // MARK: - 액션
+
 extension SelectALoginMethodController {
+    
+    // MARK: - 애플 로그인
     @objc private func appleLoginTapped() {
         self.startSignInWithAppleFlow()
     }
-    @objc private func googleLoginTapped() {
-        
-    }
+    
+    // MARK: - 이메일 로그인
     @objc private func emailLoginTapped() {
         let vc = LoginController()
         vc.delegate = self.delegate

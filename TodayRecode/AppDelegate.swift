@@ -8,7 +8,6 @@
 import UIKit
 import Firebase
 
-
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -28,6 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         navBar.standardAppearance = navigationBarAppearance
         // 네비게이션 이미지의 색상을 검정색으로 변경
         navBar.tintColor = UIColor.black
+        
         return true
     }
     

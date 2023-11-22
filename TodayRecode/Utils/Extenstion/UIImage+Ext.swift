@@ -11,8 +11,8 @@ extension UIImage {
     // ********** 탭바 이미지 **********
     static let recode: UIImage? = UIImage(systemName: "pencil.circle")
     static let recode_fill: UIImage? = UIImage(systemName: "pencil.circle.fill")
-    static let setup: UIImage? = UIImage(systemName: "gearshape")
-    static let setup_fill: UIImage? = UIImage(systemName: "gearshape.fill")
+    static let setup: UIImage? = UIImage(systemName: "gearshape.circle")
+    static let setup_fill: UIImage? = UIImage(systemName: "gearshape.circle.fill")
     
     
     
@@ -57,4 +57,9 @@ extension UIImage {
     static let calendar: UIImage? = UIImage(systemName: "calendar")
     /// 사람 이미지
     static let person_Img: UIImage? = UIImage(systemName: "person")
+    
+    
+    static let logout_Img: UIImage? = UIImage(systemName: "arrow.uturn.backward.circle")
+    static let deleteAccount_Img: UIImage? = UIImage(systemName: "person.crop.circle.badge.xmark")
+    
 }

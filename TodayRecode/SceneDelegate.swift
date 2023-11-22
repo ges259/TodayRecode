@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AuthenticationServices
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -25,7 +26,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // 뷰 컨트롤러 인스턴스 가져오기
         let vc = TabBarController()
         
-        
+        // 앱 실행 중 강제로 연결 취소 시
+        NotificationCenter.default.addObserver(forName: ASAuthorizationAppleIDProvider.credentialRevokedNotification, object: nil, queue: nil) { (Notification) in
+            // 로그인 페이지로 이동
+            vc.goToSelectALoginController()
+        }
         // 뿌리 뷰컨트롤러 설정
         self.window?.rootViewController = vc
         // 설정한 윈도우를 보이게 설정

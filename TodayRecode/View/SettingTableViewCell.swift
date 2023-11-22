@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 
 final class SettingTableViewCell: UITableViewCell {
+    
+    // MARK: - 레이아웃
     /// 시스템 이미지
     private lazy var systemImg: UIImageView = {
         let img = UIImageView()
@@ -26,10 +28,24 @@ final class SettingTableViewCell: UITableViewCell {
     
     
     
+    
+    
+    
+    
+    
+    
+    
     // MARK: - 프로퍼티
     var settingTableEnum: SettingTableEnum? {
         didSet { self.configureData() }
     }
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -64,8 +80,6 @@ extension SettingTableViewCell {
         self.selectionStyle = .none
     }
     
-    
-    
     // MARK: - 오토레이아웃 설정
     private func configureLayout() {
         // ********** addSubview 설정 **********
@@ -91,13 +105,14 @@ extension SettingTableViewCell {
         }
     }
     
-    
-    
     // MARK: - 데이터 설정
     private func configureData() {
+        // Enum에 따라 달라짐
+        // 이미지
         self.systemImg.image = self.settingTableEnum?.image
+        // 텍스트
         self.mainLabel.text = self.settingTableEnum?.text
-        
+        // 선택된 사항(?)
         self.subLabel.text = settingTableEnum?.rawValue == 0
         ? self.settingTableEnum?.dateOption
         : self.settingTableEnum?.timeOption

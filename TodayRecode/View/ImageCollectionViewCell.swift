@@ -20,9 +20,6 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     }()
     
     
-    
-    
-    
     // ********** DiaryList **********
     /// 이미지뷰 위를 덮는 white 색상 뷰
     private lazy var whiteCustomView: UIView = UIView.backgroundView(
@@ -32,7 +29,6 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         let lbl = UILabel.configureLbl(
             font: UIFont.boldSystemFont(ofSize: 30),
             textColor: UIColor.black)
-        
         lbl.textAlignment = .center
         return lbl
     }()
@@ -53,13 +49,16 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     
     
     
-    
     // MARK: - 프로퍼티
     var collectionViewEnum: CollectionViewEnum? {
         didSet { self.configureUIByEnum() }
     }
     
     weak var delegate: ImageCollectionViewDelegate?
+    
+    
+    
+    
     
     
     
@@ -98,8 +97,6 @@ extension ImageCollectionViewCell {
         self.layer.cornerRadius = 10
     }
     
-    
-    
     // MARK: - 오토레이아웃 설정
     private func configureAutoLayout() {
         self.addSubview(self.imageView)
@@ -107,8 +104,6 @@ extension ImageCollectionViewCell {
             make.edges.equalToSuperview()
         }
     }
-    
-    
     
     // MARK: - Enum에 따른 오토레이아웃
     private func configureUIByEnum() {
@@ -135,6 +130,7 @@ extension ImageCollectionViewCell {
             }
         }
     }
+    
     // MARK: - 액션 설정
     private func configureAction() {
         self.deleteBtn.addTarget(self, action: #selector(self.deleteBtnTapped), for: .touchUpInside)
