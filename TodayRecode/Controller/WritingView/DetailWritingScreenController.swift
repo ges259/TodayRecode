@@ -56,7 +56,9 @@ final class DetailWritingScreenController: UIViewController {
     
     /// 플레이스홀더 레이블
     private lazy var placeholderLbl: UILabel = UILabel.configureLbl(
-        text: "오늘 무슨 일이 있었지?",
+        text: self.detailViewMode == .diary
+                ? "오늘을 일기.."
+                : "오늘의 기록..",
         font: UIFont.systemFont(ofSize: 14),
         textColor: UIColor.gray)
     

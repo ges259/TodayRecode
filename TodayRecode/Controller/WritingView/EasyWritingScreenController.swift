@@ -16,7 +16,7 @@ final class EasyWritingScreenController: UIViewController {
     
     /// 플레이스홀더 레이블
     private let placeholderLbl: UILabel = UILabel.configureLbl(
-        text: "어떤 일을 기록하시겠습니까?",
+        text: "오늘의 기록..",
         font: UIFont.boldSystemFont(ofSize: 14),
         textColor: UIColor.lightGray)
     
