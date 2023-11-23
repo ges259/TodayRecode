@@ -593,7 +593,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayRecode/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "앨범 접근 권한을 허용해주세요.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "[오늘 기록]이 사진 첨부를 위해 사용자의 카메라 접근하려고 합니다. 카메라에 대한 사용 권한을 허용하시겠습니까?";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "[오늘 기록]이 사진 첨부를 위해 사용자의 앨범 접근하려고 합니다. 앨범에 대한 사용 권한을 허용하시겠습니까?";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
@@ -630,7 +631,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayRecode/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "앨범 접근 권한을 허용해주세요.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "[오늘 기록]이 사진 첨부를 위해 사용자의 카메라 접근하려고 합니다. 카메라에 대한 사용 권한을 허용하시겠습니까?";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "[오늘 기록]이 사진 첨부를 위해 사용자의 앨범 접근하려고 합니다. 앨범에 대한 사용 권한을 허용하시겠습니까?";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
