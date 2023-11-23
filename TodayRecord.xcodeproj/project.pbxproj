@@ -592,6 +592,7 @@
 				DEVELOPMENT_TEAM = 63D86GVH6K;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayRecode/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "앨범 접근 권한을 허용해주세요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -628,6 +629,7 @@
 				DEVELOPMENT_TEAM = 63D86GVH6K;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayRecode/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "앨범 접근 권한을 허용해주세요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;

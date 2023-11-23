@@ -340,8 +340,8 @@ enum AlertEnum {
                                       "",
                                       "",
                                       ""]
-        case .passwordIsNotSame: return ["비밀번호가 일치하지 않습니다.",
-                                         "비밀번호를 정확히 입력해 주세요.",
+        case .passwordIsNotSame: return ["이메일 또는 비밀번호가 일치하지 않습니다.",
+                                         "정확하게 입력해 주세요.",
                                          "",
                                          ""]
         case .unknownError: return ["알 수 없는 에러",
